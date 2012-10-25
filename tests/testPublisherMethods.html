@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>SafeFrame Publisher method tests</title>
+
+		<script type="text/javascript" src="../src/js/lib/base.js"></script>
+		<script type="text/javascript" src="../src/js/host/host.js"></script>
+
+		<style type="text/css">
+		#feedback{
+			width: 460px;
+			height: 300px;
+			float:right;
+			overflow: auto;
+			border: 1px solid red;
+			color: green;
+			background: #333;
+		}
+		</style>
+		
+	</head>
+	<body>
+<div id="top_leaderboard" style="height:90px;"></div>
+
+		<h1>SafeFrame Publisher method tests</h1>
+		
+		
+		<button onclick="nukePositions()">Nuke Positions</button>
+		
+<div id="feedback"></div>
+
+		<hr style="clear:both;" />
+
+
+		<div style="position:relative;margin:0px;width:100%;right:auto;top:auto;left:auto;margin-left:auto;margin-right:auto;text-align:center;width:100%;">
+			<div style="display:inline-block">
+				<div id="tgtLREC"></div>
+			</div>
+		</div>
+		
+
+<!-- 
+TAG based safe frames follow strict parsing rules imposed by window.JSON.parse.
+Keys MUST be inside double quote marks.  Javascript allows a much looser syntax for JSON objects
+-->
+<script type='text/x-safeframe' class='sf_data' id="sf_tag_1" >
+{
+	"id" : "ad1LREC",
+	"html" : "<div onclick='alert(\"Unsafe read? \" + window.frameElement.parentElement.id);' style='cursor:pointer;background:darkblue;color:white;height:100%;'><h1 >Hello World Leaderboard</h1></div>",
+	"conf" : 
+		{
+		"size" : "728x90",
+		"dest":	"top_leaderboard"
+		},
+	"meta" : 
+	{
+		"rmx": 
+		{
+			"sectionID" : "14800347", 
+			"siteID" : "140509"  
+		} 
+	} 
+} 
+</script> 
+
+<div style="clear:both;">SafeFrame 2 Below</div>
+
+
+<div id='tgtLREC'>
+			<script type='text/x-safeframe' class='sf_data'>
+				{
+					"id":		"ad2LREC",
+					"html":	"<sc" + "ript src=\"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&\" ></scr" + "ipt>" ,
+					"conf":
+					{
+						"w":		300,
+						"h":		250
+					},
+					"meta":
+					{
+						"rmx":
+						{
+							"sectionID":	 "14800347",
+							"siteID":		 "140509"
+
+						}
+					}
+				}
+			</script>
+			<!-- b/c a "dest" tag exists (the overall div container) container tags will be rendered here -->
+			<!-- optional noscript section for fall back -->
+			<noscript>
+				<img src="http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&" width=300 height=250 />
+			</noscript>
+		</div>
+
+
+		
+<h4>SF 3</h4>
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"ad3LREC",
+		"src":	"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&",
+		"conf":
+		{
+			"w":		250,
+			"h":		250,
+			"dest":	"tgtLREC3"
+		},
+		"meta":
+		{
+			"rmx":
+			{
+				"sectionID":	 "14800347",
+				"siteID":		 "140509"
+
+			}
+		}
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+		
+		<script type="text/javascript">
+		
+		function nukePositions(){
+			$sf.host.nuke();
+		}
+		
+		function renderTags(){
+			
+			$sf.host.boot();		
+		}
+		
+		function startRenderCallback(posConf){
+			var id = posConf && posConf.id || "unknown";
+			var fb = document.getElementById("feedback");
+			fb.innerHTML += "onStartPosRender called for " + id + " <br />"
+		}
+		function endRenderCallback(status, posConf){
+			var id = posConf && posConf.id || "unknown";
+			var fb = document.getElementById("feedback");
+			fb.innerHTML += "onEndPosRender called for " + id + " - result: " + status + " <br />"
+		}
+		function beforePosMessageCallback(posConf){
+			var id = posConf && posConf.id || "unknown";
+			var fb = document.getElementById("feedback");
+			fb.innerHTML += "onBeforePosMsg called for " + id + " <br />"
+		}
+		function posMessageCallback(posConf){
+			var id = posConf && posConf.id || "unknown";
+			var fb = document.getElementById("feedback");
+			fb.innerHTML += "onPosMsg called for " + id + " <br />"
+		}
+
+
+
+			/* render some sample content */
+//					renderFile:		"http://10.72.227.43/iab/safeframes/src/html/r.html",
+			(function() {
+				var conf	= new $sf.host.Config({
+					renderFile:		"../src/html/r.html",
+					positions:
+					{
+						"LREC":
+						{
+							id:		"LREC",
+							dest:	"tgtLREC",
+							w:		300,
+							h:		250
+						}
+					},
+					onStartPosRender: startRenderCallback,
+					onEndPosRender: endRenderCallback,
+					onBeforePosMsg: beforePosMessageCallback,
+					onPosMsg: posMessageCallback
+					
+				});
+
+				var posMeta		= new $sf.host.PosMeta(null,"rmx",{foo:"bar",bar:"foo"});
+				var pos			= new $sf.host.Position("LREC", "<h1>Hello World Sean</h1>", posMeta);
+
+				$sf.host.render(pos);
+			})();
+		</script>
+	</body>
+</html>

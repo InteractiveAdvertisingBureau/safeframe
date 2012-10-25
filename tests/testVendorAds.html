@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>SafeFrame Vendor method tests</title>
+	<style type="text/css">
+
+		BODY,HTML { margin:0px; padding: 0px; line-height: 1.5em; }
+
+		#header { background: #EAEAEA; height: 90px; }
+		#header h1 { margin: 0px; padding-top: 15px; }
+
+		#main_wrapper { float: left; width: 100%; }
+
+		#main {  margin: 0 450px 0 450px; }
+
+
+		#left_col { width: 450px;  position:absolute; left:0px; top: 90px; background: #C8FC98; }
+
+		#right_col { float: left; width: 450px; margin-left: -450px; background: #FDE95E;position:relative;}
+
+		#footer { clear: left; width: 100%; background: black; color: #FFF; text-align: center; padding: 4px 0; }
+
+		#feedback_wrapper { width:100%; margin-left: auto; margin-right:auto; text-align: center; }
+		#feedback
+		{
+			width: 460px;
+			height: 300px;
+			overflow: auto;
+			border: 1px solid red;
+			color: green;
+			background: #333;
+			text-align:left;
+			display:inline-block;
+		}
+
+		#boxLREC { position:absolute;right:0px;top:0px; }
+
+
+		iframe
+		{
+			border: 1px solid black;
+			background: lightgreen;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="header"><h1>SafeFrame External method tests</h1></div>
+			<div id="main_wrapper">
+				<div id="main">
+					<div id="feedback_wrapper"><div id="feedback" ></div></div>
+				</div>
+			</div>
+
+			<div id="left_col">
+				<div id='tgtLREC2'>
+					<script type='text/x-safeframe' class='sf_data'>
+						{
+							"id":		"ad2LREC",
+							//"src":	"http://localhost/tests/sample_ads/js_writeVendorAd.js" ,
+
+							//use this for local testing: "src":	"../../tests/sample_ads/js_writeVendorAd.js" ,
+
+
+							"src":	"../../tests/sample_ads/js_writeVendorAd.js" ,
+
+							"conf":
+							{
+								"w":		400,
+								"h":		450,
+								"dest":		"tgtLREC2"
+							},
+							"meta":
+							{
+								"context": "storm is a comin'",
+								"foometa": "you foo",
+								"rmx":
+								{
+									"sectionID":	 "14800347",
+									"siteID":		 "9999"
+
+								}
+							}
+						}
+					</script>
+				</div>
+			</div>
+			<div id="right_col">
+				<div id="boxLREC">
+					<div id='tgtLREC'>
+						<script type='text/x-safeframe' class='sf_data'>
+							{
+								"id":		"adLREC",
+								//"src":	"http://localhost/tests/sample_ads/js_writeVendorAd.js" ,
+
+								//use this for local testing: "src":	"../../tests/sample_ads/js_writeVendorAd.js" ,
+
+
+								"src":	"../../tests/sample_ads/js_writeVendorAd.js?ver=${sf_ver}" ,
+
+								"conf":
+								{
+									"w":		400,
+									"h":		450,
+									"dest":		"tgtLREC"
+								},
+								"meta":
+								{
+									"context": "puffy white clouds",
+									"foometa": "bar foo",
+									"rmx":
+									{
+										"sectionID":	 "14800347",
+										"siteID":		 "140509"
+
+									}
+								}
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+			<div id="footer">
+				<center>
+					<button onclick="remove_ads()">Remove Ads</button>
+				</center>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			function nukePositions(){
+				$sf.host.nuke();
+			}
+
+			function startRenderCallback(id){
+				var posConf = $sf.host.get(id);
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "onStartPosRender called for " + id + " <br />"
+			}
+			function endRenderCallback(id){
+				var posConf = $sf.host.get(id);
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "onEndPosRender called for " + id + " <br />"
+			}
+			function beforePosMessageCallback(id, msgName, data){
+				var posConf = $sf.host.get(id);
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "onBeforePosMsg called for " + id + " <br />"
+			}
+			function posMessageCallback(id, msgName, data){
+				var posConf = $sf.host.get(id);
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "onPosMsg called for " + id + " <br />"
+			}
+
+			function renderFailCallback(id){
+				var posConf = $sf.host.get(id);
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "onFailure called for " + id + " <br />"
+			}
+
+			function coverAd()
+			{
+				var el = document.getElementById("feedback");
+				el.className = "coverAd";
+				//var s = el.style;
+				// s.position = "absolute";
+				// s.right = "150px";
+				// s.top = "230px";
+			}
+
+			function unCoverAd(){
+				var el = document.getElementById("feedback");
+				el.className = ""
+				//s = el.style;
+				//s.position = "inline";
+			}
+
+			function remove_ads()
+			{
+				$sf.host.nuke("*");
+			}
+
+
+		</script>
+		<script type="text/javascript" src="../release/js/boot-debug.js"></script>
+		<script type="text/javascript" src="../release/js/host/host-debug.js"></script>
+		
+		<script type="text/javascript" >
+
+			/* render some sample content */
+			//	renderFile:		"http://10.72.227.43/iab/safeframes/src/html/r.html",
+			(function() {
+
+				var win = window, sf = win.$sf, sf_host = sf && sf_host, host_conf = sf_host && (sf_host.conf || (sf_host.Config && sf_host.Config()));
+
+				if (!sf) {
+					// IE won't let you create a global varabile that can be shared with sync loaded scripts from within a function
+					if (win.execScript) {
+						win.execScript("var $sf = {};");
+					} else {
+						win.$sf = sf;
+					}
+					sf = $sf;
+				}
+				if (!sf_host) sf.host = sf_host = {};
+				if (!host_conf) {
+					sf_host.conf	=
+					conf			=
+					{
+						renderFile: "../release/html/r-debug.html",
+						hostFile:   "../release/js/host/host-debug.js",
+	 					onStartPosRender: startRenderCallback,
+						onFailure: renderFailCallback,
+						onEndPosRender: endRenderCallback,
+						onBeforePosMsg: beforePosMessageCallback,
+						onPosMsg: posMessageCallback
+					};
+
+					/*
+					if (sf && sf.boot) {
+						try {
+							sf.boot();
+						} catch (e) { }
+					}
+					*/
+				}
+
+			})();
+		
+		</script>
+		
+	</body>
+</html>

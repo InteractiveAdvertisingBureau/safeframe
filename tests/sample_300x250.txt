@@ -1,0 +1,17 @@
+<!-- SAMPLE AD TAGS that work with SafeFrames style expansion -->
+<!-- Note that I had to add the Y specific namespace into the code for now to get this tag to work -->
+<script type="text/javascript">
+//adx_U_140093="[ your-click-through-URL-goes-here ]";
+//adx_D_140093="[ your-click-track-URL-goes-here ]";
+//adx_I_140093="[ your-impression-track-pixel-URL-goes-here ]";
+
+var d=document,r=d.referrer,i,p=new Array("U","D","I");
+var q=1299740125;
+var cacheBust=0;
+r=((r&&(i=r.indexOf("/",9))>0)?r.substring(0,i):r);
+var u="l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1";
+var uid=140093,w=300,h=250;
+
+</script>
+<script id="load_wrapper" type="text/javascript" src="http://l.yimg.com/pq/wrapper.js"></script>
+<noscript><a href="http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscript/http://www.barclays.com/"><img src="http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215" border=0></a></noscript>
