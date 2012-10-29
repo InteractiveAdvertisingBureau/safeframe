@@ -230,9 +230,7 @@
 
 		while (script_tag = script_tags[idx++])
 		{
-			if ((script_tag.className == SF_DATATAG_CLASS || _attr(script_tag, "class") == SF_DATATAG_CLASS) &&
-			    (_attr(script_tag, "type") == SF_TAG_TYPE)) {
-
+			if (script_tag.className == SF_DATATAG_CLASS || _attr(script_tag, "type") == SF_TAG_TYPE) {
 				has_booted 		= TRUE;
 				script_tag_id 	= _attr(script_tag, "id");
 				if (!script_tag_id) {
