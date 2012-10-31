@@ -1,7 +1,7 @@
 /**
  * @fileOverview This file contains the base library functionality need for both the publisher/host and vendor/client sides of the SafeFrames library.  Contains JavaScript language extensions and base level dom reading / manipulation
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
- * @version 0.5
+ * @version 0.9
 */
 
 
@@ -18,12 +18,12 @@
 
 if (window["$sf"]) {
 	try {
-		$sf.ver = "0-5-0";
+		$sf.ver = "0-9-0";
 	} catch (sf_lib_err) {
 
 	}
 } else {
-	var $sf = { ver: "0-5-0" };
+	var $sf = { ver: "0-9-0" };
 
 };
 

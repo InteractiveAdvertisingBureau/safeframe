@@ -2,8 +2,8 @@
 /**
  * @fileOverview This file contains JavaScript code that handles the HTML document where HTML is rendered for a SafeFrame, as well as defining the External Vendor/Client API.
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
- * @author <a href="mailto:ccole@emination.com">Chris Cole</a>
- * @version 0.0.1
+ * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
+ * @version 0.9
 */
 
 
@@ -41,6 +41,8 @@ var NULL					= null,
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
     NOTIFY_COLLAPSED		= (NOTIFY_COLLAPSE + "d"),
     NOTIFY_FAILURE			= "failed",
+	NOTIFY_READ_COOKIE		= "read-cookie",
+	NOTIFY_WRITE_COOKIE		= "write-cookie",
     OUR_TAG_CLS_NAME		= "sf",
     MAX_MSG_WAIT_TIME		= 4000,
 	DOM_WATCH_INTERVAL		= 3000,
@@ -963,7 +965,7 @@ var NULL					= null,
 
 	function _receive_msg(params, evt)
 	{
-		var ret = FALSE, msg, cmd, g, e;
+		var ret = FALSE, msg, cmd, g, e, data = {};
 
 		if (params) {
 			g	   	= params.geom || "";
@@ -988,7 +990,8 @@ var NULL					= null,
 				_fire_sandbox_callback(NOTIFY_COLLAPSED);
 			}
 
-		} else if (cmd == NOTIFY_COLLAPSE) {
+		} 
+		else if (cmd == NOTIFY_COLLAPSE) {
 			//Y.SandBox.vendor.collapse was called, notify
 			ret		= TRUE;
 			if (is_expanded) {
@@ -996,16 +999,46 @@ var NULL					= null,
 				is_expanded  	= FALSE;
 				_fire_sandbox_callback(NOTIFY_COLLAPSED);
 			}
-		} else if (cmd == NOTIFY_EXPAND) {
+		} 
+		else if (cmd == NOTIFY_EXPAND) {
 			ret		= TRUE;
 			if (pending_msg) {
 				pending_msg		= NULL;
 				is_expanded 	= TRUE;
 				_fire_sandbox_callback(NOTIFY_EXPAND+"ed");
 			}
-		} else if (cmd == NOTIFY_GEOM_UPDATE) {
+		} 
+		else if (cmd == NOTIFY_GEOM_UPDATE) {
 			_fire_sandbox_callback(NOTIFY_GEOM_UPDATE);
+		} 
+		else if (cmd == NOTIFY_READ_COOKIE) {
+			ret		= TRUE;
+			if (pending_msg) {
+				pending_msg		= NULL;
+				is_expanded 	= TRUE;
+				data = params && params.value;
+				_fire_sandbox_callback(NOTIFY_READ_COOKIE, data);
+			}
+		} 
+		else if (cmd == NOTIFY_WRITE_COOKIE) {
+			ret		= TRUE;
+			if (pending_msg) {
+				pending_msg		= NULL;
+				is_expanded 	= TRUE;
+				data.value = params && params.value;
+				_fire_sandbox_callback(NOTIFY_WRITE_COOKIE, data);
+			}
 		}
+		else if (cmd == NOTIFY_FAILURE) {
+			ret		= TRUE;
+			if (pending_msg) {
+				pending_msg		= NULL;
+				is_expanded 	= TRUE;
+				data.value = params && params.value;
+				_fire_sandbox_callback(NOTIFY_FAILURE, data);
+			}
+		}
+		
 		params = NULL;
 		return ret;
 	}
@@ -1067,14 +1100,15 @@ var NULL					= null,
 	 * @function
 	 * @static
 	 * @param {String} msg The status update / message to send
+	 * @param {Object} data The data from the response
 	 *
 	*/
 
-	function _fire_sandbox_callback(msg)
+	function _fire_sandbox_callback(msg, data)
 	{
 		var e;
 		try {
-			sandbox_cb(msg);
+			sandbox_cb(msg, data);
 		} catch (e) { }
 	}
 
@@ -1389,29 +1423,37 @@ var NULL					= null,
 	 * @return {String} of any pending status, otherwise empty string.
 	 *
 	*/
-
 	function status()
 	{
 		return (pending_msg && pending_msg.cmd) || "";
 	}
 
 	/**
-	 * Return the known good publisher host URL, stripped of query string / hash values
+	 * Requests the host read or write a cookie to the host domain.
+	 * The host domain must grant permission for the cookie to be written.
 	 *
-	 * @name $sf.ext.hostURL
+	 * @name $sf.ext.cookie
 	 * @public
 	 * @static
 	 * @function
-	 * @return {String}
+	 * @param {String} [cookieName] The name of the cookie to set or read
+	 * @param {Object} [cookieData] An object hash containing the value and an optional expires
+	 * @return {Number}
 	 *
 	*/
-
-	function hostURL()
+	function cookie(cookieName, cookieData)
 	{
-		return (render_params && render_params.loc) || "";
+		var isRead = (cookieData == NULL);
+		
+		var cmd_nm = isRead ? "read-cookie" : "write-cookie";
+	
+		var cmd_str = ["cmd=", cmd_nm, "&pos=", pos_id, "&cookie=", cookieName];
+		if(!isRead){
+			cmd_str.push("&value=");
+			cmd_str.push(cookieData.value);
+		}
+		_send_msg(_cstr(cmd_str), cmd_nm);
 	}
-	
-	
 
 	/**
 	 * Return the percentage that the SafeFrame container is viewable within the browser window
@@ -1463,6 +1505,7 @@ var NULL					= null,
 			key = _cstr(key);
 			if (key) {
 				sup = sup[key] || FALSE;
+				if(sup == "0") sup = FALSE;
 			} else {
 				sup = lang.mix({}, sup);
 			}
@@ -1490,8 +1533,8 @@ var NULL					= null,
 					geom:		geom,
 					meta:		meta,
 					status:		status,
-					hostURL:	hostURL,
 					supports:	supports,
+					cookie: 	cookie,
 					inViewPercentage: inViewPercentage
 				}, sf, TRUE);
 

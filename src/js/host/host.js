@@ -2,6 +2,9 @@
 /**
  * @namespace $sf.host Defines the Publisher side api, and helper functions
  * @name $sf.host
+ * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
+ * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
+ * @version 0.9
  *
 */
 
@@ -27,7 +30,10 @@
 		{
 			"exp-ovr":			1,
 			"exp-push":			0,
-			"bg":				0
+			"bg":				0,
+			"pin":				0,
+			"read-cookie":		0,
+			"write-cookie":		0
 		},
 		EXPAND_COMMAND 			= "exp-ovr",
 		COLLAPSE_COMMAND 		= "collapse",
@@ -490,7 +496,6 @@
 	 * @name $sf.lib.dom.msghost
 	 *
 	*/
-
 
 	/**
 	 * Returns the root document HTMLElement / node
@@ -2003,6 +2008,27 @@
 
 						ret = TRUE;
 					break;
+					case "read-cookie":
+						var canRead = info.conf && info.conf.supports && info.conf.supports[msgObj.cmd] && info.conf.supports[msgObj.cmd] != "0";
+						if(canRead){
+							_read_cookie(msgObj);
+							ret = TRUE;
+						}
+						else{
+							ret = FALSE;
+						}
+					break;
+					case "write-cookie":
+						var canWrite = info.conf && info.conf.supports && info.conf.supports[msgObj.cmd] && info.conf.supports[msgObj.cmd] != "0";
+						if(canWrite){
+							_write_cookie(msgObj);
+							ret = TRUE;
+						}
+						else{
+							ret = FALSE;
+						}
+					break;
+						
 				}
 			}
 		}
@@ -2369,7 +2395,133 @@
 
 		ifr = ifrSt = par = parSt = params = msgObj = NULL;
     }
+	
+	
+	/**
+	 * Returns the current document cookies as a hash
+	 * @name $sf.lib._cookieHash
+	 * @private
+	 * @static
+	 * @function
+	 * @returns {Object}
+	 *
+	*/
 
+	function _cookieHash()
+	{
+		var cooks, key, i, cookies = {}, c;
+
+		cooks = document.cookie.split('; ');
+		for(i=cooks.length-1; i>=0; i--){
+			c = cooks[i].split("=");
+			cookies[c[0]] = c[1];
+		}
+		
+		return cookies;
+	}
+
+	
+	/**
+     * Read a host domain cookie
+     *
+     * @name $sf.host-_read_cookie
+     * @private
+     * @static
+     * @function
+     * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
+     * @param {Boolean} [isOutside] Whether or not the read-cookie command came from the publisher
+     *
+     *
+    */
+
+    function _read_cookie(msgObj, isOutside)
+    {
+		var posID		= (msgObj && msgObj.pos),
+			params		= (posID && rendered_ifrs[posID]),
+			params_conf	= (params && params.conf),
+			id			= (params_conf && params_conf.dest),
+			ifr			= (id && _elt(id)),
+			key, cookies;
+			
+		
+		var command = "read-cookie";
+		
+		var canRead = params_conf.supports && params_conf.supports[command] && params_conf.supports[command] != "0";
+		
+		if(!canRead){
+			return;
+		}
+		
+		if (!posID || !params || !ifr) return;
+
+		key = msgObj.cookie;
+		if(!key) return;
+		
+		cookies = _cookieHash();
+
+		_fire_pub_callback(POS_MSG, command, posID, 0, 0);
+		msgObj.cmd  	=  command;
+		msgObj.geom		= _es(_build_geom(posID, ifr, TRUE));
+		msgObj.value = cookies[key];
+		_send_response(params, msgObj);
+
+		ifr = params = msgObj = NULL;
+    }
+
+	
+	/**
+     * Read a host domain cookie
+     *
+     * @name $sf.host-_write_cookie
+     * @private
+     * @static
+     * @function
+     * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
+     * @param {Boolean} [isOutside] Whether or not the read-cookie command came from the publisher
+     *
+     *
+    */
+
+    function _write_cookie(msgObj, isOutside)
+    {
+		var posID		= (msgObj && msgObj.pos),
+			params		= (posID && rendered_ifrs[posID]),
+			params_conf	= (params && params.conf),
+			id			= (params_conf && params_conf.dest),
+			ifr			= (id && _elt(id)),
+			key, newValue, cookies, newCookies;
+			
+		
+		var command = "write-cookie";
+		
+		var canRead = params_conf.supports && params_conf.supports[command] && params_conf.supports[command] != "0";
+		
+		if(!canRead){
+			return;
+		}
+		
+		if (!posID || !params || !ifr) return;
+
+		key = msgObj.cookie;
+		if(!key) return;
+		newValue = escape(msgObj.value);
+		
+		var exdate=new Date();
+		exdate.setDate(exdate.getDate() + 1);
+		var c_value=newValue + "; expires="+exdate.toUTCString();
+		document.cookie=key + "=" + c_value;
+
+
+		_fire_pub_callback(POS_MSG, command, posID, 0, 0);
+		msgObj.cmd  	=  command;
+		msgObj.geom		= _es(_build_geom(posID, ifr, TRUE));
+		msgObj.value = "";
+		_send_response(params, msgObj);
+
+		ifr = params = msgObj = NULL;
+    }
+
+	
    /**
 	 * Remove / destroy one or more SafeFrames from the publisher page
 	 *
