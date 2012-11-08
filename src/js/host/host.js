@@ -2481,14 +2481,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	
 	/**
-     * Read a host domain cookie
+     * Write a host domain cookie
      *
      * @name $sf.host-_write_cookie
      * @private
      * @static
      * @function
      * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
-     * @param {Boolean} [isOutside] Whether or not the read-cookie command came from the publisher
+     * @param {Boolean} [isOutside] Whether or not the write-cookie command came from the publisher
      *
      *
     */
@@ -2526,6 +2526,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		_fire_pub_callback(POS_MSG, command, posID, 0, 0);
 		msgObj.cmd  	=  command;
 		msgObj.geom		= _es(_build_geom(posID, ifr, TRUE));
+		msgObj.info 	= newValue;
 		msgObj.value = "";
 		_send_response(params, msgObj);
 

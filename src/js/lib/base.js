@@ -2478,7 +2478,7 @@ if (window["$sf"]) {
 				evt_tgt_prop_b	= "currentTarget";
 			}
 
-			if (win[w3c_attach]) {
+			if (win[w3c_attach] && !isIE) {
 				use_attach = w3c_attach;
 				use_detach = w3c_detach;
 			} else if (isIE) {

@@ -55,6 +55,10 @@ var sfAPI = extern;
 		extern.collapse();
 	}
 	
+	function adStatus(){
+		var result = extern.status();
+		writeLog(result);
+	}
 	
 	function testSupports(){
 		writeLog("start");

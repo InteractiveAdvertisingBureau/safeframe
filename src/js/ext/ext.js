@@ -983,6 +983,10 @@ var NULL					= null,
 			cmd		= params.cmd;
 			if (g) geom_info = ParamHash(_ue(g),NULL,NULL,TRUE,TRUE);
 		}
+		
+		data.cmd = cmd;
+		data.value = data.info = params && params.value;
+		data.reason = params && params.reason;
 
 		//OK firefox is doing really weird stuff with switch statements and I can't seem to figure
 		//it out so i'm switching to if / else
@@ -1036,7 +1040,6 @@ var NULL					= null,
 			if (pending_msg) {
 				pending_msg		= NULL;
 				is_expanded 	= TRUE;
-				data.value = params && params.value;
 				_fire_sandbox_callback(NOTIFY_WRITE_COOKIE, data);
 			}
 		}
@@ -1045,7 +1048,6 @@ var NULL					= null,
 			if (pending_msg) {
 				pending_msg		= NULL;
 				is_expanded 	= TRUE;
-				data.value = params && params.value;
 				_fire_sandbox_callback(NOTIFY_FAILURE, data);
 			}
 		}
