@@ -1,9 +1,11 @@
 document.write('<div id="viewInfo" style="height:20px;font-weight:bold;color:blue;font-family:Arial;"></div>');
-document.write('<div id="feedback" style="height:40px;background:#333;color:yellow;overflow:auto;" ></div>');
-//document.write('<button onclick="testSupports()">sf.ext.supports</button>');
+document.write('<div id="feedback" style="height:450px;background:#333;color:yellow;overflow:auto;" ></div>');
 document.write('<button onclick="testGeometry()">sf.ext.geom</button>');
-//document.write('<button onclick="windowGeometry()">window geom</button>');
 document.write('<button onclick="getViewableAmount()">percent_viewable</button>');
+document.write('<br />');
+document.write('<button onclick="expandAd()">sf.ext.expand</button>');
+document.write('<button onclick="collapseAd()">sf.ext.collapse</button>');
+//for local testing use
 document.write('</div>');
 
 var extern = window.extern || $sf.ext;
@@ -51,6 +53,32 @@ var sfAPI = extern;
 		else if (status == "write-cookie") {
 			writeLog("Wrote Cookie: " + data.value);
 		}
+		
+		
+	}
+	
+	function expandAd(){
+		var w = window, sf = w["sf"], e = sf && sf.ext, g, ex;
+
+		writeLog("Ad expand on load - collapse in 4 seconds");
+
+		if (extern) {
+			try {
+				g	= extern.geom();
+				ex	= g && g.exp;
+				//if (Math.abs(ex.l) >= 400 && Math.abs(ex.t) >= 200) {
+						extern.expand(400, 200); //{l:400,t:200}
+				//}
+			} catch (e) {
+				//do not expand, not enough room
+			}
+		} else {
+			//api expansion not supported
+		}
+	}	
+
+	function collapseAd(){
+		extern.collapse();
 	}
 
 	if (extern) {
@@ -66,4 +94,16 @@ var sfAPI = extern;
 			updateInViewDisplay();
 			}, 100);
 	})();
+
+// Expand the ad, then collapse after 4 seconds	
+(function(){
+	
+	expandAd();
+	
+	window.setTimeout(function(){
+		collapseAd();
+		}, 4000);
+})();	
+
+	
 	
