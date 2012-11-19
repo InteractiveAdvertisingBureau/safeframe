@@ -58,16 +58,16 @@ var sfAPI = extern;
 	}
 	
 	function expandAd(){
-		var w = window, sf = w["sf"], e = sf && sf.ext, g, ex;
+		var g, ex;
 
 		writeLog("Ad expand on load - collapse in 4 seconds");
 
-		if (extern) {
+		if ($sf.ext) {
 			try {
-				g	= extern.geom();
+				g	= $sf.ext.geom(); // the geometry object
 				ex	= g && g.exp;
 				//if (Math.abs(ex.l) >= 400 && Math.abs(ex.t) >= 200) {
-						extern.expand(400, 200); //{l:400,t:200}
+						$sf.ext.expand(400, 200); //{l:400,t:200}
 				//}
 			} catch (e) {
 				//do not expand, not enough room
@@ -78,7 +78,7 @@ var sfAPI = extern;
 	}	
 
 	function collapseAd(){
-		extern.collapse();
+		$sf.ext.collapse();
 	}
 
 	if (extern) {
