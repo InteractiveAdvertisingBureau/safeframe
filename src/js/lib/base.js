@@ -35,7 +35,7 @@ if (window["$sf"]) {
 
 	}
 } else {
-	var $sf = { ver: "0-9-0" };
+	var $sf = { ver: "1-0-0" };
 
 };
 
