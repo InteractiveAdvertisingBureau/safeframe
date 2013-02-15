@@ -2046,6 +2046,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 						ret = TRUE;
 					break;
+					case "geom-update":
+						sf.lib.logger.log("Geom update complete: " + msgObj.pos);
+						ret = TRUE;
+					break;
 					case "read-cookie":
 						var canRead = info.conf && info.conf.supports && info.conf.supports[msgObj.cmd] && info.conf.supports[msgObj.cmd] != "0";
 						if(canRead){
