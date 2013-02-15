@@ -1469,6 +1469,21 @@ var NULL					= null,
 	}
 
 	/**
+	 * Send a message to the host
+	 *
+	 * @name $sf.ext.message
+	 * @public
+	 * @static
+	 * @function
+	 *
+	*/
+
+	function message(content)
+	{
+		_send_msg(_cstr(["cmd=","msg","&pos=", pos_id, "&msg=", content]), "msg");
+	}
+
+	/**
 	 * Return the percentage that the SafeFrame container is viewable within the browser window
 	 *
 	 * @name $sf.ext.inViewPercentage
@@ -1548,6 +1563,7 @@ var NULL					= null,
 					status:		status,
 					supports:	supports,
 					cookie: 	cookie,
+					message: 	message,
 					inViewPercentage: inViewPercentage
 				}, sf, TRUE);
 

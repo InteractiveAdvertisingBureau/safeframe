@@ -16,13 +16,21 @@
 	border-radius: 4px;
 	color: green;
 	font-family: courier;
+}
+.logWrapper{
+	position:relative;
+	width:315px;
 	float:right;
 }
 </style>		
 </head>
 	<body>
 	<h1>Safe Frame Config and Callback Tests</h1>
-				<div id="log"></div>
+	<div class="logWrapper">
+		<div id="log"></div>
+		<button onclick="document.getElementById('log').innerHTML='';">Clear</button>
+	</div>
+	
 					<div id="label_input" style="font-weight:bold;font-family:arial;">HTML Input:&nbsp;&nbsp;</div>
 					<textarea id="html_input" style="width:640px;height:280px;"></textarea>
 		<table cellspacing="0" border="0" cellpadding="0" style="height:auto;table-layout:fixed">
@@ -37,12 +45,40 @@
 		</table>
 		<hr />
 
+		
+		<!-- a second ad -->
+<div id="leftAdPlacement"  class="adBg"></div>
 
+		<!-- a second ad -->
 		<div style="position:relative;margin:0px;width:100%;right:auto;top:auto;left:auto;margin-left:auto;margin-right:auto;text-align:center;width:100%;">
 			<div style="display:inline-block">
 				<div id="tgtLREC"></div>
 			</div>
 		</div>
+		
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"leftSkyscraperAdFrame",
+		"src":	"../../tests/sample_ads/adBootstrap.js?flashVer=${flash_ver}",
+		
+		"conf":
+		{
+			"w":		360,
+			"h":		600,
+			"dest":	"leftAdPlacement"
+		},
+		"meta":
+		{
+			"expand":
+			{
+				"x":	 "450",
+				"y":	 "0"
+			}
+		}
+	}
+</script>
+		
+		
 		<script type="text/javascript">
 		
 		function logEntry(msg){
@@ -54,7 +90,11 @@
 		* Host Callback posMsg
 		*/
 		function posMsgCallback(id, message, data){
-			logEntry("posMsgCalled from " + id + " on event " + message);
+			var msg = "posMsgCalled from " + id + " on event " + message;
+			if(data){
+				msg += " WITH DATA: " + data;
+			}
+			logEntry(msg);
 		}
 		
 		/**

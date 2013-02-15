@@ -190,10 +190,18 @@ var sfAPI = extern;
 		} catch (e) {
 			settingCookie = false;
 		}
+	}
+	
+	function sendMessage(){
+		var elem = document.getElementById("msgContents");
+		if(!elem) return;
 		
+		var val = elem.value || "hello world";
+	
+		sfAPI.message(val);
 	}
 
-	(function(){
+(function(){
 	updateInViewDisplay();
 })();
 
