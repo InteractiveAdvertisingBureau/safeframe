@@ -49,6 +49,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		EXPAND_COMMAND 			= "exp-ovr",
 		COLLAPSE_COMMAND 		= "collapse",
 		NOTIFY_EXPAND			= "expand",
+		NOTIFY_GEOM_UPDATE		= "geom-update",
 		NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
 		DEFAULT_ZINDEX			= 3000,
 		OBJ						= "object",
@@ -1754,14 +1755,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function _fire_pub_callback(cb_name /* args to call back */)
 	{
-		var cb_args = [], args = arguments, len = args[LEN], idx = 0, f, ret, e;
+		var cb_args = [], args = arguments, len = args[LEN], idx = 0, f, ret, e, a;
 		if (config) {
-			while (len--)
-			{
-				cb_args.push(args[idx++]);
-			}
 			f	= config[cb_name];
 			if (f) {
+				while (len--)
+				{
+					a = args[idx++];
+					if(a != cb_name){
+						cb_args.push(a);
+					}
+				}
 				try {
 					ret = f.apply(NULL,cb_args);
 				} catch (e) {
@@ -1856,10 +1860,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     			g				= _build_geom(posID, ifr, TRUE);
     			msgObj			= ParamHash();
     			msgObj.pos		= posID;
-    			msgObj.cmd		= "geom-update";
+    			msgObj.cmd		= NOTIFY_GEOM_UPDATE;
 	    		msgObj.geom		= _es(g);
 
-    			_fire_pub_callback(POS_MSG, "geom-update", posID, g);
+    			_fire_pub_callback(POS_MSG, posID, NOTIFY_GEOM_UPDATE, g);
     			_send_response(params, msgObj);
     		}
     	}
@@ -1926,9 +1930,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					g				= _build_geom(posID, ifr, TRUE);
 					msgObj			= ParamHash();
 	    			msgObj.pos		= posID;
-	    			msgObj.cmd		= "geom-update";
+	    			msgObj.cmd		= NOTIFY_GEOM_UPDATE;
 	    			msgObj.geom		= _es(g);
-	    			_fire_pub_callback(POS_MSG, "geom-update", posID, g);
+	    			_fire_pub_callback(POS_MSG, posID, NOTIFY_GEOM_UPDATE, g);
 	    			_send_response(params, msgObj);
 	    		}
 
@@ -2046,7 +2050,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 						ret = TRUE;
 					break;
-					case "geom-update":
+					case NOTIFY_GEOM_UPDATE:
 						sf.lib.logger.log("Geom update complete: " + msgObj.pos);
 						ret = TRUE;
 					break;

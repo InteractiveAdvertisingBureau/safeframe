@@ -48,7 +48,6 @@ var NULL					= null,
 	EXPAND_COMMAND 			= "exp-ovr",
     COLLAPSE_COMMAND 		= "collapse",
     NOTIFY_GEOM_UPDATE		= "geom-update",
-	NOTIFY_GEOM_UPDATE_FIN  = NOTIFY_GEOM_UPDATE,
     NOTIFY_EXPAND			= "expand",
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
     NOTIFY_COLLAPSED		= (NOTIFY_COLLAPSE + "d"),
@@ -493,16 +492,7 @@ var NULL					= null,
 					setTimeout(function()
 					{
 						_receive_msg(msg_obj, evt);
-						if(msg_obj.cmd && msg_obj.cmd == NOTIFY_GEOM_UPDATE){
-							var p = msg_obj.pos;
-							setTimeout(function()
-							{
-								// POST MESSAGE
-								_send_msg(_cstr(["cmd=",NOTIFY_GEOM_UPDATE_FIN,"&pos=", pos_id]), NOTIFY_GEOM_UPDATE_FIN);
-							},1);
-						}
 						msg_params = evt = msg_guid = msg_obj = NULL;
-						// FIRE GEOM_UPDATE_CONFIRM BACK UP
 					},1);
 				} catch (e) { }
 			}
