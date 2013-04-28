@@ -23,7 +23,8 @@
 	#htmlInput{
 		max-idth:600px;
 		width: 90%;
-		height:150px;"	
+		height:150px;
+		background: #ffe;		
 	}
 	input.size{
 		width:50px;
@@ -119,9 +120,9 @@
 				<div id="tgtLREC"></div>
 			</div>
 		</div>
-		<script type="text/javascript" src="https://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/base.js"></script>
-		<script type="text/javascript" src="https://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/host/host.js"></script>
-		<script type="text/javascript" src="https://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"></script>
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/base.js"></script>
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/host/host.js"></script>
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"></script>
 		
 		<!-- Script code to handle code-based rendering -->
 		<script type="text/javascript">
@@ -132,8 +133,8 @@
 		function loadSample(selCtl){
 			var sampId = selCtl[selCtl.selectedIndex].value,
 				contEl = getEl("htmlInput"),
-				size, wd, ht, bits,
-				el, code;
+				size, bits,
+				el, elWd, elHt, code, content;
 			
 			if(sampId == ""){
 				contEl.value = "";
@@ -142,30 +143,25 @@
 			
 			el = getEl(sampId);
 			size = el.getAttribute('adsize');
+			elWd = getEl("width_input");
+			elHt = getEl("height_input");
 			bits = size.split('x');
-			wd = bits[0];
-			ht = bits[1];
-			debugger;
+			elWd.value = bits[0];
+			elHt.value = bits[1];
+			
 			code = el && (el.text || el.innerHTML || el.innerText);
 			if (code) {
 				try {
 					f 		= new Function("return " + code);
-					code	= f();
+					content	= f();
+					contEl.value = content;
 				} catch (e) {
-					code = f = null;
+					content = f = null;
 				}
-				if (code) {
-					el			= Dom.elt("ad_tag_input");
-					el.value	= code;
-
-					el			= Dom.elt("ad_tag_width");
-					el.value	= w;
-
-					el			= Dom.elt("ad_tag_height");
-					el.value	= h;
+				if (!content) {
+					return;
 				}
 			}			
-			contEl.value = samp;
 			renderInput();		
 		}
 		
@@ -234,7 +230,7 @@
 		*/
 		(function() {
 			var conf	= new $sf.host.Config({
-				renderFile:		"https://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
+				renderFile:		"http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
 				positions:
 				{
 					"LREC":
@@ -256,17 +252,11 @@
 
 <!-- ========================  SAMPLE ADS ===================================== -->
 
-	<script type="text/plain" adsize="300x250" id="lrec_data">
-	"<!--  Standard Inventory Ad; AdinteraxID:140093; ad:cgong-teset/LREC_exp; publisher:publisher1; campaign:demo; size:300x250; Ad File Size:48kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140093=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140093=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140093=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740125;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1\";\r\nvar uid=140093,w=300,h=250;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://www.barclays.com/\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215\" border=0></a></noscr"+"ipt>"
-	</script>
+	<script type="text/plain" adsize="300x250" id="lrec_data">"<!--  Standard Inventory Ad; AdinteraxID:140093; ad:cgong-teset/LREC_exp; publisher:publisher1; campaign:demo; size:300x250; Ad File Size:48kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140093=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140093=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140093=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740125;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1\";\r\nvar uid=140093,w=300,h=250;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://www.barclays.com/\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215\" border=0></a></noscr"+"ipt>"</script>
 	
-	<script type="text/plain" adsize="120x600" id="sky_data">
-	"<!--  Standard Inventory Ad; AdinteraxID:140095; ad:cgong-teset/120_600_exp; publisher:publisher1; campaign:demo; size:120x600; Ad File Size:54kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140095=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140095=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140095=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740219;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1\";\r\nvar uid=140095,w=120,h=600;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://adinterax.com\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/120x600_skyscraper_070102_v2.jpg?adxq=1290143223\" border=0></a></noscr"+"ipt>"
-	</script>
+	<script type="text/plain" adsize="120x600" id="sky_data">"<!--  Standard Inventory Ad; AdinteraxID:140095; ad:cgong-teset/120_600_exp; publisher:publisher1; campaign:demo; size:120x600; Ad File Size:54kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140095=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140095=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140095=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740219;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1\";\r\nvar uid=140095,w=120,h=600;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://adinterax.com\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/120x600_skyscraper_070102_v2.jpg?adxq=1290143223\" border=0></a></noscr"+"ipt>"</script>
 	
-	<script type="text/plain" adsize="728x90" id="n_data">
-	"<!--  Standard Inventory Ad; AdinteraxID:140094; ad:cgong-teset/728_90_exp_flash; publisher:publisher1; campaign:demo; size:728x90; Ad File Size:50kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140094=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140094=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140094=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740195;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1\";\r\nvar uid=140094,w=728,h=90;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/DART\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/seat_shakira_es_728x90_exp_.gif?adxq=1258066365\" border=0></a></noscr"+"ipt>"
-	</script>
+	<script type="text/plain" adsize="728x90" id="n_data">"<!--  Standard Inventory Ad; AdinteraxID:140094; ad:cgong-teset/728_90_exp_flash; publisher:publisher1; campaign:demo; size:728x90; Ad File Size:50kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\">\r\n//adx_U_140094=\"[ your-click-through-URL-goes-here ]\";\r\n//adx_D_140094=\"[ your-click-track-URL-goes-here ]\";\r\n//adx_I_140094=\"[ your-impression-track-pixel-URL-goes-here ]\";\r\n\r\nvar d=document,r=d.referrer,i,p=new Array(\"U\",\"D\",\"I\");\r\nvar q=1299740195;\r\nvar cacheBust=0;\r\nr=((r&&(i=r.indexOf(\"/\",9))>0)?r.substring(0,i):r);\r\nvar u=\"l.yimg.com/pq/js/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1\";\r\nvar uid=140094,w=728,h=90;\r\n\r\n</scr"+"ipt>\r\n<scr"+"ipt id=\"load_wrapper\" type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/wrapper.js\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/DART\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/seat_shakira_es_728x90_exp_.gif?adxq=1258066365\" border=0></a></noscr"+"ipt>"	</script>
 
 
 		</body>

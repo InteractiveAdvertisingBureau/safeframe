@@ -183,8 +183,8 @@
 
 
 		</script>
-		<script type="text/javascript" src="../release/js/boot-debug.js"></script>
-		<script type="text/javascript" src="../release/js/host/host-debug.js"></script>
+		<script type="text/javascript" src="../src/js/lib/base.js"></script>
+		<script type="text/javascript" src="../src/js/host/host.js"></script>
 		
 		<script type="text/javascript" >
 
@@ -208,8 +208,8 @@
 					sf_host.conf	=
 					conf			=
 					{
-						renderFile: "../release/html/r-debug.html",
-						hostFile:   "../release/js/host/host-debug.js",
+						renderFile: "../src/html/r.html",
+						hostFile:   "../src/js/host/host.js",
 	 					onStartPosRender: startRenderCallback,
 						onFailure: renderFailCallback,
 						onEndPosRender: endRenderCallback,
