@@ -262,6 +262,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					data = data();
 				} catch (err) {
 					data = NULL;
+					_log("Error parsing tag configuration " + err.message);
 					continue;
 				}
 

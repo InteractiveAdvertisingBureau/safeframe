@@ -4,10 +4,12 @@
 	<title>SafeFrame Testing for Creative</title>
 	
 	<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
-	<!-- <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script> -->
 	<style type="text/css">
 	.padtop {
 		margin-top: 50px;
+	}
+	.marginTop20{
+		margin-top: 20px;
 	}
 	iframe {
 		background: #ddd;
@@ -16,8 +18,15 @@
 		font-size: 1.5em;
 		text-shadow: 1px 1px 2px #bbb;
 	}
+	h2 { font-size: 1.3em; }
+	h3 { font-size: 1.2em; }
 	label{
 		font-weight: bold;
+	}
+	#tagMarkupSample{
+		min-height: 30px;
+		max-height: 350px;
+		overflow: auto;
 	}
 	
 	#htmlInput{
@@ -35,11 +44,13 @@
 	}
 	
 	.linearForm label {
-		display: inline;
+		display: inline-block;
 		margin-left: 20px;
 	}
 	.linearForm label:first-child {
 		margin-left: 0px;
+		width: 63px;
+		text-align: right;
 	}
 	
 	.linearForm input {
@@ -48,6 +59,22 @@
 	
 	.actionButtons button{
 		margin-right: 20px;
+	}
+	.wideModal{
+		min-width: 600px;
+		width: 75%;
+		left: 10%;
+		margin-left: 0;
+	}
+	
+	.hidden{
+		display: none;
+	}
+	.visibleInBlock{
+		display: inline-block;
+	}
+	.visibleBlock{
+		display: block;
 	}
 	</style>
 	</head>
@@ -61,7 +88,8 @@
     <a class="brand" target="_blank" href="https://sourceforge.net/p/safeframes/wiki/Home/" title="SafeFrame Reference Implementation">SafeFrame</a>  
   </li>  
   <li><a  target="_blank" href="http://www.iab.net/safeframe">IAB</a></li>  
-  <li><a target="_blank" href="http://www.iab.net/media/file/SafeFramesSpec.pdf">SafeFrame Specification</a></li>  
+  <li><a target="_blank" href="http://www.iab.net/media/file/SafeFramesSpec.pdf">SafeFrame Specification <sub>(PDF)</sub></a></li>  
+  <li><a href="https://sourceforge.net/projects/safeframes/files/latest/download?source=files">Download</a></li>  
 </ul> 
     </div>  
   </div>  
@@ -85,17 +113,25 @@
 	
 	<div class="span8">
 	
-	<label for="htmlInput">HTML Input</label>
+	<label for="htmlInput">
+	<button class="btn btn-info" id="sourceHtmlBtn" 
+	title="Raw HTML content of an ad"
+	onclick="pageStuff.setInput('html');">HTML Input</button>
+	<button class="btn" id="sourceScriptBtn" onclick="pageStuff.setInput('script');" 
+	title="Source URL for the script to serve a display ad" >Script File Source</button>
+	</label>
 	
 	<textarea id="htmlInput" ></textarea>
 	
 	<div class="linearForm sampleRow">
 	<label>Samples</label>
-	<select onchange="loadSample(this)">
+	<select onchange="pageStuff.loadSample(this)">
 		<option value="" selected>[Custom Content]</option>
 		<option value="lrec_data">Medium Rectangle (300x250)</option>
+		<option value="src_ad">Script Medium Rect (300x250)</option>
 		<option value="n_data">Leaderboard (728x90)</option>
 		<option value="sky_data">Skyscraper (120x600)</option>
+		
 	</select>
 	<a href="http://www.iab.net/guidelines/508676/508767/displayguidelines" target="_blank" title="Ad Unit Definitions"><span class="icon-question-sign"></span></a>
 	</div>
@@ -105,9 +141,16 @@
 	<label>Height</label> <input id="height_input" type="text" class="size" value="350" />
 	</div>
 	<div class="actionButtons">
-					<button class="btn btn-primary" onclick="renderInput()">Render Input</button>
+					<button class="btn btn-primary" onclick="pageStuff.renderInput()">Render Input</button>
 					<button class="btn" onclick="$sf.host.nuke()">Remove</button>
 	</div>
+	<div class="actionButtons marginTop20">
+					<button class="btn" 
+					title="Generate the Markup to embed this ad in a page.  SafeFrame offers many mechanisms to handle rendering ads. Tag embedding is but one of these mechanisms"
+					onclick="pageStuff.showEmbedDialog()"
+					>Show Tag Embed</button>
+	</div>
+	
 	</div>
 	</div>
 	
@@ -125,15 +168,34 @@
 		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"></script>
 		
 		<!-- Script code to handle code-based rendering -->
-		<script type="text/javascript">
+	<script type="text/javascript">
+	
+	// Shim a simple DOM shortcut, if needed
+	if(window.$ === undefined){
+		window.$ = function(id){
+			if(id[0] == "#"){
+				id = id.substring(1);
+			}
+			return document.getElementById(id);		
+		}
+	}
+	
+	/**
+	* Encapsulation of page functionality
+	*/
+	var pageStuff = {
+		/**
+		* Input source mode - html or script
+		*/
+		sourceMode: 'html',
 		
 		/**
 		* Load one of the pre-defined samples for rendering.
 		*/
-		function loadSample(selCtl){
+		loadSample: function(selCtl){
 			var sampId = selCtl[selCtl.selectedIndex].value,
-				contEl = getEl("htmlInput"),
-				size, bits,
+				contEl = $("htmlInput"),
+				size, adType, bits,
 				el, elWd, elHt, code, content;
 			
 			if(sampId == ""){
@@ -141,10 +203,15 @@
 				return;
 			}
 			
-			el = getEl(sampId);
+			el = $(sampId);
 			size = el.getAttribute('adsize');
-			elWd = getEl("width_input");
-			elHt = getEl("height_input");
+			adType = el.getAttribute('adtype');
+			if(adType){
+				pageStuff.setInput(adType);
+			}
+			
+			elWd = $("#width_input");
+			elHt = $("height_input");
 			bits = size.split('x');
 			elWd.value = bits[0];
 			elHt.value = bits[1];
@@ -152,7 +219,7 @@
 			code = el && (el.text || el.innerHTML || el.innerText);
 			if (code) {
 				try {
-					f 		= new Function("return " + code);
+					f = new Function("return " + code);
 					content	= f();
 					contEl.value = content;
 				} catch (e) {
@@ -162,18 +229,108 @@
 					return;
 				}
 			}			
-			renderInput();		
-		}
+			pageStuff.renderInput();		
+		},
+		
+		/**
+		* Display an overlay with the appropriate markup to embed this ad
+		*/
+		showEmbedDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal fade in visibleBlock wideModal",
+				overlayClass =  "modal-backdrop fade in",
+				contEl = $("htmlInput"),
+				content, ht, wd,
+				embedSrcElem = $("tagMarkupSample"),
+				sfTag,
+				adId = "myAdPlacement" + new Date().getMilliseconds(),
+				overlay = $("dlgOverlay");
+			
+			
+			sfTag = "&lt;scri" + "pt type='text/x-safeframe' class='sf_data' >\n"
+			sfTag += "{\n\t \"id\" : \"" + adId + "\",\n";
+			
+			if(pageStuff.sourceMode == 'script'){
+				sfTag += "\t \"src\" : \"" + contEl.value + "\",\n";
+			}
+			else{
+				content = $sf.lib.lang.jssafe_html(contEl.value);
+				content = content.replace(/</gi, "&lt;")
+				content = content.replace(/>/gi, "&gt;");
+				content = content.replace(/\n/gi, '\"\n + "');
+				content = content.replace(/""/gi, '');
+			
+				sfTag += "\t \"html\" : \"" + content + "\",\n";
+			}
+			
+			ht = parseInt($('height_input').value);
+			wd = parseInt($('width_input').value);
+			
+			if(isNaN(ht)){
+				ht = "300";
+			}
+			if(isNaN(wd)){
+				wd = "300";
+			}
+			
+			sfTag += "\t \"conf\" : {\n";
+			sfTag += "\t\t \"size\" : \"" + wd + "x" + ht + "\",\n";
+			sfTag += "\t\t \"dest\" : \"id_of_target_elem\"\n";
+			sfTag += "\t}\n}\n";
+			sfTag += "&lt;/scr" + "ipt&gt;\n";
+			
+			embedSrcElem.innerHTML = sfTag;
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
+		},
+		
+		/**
+		* Hide the dialog
+		*/
+		hideDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal hide fade in",
+				overlayClass =  "modal-backdrop fade in hide",
+				overlay = $("dlgOverlay");
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
+		},
+		
+		/**
+		* Changes the type of ad creative input between script source file
+		* and raw ad HTML.
+		*/
+		setInput: function(type){
+			var htmlBtn = $('sourceHtmlBtn'),
+				scriptBtn = $('sourceScriptBtn'),
+				inputEl = $('htmlInput'),
+				onClass = 'btn btn-info',
+				offClass = 'btn';
+			
+			pageStuff.sourceMode = type;
+			if(type == 'html'){
+				htmlBtn.className = onClass;
+				scriptBtn.className = offClass;
+				inputEl.innerHTML = '';
+			}
+			else{
+				htmlBtn.className = offClass;
+				scriptBtn.className = onClass;
+				inputEl.innerHTML = '[enter script source url here]';
+			}		
+		},
 		
 		/**
 		* Render the given HTML as a SafeFrame ad
 		*/
-		function renderInput() {
-			var el, val, w, h, html, posID, posConf, pos;
+		renderInput: function() {
+			var el, val, w, h, html, posID, posConf, adObj, pos;
 
 			$sf.host.nuke();
 
-			el 	= $sf.lib.dom.elt("htmlInput");
+			el 	= $("htmlInput");
 			val = (el && el.value) || "";
 			val = $sf.lib.lang.trim(val);
 
@@ -184,7 +341,7 @@
 
 			html = val;
 
-			el	= $sf.lib.dom.elt("width_input");
+			el	= $("width_input");
 			val = (el && el.value) || "";
 			val = $sf.lib.lang.cnum(val,0);
 
@@ -196,7 +353,7 @@
 			w = val;
 
 
-			el	= $sf.lib.dom.elt("height_input");
+			el	= $("height_input");
 			val = (el && el.value) || "";
 			val = $sf.lib.lang.cnum(val,0);
 
@@ -210,25 +367,35 @@
 
 			posID	 = "test_" + w + "x" + h;
 			posConf	 = new $sf.host.PosConfig({id:posID,w:w,h:h,dest:"tgtLREC"});
-			pos		 = new $sf.host.Position(posID, html);
+			adObj = {
+				id: posID
+			};
+			if(pageStuff.sourceMode == 'script'){
+				adObj.src = html.trim();
+				if(adObj.src.indexOf("htt") != 0){
+					alert("Script File mode requires a URL to a script.\n\nSwitch to HTML Input for direct ad markup.");
+				}
+			}
+			else{
+				adObj.html = html;
+			}
+			
+			pos		 = new $sf.host.Position(adObj);
 
 			$sf.host.render(pos);
 
 		}
-		
-		/**
-		* Shortcut document.getElementById
-		*/
-		function getEl(elemId){
-			return document.getElementById(elemId);
-		}
+	}
+	
+	// ============= END PAGE FUNCTIONS ==================
 
 		/**
 		* Define the Config bootstrap to start SafeFrame.
 		* This identifies the location of the rendering bootstrap file
 		* and defines initial position placements.
 		*/
-		(function() {
+		
+		function initSafeFrameConfig() {
 			var conf	= new $sf.host.Config({
 				renderFile:		"http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
 				positions:
@@ -247,16 +414,88 @@
 			var pos			= new $sf.host.Position("LREC", "<h3>[[Ad Placement Here]]</h3>", posMeta);
 
 			$sf.host.render(pos);
-		})();
-		</script>
+		}
+		
+		initSafeFrameConfig();
+	</script>
 
+	
+	
+	
+<!-- ========================  EMBED TAG DIALOG ===================================== -->
+			<div id="sfTagDialog" class="modal hide fade wideModal" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button class="close" onclick="pageStuff.hideDialog()">&times;</button>
+					<h3>Embed Markup for Ad</h3>
+					</div>
+				<div class="modal-body">
+					<div class="divDialogElements">
+					<p>
+					This area shows SafeFrame tag markup to embed your ad in a page.  
+					SafeFrame also supports programmatic creation and rotation of ads.
+					View source on this page for more details.
+					</p>
+					
+					<pre id="tagMarkupSample"></pre>
+					
+					
+					
+					<p>
+					Place these script tags anywhere in the publisher host page.
+					In production environments, use your own CDN to host the 
+					SafeFrame Reference Implementation code for best results.
+					You may wish to combine and compress the code for better performance.
+					</p>
+<label>Script Includes and Bootstrap</label>
+<pre>
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/base.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/host/host.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"&gt;&lt;/script&gt;
+
+&lt;script type="text/javascript" &gt;
+/**
+* Initialize a new SafeFrames publisher configuration
+*/
+	(function() {
+		var conf	= new $sf.host.Config({
+			// Should be absolute path to render file hosted on CDN
+			renderFile:		"http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
+			positions: {}
+		});
+
+	})();
+&lt;/script&gt;
+
+</pre>
+						
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="pageStuff.hideDialog();">Close</button>
+				</div>
+			</div>
+<div id="dlgOverlay" class="modal-backdrop fade in hidden"></div>
+	
+	
+	
+	
+	
+	
+	
 <!-- ========================  SAMPLE ADS ===================================== -->
 
-	<script type="text/plain" adsize="300x250" id="lrec_data">"<!--  Standard Inventory Ad; AdinteraxID:140093; ad:cgong-teset/LREC_exp; publisher:publisher1; campaign:demo; size:300x250; Ad File Size:48kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/ad2.js?q=1299740125\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://www.barclays.com/\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215\" border=0></a></noscr"+"ipt>"</script>
+	<script type="text/plain" adsize="300x250" adtype='html' id="lrec_data">"<!--  Standard Inventory Ad; AdinteraxID:140093; ad:cgong-teset/LREC_exp; publisher:publisher1; campaign:demo; size:300x250; Ad File Size:48kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/ad2.js?q=1299740125\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://www.barclays.com/\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215\" border=0></a></noscr"+"ipt>"</script>
 	
-	<script type="text/plain" adsize="120x600" id="sky_data">"<!--  Standard Inventory Ad; AdinteraxID:140095; ad:cgong-teset/120_600_exp; publisher:publisher1; campaign:demo; size:120x600; Ad File Size:54kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/ad2.js?q=1299740219\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://adinterax.com\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/120x600_skyscraper_070102_v2.jpg?adxq=1290143223\" border=0></a></noscr"+"ipt>"</script>
+	<script type="text/plain" adsize="120x600" adtype='html' id="sky_data">"<!--  Standard Inventory Ad; AdinteraxID:140095; ad:cgong-teset/120_600_exp; publisher:publisher1; campaign:demo; size:120x600; Ad File Size:54kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/ad2.js?q=1299740219\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://adinterax.com\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/120x600_skyscraper_070102_v2.jpg?adxq=1290143223\" border=0></a></noscr"+"ipt>"</script>
 	
-	<script type="text/plain" adsize="728x90" id="n_data">"<!--  Standard Inventory Ad; AdinteraxID:140094; ad:cgong-teset/728_90_exp_flash; publisher:publisher1; campaign:demo; size:728x90; Ad File Size:50kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/ad2.js?q=1299740195\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/DART\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/seat_shakira_es_728x90_exp_.gif?adxq=1258066365\" border=0></a></noscr"+"ipt>"	</script>
+	<script type="text/plain" adsize="728x90" adtype='html' id="n_data">"<!--  Standard Inventory Ad; AdinteraxID:140094; ad:cgong-teset/728_90_exp_flash; publisher:publisher1; campaign:demo; size:728x90; Ad File Size:50kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/ad2.js?q=1299740195\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/DART\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/seat_shakira_es_728x90_exp_.gif?adxq=1258066365\" border=0></a></noscr"+"ipt>"	</script>
+	
+	<script type="text/plain" adsize="300x250" adtype='script' id="src_ad">"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&"</script>
+
+	<!--  -->
 
 		</body>
 </html>
