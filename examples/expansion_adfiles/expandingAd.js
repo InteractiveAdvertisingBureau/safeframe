@@ -60,7 +60,7 @@ var sfAPI = extern;
 	function expandAd(){
 		var g, ex;
 
-		writeLog("Ad expand on load - collapse in 4 seconds");
+		writeLog("Ad expand on mouseover");
 
 		if ($sf.ext) {
 			try {
@@ -95,14 +95,19 @@ var sfAPI = extern;
 			}, 100);
 	})();
 
-// Expand the ad, then collapse after 4 seconds	
+// Expand the ad on mouseover
 (function(){
+	setTimeout(function(){
+		var body = document.getElementsByTagName('body')[0];
+		body.style.height='100%';
+		body.addEventListener('mouseover', function(){
+			expandAd();
+		});
+		body.addEventListener('mouseout', function(){
+			collapseAd();
+		});
+	}, 100);
 	
-	expandAd();
-	
-	window.setTimeout(function(){
-		collapseAd();
-		}, 4000);
 })();	
 
 	
