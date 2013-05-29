@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @name $sf.host
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.0
+ * @version 1.0.2
  *
 */
 
@@ -1817,7 +1817,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function _fire_pub_callback(cb_name /* args to call back */)
 	{
-		var cb_args = [], args = arguments, len = args[LEN], idx = 0, f, ret, e, a;
+		var cb_args = [], args = arguments, len = args[LEN], 
+			idx = 0, f, 
+			ret = FALSE, 
+			e, a;
+			
 		if (config) {
 			f	= config[cb_name];
 			if (f) {
@@ -1835,6 +1839,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				}
 			}
 		}
+		return ret;  //ADDED BY SEAN
 	}
 
 	/**

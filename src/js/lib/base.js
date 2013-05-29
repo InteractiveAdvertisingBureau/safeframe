@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /**
  * @fileOverview This file contains the base library functionality need for both the publisher/host and vendor/client sides of the SafeFrames library.  Contains JavaScript language extensions and base level dom reading / manipulation
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
- * @version 1.0
+ * @version 1.0.2
 */
 
 
@@ -30,12 +30,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 if (window["$sf"]) {
 	try {
-		$sf.ver = "1-0-0";
+		$sf.ver = "1-0-2";
 	} catch (sf_lib_err) {
 
 	}
 } else {
-	var $sf = { ver: "1-0-0" };
+	var $sf = { ver: "1-0-2" };
 
 };
 
