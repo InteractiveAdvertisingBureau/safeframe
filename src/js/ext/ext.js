@@ -102,6 +102,7 @@ var NULL					= null,
 	inline_handler_timer_id		= 0,
 	err_msgs					= [],
 	unload_handlers				= [],
+	xtra  						= {},
 
 	render_params, render_conf, ie_old_attach, w3c_old_attach, ie_old_detach, w3c_old_detach;
 
@@ -1564,6 +1565,7 @@ var NULL					= null,
 					supports:	supports,
 					cookie: 	cookie,
 					message: 	message,
+					xtra: 		xtra,
 					inViewPercentage: inViewPercentage
 				}, sf, TRUE);
 

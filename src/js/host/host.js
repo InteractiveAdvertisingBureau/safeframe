@@ -122,6 +122,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		loc						= (win && win.location),
 		locHost					= (loc && ((loc.protocol + "//" + (loc.host||loc.hostname)) || "")), // missing the port number
 
+		xtra 					= {}, // xtra extension namespace
 		rendered_ifrs			= {},
 		msg_pipes				= {},
 		ifr_dest_id_map 		= {},
@@ -2936,7 +2937,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				nuke:		nuke,
 				get: 		get,
 				render:		render,
-				status:		status
+				status:		status,
+				xtra:  		xtra
 			}, NULL, TRUE);
 
 		}

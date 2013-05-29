@@ -87,6 +87,7 @@ if (window["$sf"]) {
 		LEN     				= "length",
 		DOC						= "document",
 		PROTO					= "prototype",
+		UNDEFINED   			= 'undefined',
 		N     					= (win && win.Number),
 		M      					= (win && win.Math),
 		d						= (win && win[DOC]),
@@ -119,6 +120,7 @@ if (window["$sf"]) {
 		IAB_LIB					= "$sf.lib",
 		IAB_ENV					= "$sf.env",
 		IAB_INF					= "$sf.info",
+		SF_XTRA					= "$sf.xtra",
 		IE_GC_INTERVAL			= 3000,
 		TRUE					= true,
 		FALSE					= false,
@@ -2591,6 +2593,97 @@ if (window["$sf"]) {
 		// Add Javascript shims
 		//IE doesn't support string.trim
 		if(!S[PROTO].trim) S[PROTO].trim = lang.trim;
+
+	})();
+	
+	/**
+	 * @namespace $sf.xtra Helpers to manage extension registration.
+	 * @name $sf.xtra
+	 * @requires $sf.lib.lang
+	 *
+	*/
+
+	(function() {
+	
+		var xtra,
+			H_NS 			= 'host',
+			E_NS 			= 'ext',
+			SF   			= '$sf',
+			NAME  			= 'name',
+			XTRA 			= 'xtra',
+			
+			regList  		= [], // list pending registration
+			extensions 		= {}; // registered extensions
+		
+		/** @ignore 
+		* Attempts to register the appropriate parts in the namespace
+		*/
+		
+		function _regInNamespace(nsObj, name, xtra){
+			var nsXtra = nsObj[XTRA];
+			if(!nsXtra){
+				nsXtra = nsObj[XTRA] = {};
+			}
+			nsXtra[name] = xtra;
+		}
+		
+		/**
+		* Registers new extensions with SafeFrame.
+		 * @static
+		 * @public
+		 * @function
+		 * @param {String} name  			Name of the extension to register
+		 * @param {Object} extension  		Host extension object or hash containing host and external extension objects { host: Obj, ext: Obj}
+		 * @param {Object} externExtension  External extension object or null if extension is an object hash in the appropriate format.
+		 * @return {Boolean}  				A true or false value to indicate success or failure.
+		*/		
+		function register(name, extension, externExtension){
+			var parts = {}, 
+				regHandled = FALSE;
+			
+			parts[H_NS] = {};
+			parts[E_NS] = {};
+			if(typeof extension == OBJ){
+				if(typeof extension[H_NS] !== UNDEFINED && typeof extension[E_NS] !== UNDEFINED ){
+					parts = extension;
+				}
+				else{
+					parts[H_NS] = extension;
+					if(typeof externExtension == OBJ){
+						parts[E_NS] = externExtension;
+					}
+				}
+			}
+			
+			name = $sf.lib.lang.cstr(name);
+			parts[NAME] = name;
+			
+			// place in the pending list
+			if(typeof extensions[name] === UNDEFINED){
+				regList.push(parts);
+			}
+			
+			// If $sf.host or $sf.ext are present, register the extension
+			if(typeof win[SF][H_NS] !== UNDEFINED){
+				_regInNamespace(win[SF][H_NS], parts[NAME], parts[H_NS]);
+				regHandled = true;
+			}
+			if(typeof win[SF][E_NS] !== UNDEFINED){
+				_regInNamespace(win[SF][E_NS], parts[NAME], parts[E_NS]);
+				regHandled = true;
+			}
+			
+			if(regHandled){
+				extensions[name] = parts;
+				regList.pop;
+			}
+		}
+		
+		// Define the object namespace
+		xtra = lang.def(SF_XTRA,
+		{
+			register: 	register
+		}, NULL, TRUE);
 
 	})();
 
