@@ -24,21 +24,21 @@
 	
 	hostExtension = {
 		consumeButter : function(){
-		
+			console.log('buttering the bread');
 		},
 		
 		sendSandwich : function(){
-		
+			console.log('sending sandwich now');
 		}	
 	}
 	
 	extExtension = {
 		sendButter : function(){
-		
+			console.log('sending butter now');
 		},
 		
-		eatSandwich : function(){
-		
+		eatSandwich : function(sandwich){
+			console.log('eating a yummy sandwich');
 		}	
 	}
 	

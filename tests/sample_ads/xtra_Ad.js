@@ -4,14 +4,7 @@ document.write('<div id="viewInfo" style="font-weight:bold;color:blue;font-famil
 document.write('<div id="feedback" style="height:240px;background:#333;color:yellow;overflow:auto;" ></div>');
 document.write('<input id="msgContents" type="text" /><br/>');
 document.write('<button onclick="sendMessage()">Send Host Message</button>');
-document.write('<button onclick="testGeometry()">sf.ext.geom</button>');
-document.write('<button onclick="expandAd()">sf.ext.expand</button>');
-document.write('<button onclick="collapseAd()">sf.ext.collapse</button>');
-document.write('<button onclick="adStatus()">sf.ext.status</button>');
-document.write('<button onclick="tryReadHostCookie()">Read sf.ext.cookie</button>');
-document.write('<button onclick="tryWriteHostCookie()">Write sf.ext.cookie</button>');
-document.write('<button onclick="getViewableAmount()">percent_viewable</button>');
-document.write('<button onclick="getHostUrl()">hostURL</button>');
+document.write('<button onclick="invokeSampleExtension()">Invoke Sample Extension</button>');
 //for local testing use
 document.write('<scr' + 'ipt src=\"../../tests/sample_ads/exampleAdvertiserScripts.js\" ></sc' + '' + 'ript>');
 document.write('<scr' + 'ipt src=\"../../src/js/xtra/sample.js\" ></sc' + '' + 'ript>');

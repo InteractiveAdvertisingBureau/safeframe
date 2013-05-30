@@ -200,9 +200,30 @@ var sfAPI = extern;
 	
 		sfAPI.message(val);
 	}
+	
+	function invokeSampleExtension(){
+		var samp = sfAPI.xtra['sample'];
+		
+		if(!samp) return; // sample extension not included
+		samp.sendButter();
+	
+	}
+	
 
 (function(){
 	updateInViewDisplay();
+	var oldConsoleLog = console.log;
+	
+	try{
+		console.log = function(str){
+			writeLog(str);
+			oldConsoleLog.call(console, str);
+		};
+	}
+	catch(ex){
+		alert(ex.message);
+	}
+	
 })();
 
 (function(){
