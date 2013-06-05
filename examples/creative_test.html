@@ -152,6 +152,12 @@
 					title="Generate the Markup to embed this ad in a page.  SafeFrame offers many mechanisms to handle rendering ads. Tag embedding is but one of these mechanisms"
 					onclick="pageStuff.showEmbedDialog()"
 					>Show Tag Embed</button>
+					
+					<button class="btn" 
+					title="Generate the script to embed the ad on this page.  This will show you how to utilize the programmatic mechanism for creating a SafeFrame"
+					onclick="pageStuff.showSFScriptDialog()"
+					>Show Scripted Ad</button>
+
 	</div>
 	
 	</div>
@@ -233,6 +239,59 @@
 				}
 			}			
 			pageStuff.renderInput();		
+		},
+		
+		/**
+		* Display an overlay with the script commands to create this ad
+		*/
+		showSFScriptDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal fade in visibleBlock wideModal",
+				overlayClass =  "modal-backdrop fade in",
+				contEl = $("htmlInput"),
+				content, ht, wd,
+				embedSrcElem = $("tagMarkupSample"),
+				sfTag,
+				adId = "myAdPlacement" + new Date().getMilliseconds(),
+				overlay = $("dlgOverlay");
+			
+			
+			sfTag = "&lt;scri" + "pt type='text/javascript' >\n"
+			sfTag += "{\n\t \"id\" : \"" + adId + "\",\n";
+			
+			if(pageStuff.sourceMode == 'script'){
+				sfTag += "\t \"src\" : \"" + contEl.value + "\",\n";
+			}
+			else{
+				content = $sf.lib.lang.jssafe_html(contEl.value);
+				content = content.replace(/</gi, "&lt;")
+				content = content.replace(/>/gi, "&gt;");
+				content = content.replace(/\n/gi, '\"\n + "');
+				content = content.replace(/""/gi, '');
+			
+				sfTag += "\t \"html\" : \"" + content + "\",\n";
+			}
+			
+			ht = parseInt($('height_input').value);
+			wd = parseInt($('width_input').value);
+			
+			if(isNaN(ht)){
+				ht = "300";
+			}
+			if(isNaN(wd)){
+				wd = "300";
+			}
+			
+			sfTag += "\t \"conf\" : {\n";
+			sfTag += "\t\t \"size\" : \"" + wd + "x" + ht + "\",\n";
+			sfTag += "\t\t \"dest\" : \"id_of_target_elem\"\n";
+			sfTag += "\t}\n}\n";
+			sfTag += "&lt;/scr" + "ipt&gt;\n";
+			
+			embedSrcElem.innerHTML = sfTag;
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
 		},
 		
 		/**
