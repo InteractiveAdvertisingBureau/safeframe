@@ -242,6 +242,14 @@
 		},
 		
 		/**
+		* Set the title and intro text for the dialog
+		*/
+		loadDialogTitleAndIntro: function(title, intro){
+			$('dialogTitle').innerHTML = title;
+			$('dialogIntro').innerHTML = intro;			
+		},
+		
+		/**
 		* Display an overlay with the script commands to create this ad
 		*/
 		showSFScriptDialog: function(){
@@ -251,26 +259,12 @@
 				contEl = $("htmlInput"),
 				content, ht, wd,
 				embedSrcElem = $("tagMarkupSample"),
-				sfTag,
+				sfTag = [],
 				adId = "myAdPlacement" + new Date().getMilliseconds(),
 				overlay = $("dlgOverlay");
-			
-			
-			sfTag = "&lt;scri" + "pt type='text/javascript' >\n"
-			sfTag += "{\n\t \"id\" : \"" + adId + "\",\n";
-			
-			if(pageStuff.sourceMode == 'script'){
-				sfTag += "\t \"src\" : \"" + contEl.value + "\",\n";
-			}
-			else{
-				content = $sf.lib.lang.jssafe_html(contEl.value);
-				content = content.replace(/</gi, "&lt;")
-				content = content.replace(/>/gi, "&gt;");
-				content = content.replace(/\n/gi, '\"\n + "');
-				content = content.replace(/""/gi, '');
-			
-				sfTag += "\t \"html\" : \"" + content + "\",\n";
-			}
+				
+			pageStuff.loadDialogTitleAndIntro('Script-based SafeFrame Creation', 
+				'This code shows how to programmatically initialize a SafeFrame by using script instead of a tag');
 			
 			ht = parseInt($('height_input').value);
 			wd = parseInt($('width_input').value);
@@ -282,13 +276,45 @@
 				wd = "300";
 			}
 			
-			sfTag += "\t \"conf\" : {\n";
-			sfTag += "\t\t \"size\" : \"" + wd + "x" + ht + "\",\n";
-			sfTag += "\t\t \"dest\" : \"id_of_target_elem\"\n";
-			sfTag += "\t}\n}\n";
-			sfTag += "&lt;/scr" + "ipt&gt;\n";
+			sfTag.push("&lt;!-- ELEMENT MUST EXIST FOR SCRIPT-BASED RENDER --&gt;");
+			sfTag.push("&lt;div id='adTargetElement'&gt;&lt;/div&gt;\n");
+			sfTag.push("&lt;scri" + "pt type='text/javascript' >\n")
+			sfTag.push("  var adPositionId = '" + adId + "',\n\t width = " + wd + ",\n\t height = " + ht + ";");
 			
-			embedSrcElem.innerHTML = sfTag;
+			sfTag.push("\n// Ad contents or bootstrap");
+			if(pageStuff.sourceMode == 'script'){
+				sfTag.push("  var src = \"" + contEl.value + "\";");
+			}
+			else{
+				content = $sf.lib.lang.jssafe_html(contEl.value);
+				content = content.replace(/</gi, "&lt;")
+				content = content.replace(/>/gi, "&gt;");
+				content = content.replace(/\n/gi, '\"\n + "');
+				content = content.replace(/""/gi, '');
+			
+				sfTag.push("  var html = \"" + content + "\"");
+			}
+			sfTag.push('');
+			sfTag.push("// Initialize the ad position");
+			sfTag.push("var adConfig = {\n  id: adPositionId, \n  w: width,\n  h: height,\n  dest: 'adTargetElement'\n};");
+			sfTag.push("// Register the ad position config information");
+			sfTag.push("var posConf = new $sf.host.PosConfig(adConfig);");
+			sfTag.push("\n// Create the ad position.");
+			var positionInfo = "var pos   = new $sf.host.Position(";
+			if(pageStuff.sourceMode == 'script'){
+				positionInfo += "{ id: adPositionId, src: src }"
+			}
+			else{
+				positionInfo += "adPositionId, html"
+			}
+			positionInfo += ");"
+			sfTag.push(positionInfo);
+			sfTag.push("\n// Render the ad in a SafeFrame.");
+			sfTag.push("$sf.host.render(pos);\n");
+			
+			sfTag.push("&lt;/scr" + "ipt&gt;");
+			
+			embedSrcElem.innerHTML = sfTag.join('\n');
 			
 			overlay.className = overlayClass;
 			dlg.className = dlgClass;
@@ -308,6 +334,10 @@
 				adId = "myAdPlacement" + new Date().getMilliseconds(),
 				overlay = $("dlgOverlay");
 			
+			pageStuff.loadDialogTitleAndIntro('Embed Markup for Ad', 
+				'This area shows SafeFrame tag markup to embed your ad in a page.  ' +
+				'SafeFrame also supports programmatic creation and rotation of ads. ' +
+				'View source on this page for more details.');
 			
 			sfTag = "&lt;scri" + "pt type='text/x-safeframe' class='sf_data' >\n"
 			sfTag += "{\n\t \"id\" : \"" + adId + "\",\n";
@@ -488,11 +518,11 @@
 			<div id="sfTagDialog" class="modal hide fade wideModal" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
 				<div class="modal-header">
 					<button class="close" onclick="pageStuff.hideDialog()">&times;</button>
-					<h3>Embed Markup for Ad</h3>
+					<h3 id="dialogTitle">Embed Markup for Ad</h3>
 					</div>
 				<div class="modal-body">
 					<div class="divDialogElements">
-					<p>
+					<p id="dialogIntro">
 					This area shows SafeFrame tag markup to embed your ad in a page.  
 					SafeFrame also supports programmatic creation and rotation of ads.
 					View source on this page for more details.
