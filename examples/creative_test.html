@@ -107,12 +107,14 @@
 		height: 365px;
 	}
 	
+	#topAdWrapper div, #topAdWrapper div iframe {
+		transition: width 0.4s ease-in-out, height 0.4s;
+	}
+	
 	/* ============================== AD PLACEMENT FORMATS ===================================== */
 	.leaderboard{
 		display: block;
 		margin: auto;
-		width: 728px;
-		height: 90px;
 		overflow: show;
 		margin-bottom: 15px;
 	}
@@ -126,15 +128,11 @@
 	
 	.sidekick250{
 		float: right;
-		width: 300px;
-		height: 250px;
 		margin: 10px;
 	}
 	.sidekick250expando{
 		float: left;
 		top: 60px;
-		width: 330px;
-		height: 250px;
 		margin-right: 10px;
 	}
 	
@@ -195,6 +193,8 @@
 		<option value="n_data">Leaderboard (728x90)</option>
 		<option value="sky_data">Skyscraper (120x600)</option>
 		<option value="expander">Mouseover Expanding Ad (300x250)</option>
+		<option value="expand_push">Push Expansion (300x250)</option>
+		<option value="pushdown">Pushdown Expansion (920x150)</option>
 		<option value="expand_flash">Rich Media Expanding Ad (300x250)</option>
 		<option value="sky_viewable">Viewability Skyscraper (120x600)</option>
 		
@@ -234,9 +234,7 @@
 <div id="contentAboveAd"></div>
 <!-- "position:relative;margin:0px;width:100%;right:auto;top:auto;left:auto;margin-left:auto;margin-right:auto;text-align:center;width:100%;" -->
 		<div id='topAdWrapper' >
-			<div style="display:inline-block">
-				<div id="tgtLREC"></div>
-			</div>
+			<div id="tgtLREC"></div>
 		</div>
 
 		<div id="contentBelowAd">
@@ -402,6 +400,7 @@ Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus se
 			sfTag.push('');
 			sfTag.push("// Initialize the ad position");
 			sfTag.push("var adConfig = {\n  id: adPositionId, \n  w: width,\n  h: height,\n  dest: 'adTargetElement'\n};");
+			sfTag.push("adConfig.supports = { 'exp-push' : true };\n");
 			sfTag.push("// Register the ad position config information");
 			sfTag.push("var posConf = new $sf.host.PosConfig(adConfig);");
 			sfTag.push("\n// Create the ad position.");
@@ -472,7 +471,10 @@ Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus se
 			
 			sfTag += "\t \"conf\" : {\n";
 			sfTag += "\t\t \"size\" : \"" + wd + "x" + ht + "\",\n";
-			sfTag += "\t\t \"dest\" : \"id_of_target_elem\"\n";
+			sfTag += "\t\t \"dest\" : \"id_of_target_elem\",\n";
+			sfTag += "\t\t \"supports\" : {\n";
+			sfTag += "\t\t\t \"exp-push\" : \"1\"\n";
+			sfTag += "\t\t \}\n";
 			sfTag += "\t}\n}\n";
 			sfTag += "&lt;/scr" + "ipt&gt;\n";
 			
@@ -563,7 +565,15 @@ Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus se
 
 
 			posID	 = "test_" + w + "x" + h;
-			posConf	 = new $sf.host.PosConfig({id:posID,w:w,h:h,dest:"tgtLREC"});
+			// Initialize the configuration of the new location
+			var configOptions = {id:posID,w:w,h:h,dest:"tgtLREC"};
+			configOptions.supports = {
+				'read-cookie': true,
+				'write-cookie': true,
+				'exp-push': true
+			};
+			
+			posConf	 = new $sf.host.PosConfig(configOptions);
 			adObj = {
 				id: posID
 			};
@@ -601,8 +611,8 @@ Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus se
 					{
 						id:		"LREC",
 						dest:	"tgtLREC",
-						w:		300,
-						h:		250
+						w:		250,
+						h:		50
 					}
 				}
 			});
@@ -697,6 +707,12 @@ Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus se
 	<script type="text/plain" adsize="120x600" adtype="html" adformat='skyscraper' id="sky_viewable">"<style>html,body { height:100%;background:#DD3333;}</style>\n<div style=\"font-size:1.4em;\">Viewable Skyscraper</div>\n<div id=\"viewInfo\" style=\"height:20px;font-weight:bold;color:blue;font-family:Arial;\"></div>\nViewable calculation based on 50% in view for 3 seconds\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar inViewTime = 3000,\n inViewPercent = 50,\n inViewBeaconFired = false,\n inViewTimerId = 0;\n\n function writeLog(message){\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n /**\n * Update the inView calculation and display.\n * Register the beacon to fire once viewability is satisfied.\n */\n function updateInViewDisplay(){\n  var totalViewable = extern.inViewPercentage();\n  var elem = document.getElementById(\"viewInfo\");\n  if(elem) {\n   elem.innerHTML = \"Viewable: \" + totalViewable + \"%\";\n  }\n  \n  if(!inViewBeaconFired){\n   if(totalViewable >= inViewPercent && inViewTimerId == 0){\n    window.setTimeout(function(){  fireViewableBeacon(); }, inViewTime); \n   }\n   else if(totalViewable < inViewPercent && inViewTimerId != 0) {\n    window.clearTimeout(inViewTimerId);\n    inViewTimerId = 0;\n   }  \n  }\n }\n \n /**\n * Skeleton method to fire beacon\n */\n function fireViewableBeacon(){\n  // tickle your beacon here\n  writeLog(\"IN-VIEW SATISFIED. BEACON FIRED\");\n }\n\n /**\n * This is the event listener to capture events from the publisher host page.\n */\n function statusUpdate(status, data)\n {\n //debugger;\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   updateInViewDisplay();\n  }\n }\n\n // Register the SafeFrame listener\n if (extern) {\n  try {\n   extern.register(120, 600, statusUpdate);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n (function(){\n  window.setTimeout(function(){\n   updateInViewDisplay();\n   }, 100);\n })();\n \n</scr"+"ipt>\n\n"</script>
 	
 	<script type="text/plain" adsize="320x250" adtype="html" adformat='sidekick250expando' id="expand_flash">"<scr"+"ipt src=\"http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject_src.js\" ></scr"+"ipt>\n\n<div id='adWrapper' style=\"width:320px;height:240px;transition: width 1s;-webkit-transition: width 1s;\">\n<OBJECT id=\"sampleFlash\" classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0\" WIDTH=\"100%\" HEIGHT=\"100%\" ALIGN=\"\">\n<PARAM NAME=movie VALUE=\"http://www.adobe.com/content/dotcom/en/devnet/actionscript/samples/drawing_6/_jcr_content/articlecontentAdobe/generic/file.res/6_patterns.swf\"> \n<PARAM NAME=quality VALUE=high> <PARAM NAME=bgcolor VALUE=#333399> <EMBED src=\"http://www.adobe.com/content/dotcom/en/devnet/actionscript/samples/drawing_6/_jcr_content/articlecontentAdobe/generic/file.res/6_patterns.swf\" quality=high bgcolor=#333399 WIDTH=\"100%\" HEIGHT=\"100%\" NAME=\"Yourfilename\" ALIGN=\"\" TYPE=\"application/x-shockwave-flash\" PLUGINSPAGE=\"http://www.macromedia.com/go/getflashplayer\"></EMBED> </OBJECT>\n\n    <scr"+"ipt type=\"text/javascript\">\n    swfobject.registerObject(\"sampleFlash\", \"9.0.115\", \"expressInstall.swf\");\n    </scr"+"ipt>\n\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar expandedWidth = 400,\n expandedHeight = 320;\n\n function writeLog(message){\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function expandAd(){\n  var g, ex;\n\n  writeLog(\"Ad expand on m\");\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(expandedWidth, expandedHeight); //{l:400,t:200}\n   \n   var ad = swfobject.getObjectById(\"sampleFlash\");\n   var add = document.getElementById(\"sampleFlash\");\n   var adwrap = document.getElementById(\"adWrapper\");\n   adwrap.style.width = \"750px\";\n   adwrap.style.height = \"570px\";\n    console.log(adwrap);\n   \n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n   var adwrap = document.getElementById(\"adWrapper\");\n   adwrap.style.width = \"320px\";\n   adwrap.style.height = \"240px\";\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   expandAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n \n})(); \n</scr"+"ipt>\n"</script>
+
+	<script type="text/plain" adsize="320x250" adtype="html" adformat='sidekick250expando' id="expand_push">"<style>html,body { height:100%;background:#FFBF00;}</style>\n\n<button onclick='expandAd();'>Expand</button>\n<button onclick='collapseAd();'>Collapse</button>\n<p>\nPush expansion requires that the ad position be explicitly marked to support the parameter \"exp-push\"\nby the host page.  Additionally, any enclosing DOM elements <b>MUST NOT</b> have an explicit height\nor width defined and they must not be absolutely positioned.\n</p>\n<p>\nSmooth expansion transitions may be achieved using CSS.\n</p>\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar expandedWidth = 400,\n expandedHeight = 320;\n\n function writeLog(message){\n  //debugger;\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function expandAd(){\n  var g, ex, obj;\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n obj = {};\n obj.l=0;\n obj.r=expandedWidth;\n obj.t=0;\n obj.b=expandedHeight;\n obj.push=true;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(obj);\n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n/*\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   expandAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n */\n})(); \n</scr"+"ipt>\n"</script>
+	
+	
+	<script type="text/plain" adsize="920x150" adtype="html" adformat='leaderboard' id="pushdown">"<style>html,body { height:100%;background:#FFBF00;}</style>\n<p>\n<div style='display:inline-block;'>\n<button onclick='pushDownAd();'>Expand</button>\n<button onclick='collapseAd();'>Collapse</button>\n</div>\n<span style='font-weight:bold;font-size:1.2em;'>Pushdown Sample</span>\n\nPush expansion requires that the ad position be explicitly marked to support the parameter \"exp-push\"\nby the host page.  Additionally, any enclosing DOM elements <b>MUST NOT</b> have an explicit height\nor width defined and they must not be absolutely positioned.\n</p>\n<p>\nSmooth expansion transitions may be achieved using CSS.\n</p>\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\n\n function writeLog(message){\n  //debugger;\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function pushDownAd(){\n  var g, ex, obj;\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n obj = {};\n obj.l=0;\n obj.r=0;\n obj.t=-30;\n obj.b=350;\n obj.push=true;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(obj);\n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n/*\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   pushDownAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n */\n})(); \n</scr"+"ipt>\n"</script>
+	
 
 	<!--  -->
 
