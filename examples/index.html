@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<title>SafeFrame Testing for Creative</title>
+	
+	<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
+	<style type="text/css">
+	.padtop {
+		margin-top: 50px;
+	}
+	.btnSmall{
+		font-size: 10px;
+		padding: 2px 5px;
+	}
+	.marginTop20{
+		margin-top: 20px;
+	}
+	iframe {
+		background: transparent;
+	}
+	h1 {
+		font-size: 1.4em;
+		text-shadow: 1px 1px 2px #bbb;
+		margin-bottom: 8px;
+	}
+	h2 { font-size: 1.3em; }
+	h3 { font-size: 1.2em; }
+	label{
+		font-weight: bold;
+	}
+	#tagMarkupSample{
+		min-height: 30px;
+		max-height: 350px;
+		overflow: auto;
+	}
+	
+	#htmlInput{
+		max-idth:600px;
+		width: 90%;
+		height:150px;
+		background: #ffe;		
+	}
+	input.size{
+		width:50px;
+	}
+	
+	.sampleRow select {
+		vertical-align: baseline;
+	}
+	
+	.linearForm label {
+		display: inline-block;
+		margin-left: 20px;
+	}
+	.linearForm label:first-child {
+		margin-left: 0px;
+		width: 63px;
+		text-align: right;
+	}
+	
+	.linearForm input {
+		vertical-align: baseline;
+	}
+	
+	.actionButtons button{
+		margin-right: 20px;
+	}
+	.wideModal{
+		min-width: 600px;
+		width: 75%;
+		left: 10%;
+		margin-left: 0;
+	}
+	
+	.hidden{
+		display: none;
+	}
+	.visibleInBlock{
+		display: inline-block;
+	}
+	.visibleBlock{
+		display: block;
+	}
+	
+	.adSamplePage{
+		background: #eee;
+		border: 1px solid #555;
+		padding-bottom: 60px;
+	}
+	
+	.adSamplePage .pageContent{
+		width: 928px;
+		margin: auto;
+		min-height: 620px;
+		background: white;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+	#adcontrols{
+		transition: height 1s ease-in-out;
+	}
+	.collapsed{
+		height: 0px;
+		overflow: hidden;
+	}
+	.expanded{
+		height: 365px;
+	}
+	
+	#topAdWrapper div, #topAdWrapper div iframe {
+		transition: width 0.4s ease-in-out, height 0.4s;
+	}
+	
+	/* ============================== AD PLACEMENT FORMATS ===================================== */
+	.leaderboard{
+		display: block;
+		margin: auto;
+		overflow: show;
+		margin-bottom: 15px;
+	}
+	
+	.skyscraper{
+		float: left;
+		width: 120px;
+		height: 600px;
+		margin-right: 15px;
+	}
+	
+	.sidekick250{
+		float: right;
+		margin: 10px;
+	}
+	.sidekick250expando{
+		float: left;
+		top: 60px;
+		margin-right: 10px;
+	}
+	
+	</style>
+	</head>
+	<body>
+<nav>	
+<div class="navbar navbar-inverse navbar-fixed-top">  
+  <div class="navbar-inner">  
+    <div class="container">  
+    <ul class="nav">  
+  <li class="active">  
+    <a class="brand" target="_blank" href="https://sourceforge.net/p/safeframes/wiki/Home/" title="SafeFrame Reference Implementation">SafeFrame</a>  
+  </li>  
+  <li><a  target="_blank" href="http://www.iab.net/safeframe">IAB</a></li>  
+  <li><a target="_blank" href="http://www.iab.net/media/file/SafeFramesSpec.pdf">SafeFrame Specification <sub>(PDF)</sub></a></li>  
+  <li><a href="https://sourceforge.net/projects/safeframes/files/latest/download?source=files">Download</a></li>  
+</ul> 
+    </div>  
+  </div>  
+</div>   
+	</nav>
+	
+	<div class="container padtop">
+	<h1>SafeFrame Ad Test Page <button class="btn btnSmall" onclick='pageStuff.toggleControls()'>Toggle Controls</button> </h1>
+
+	<div id="adcontrols" class="row collapsable expanded">
+	<div class="span4">
+	<p>
+	This page allows you to test the rendering of your ad creative assets under SafeFrame.
+	Paste your ad code into the text block and push the <i>Render Input</i> button.
+	Your ad will render below.
+	</p>
+	<p>
+	This page utilizes the SafeFrame reference implementation developed in partnership with the IAB and SafeFrame Working Group.
+	Live publisher implementations require that you host the SafeFrame framework code on your own CDN.
+	</p>
+	</div>
+	
+	<div class="span8">
+	
+	<label for="htmlInput">
+	<button class="btn btn-info" id="sourceHtmlBtn" 
+	title="Raw HTML content of an ad"
+	onclick="pageStuff.setInput('html');">HTML Input</button>
+	<button class="btn" id="sourceScriptBtn" onclick="pageStuff.setInput('script');" 
+	title="Source URL for the script to serve a display ad" >Script File Source</button>
+	</label>
+	
+	<textarea id="htmlInput" ></textarea>
+	
+	<div class="linearForm sampleRow">
+	<label>Samples</label>
+	<select onchange="pageStuff.loadSample(this)">
+		<option value="" selected>[Custom Content]</option>
+		<option value="lrec_data">Medium Rectangle (300x250)</option>
+		<option value="src_ad">Script Medium Rect (300x250)</option>
+		<option value="n_data">Leaderboard (728x90)</option>
+		<option value="sky_data">Skyscraper (120x600)</option>
+		<option value="expander">Mouseover Expanding Ad (300x250)</option>
+		<option value="expand_push">Push Expansion (300x250)</option>
+		<option value="pushdown">Pushdown Expansion (920x150)</option>
+		<option value="expand_flash">Rich Media Expanding Ad (300x250)</option>
+		<option value="sky_viewable">Viewability Skyscraper (120x600)</option>
+		
+	</select>
+	<a href="http://www.iab.net/guidelines/508676/508767/displayguidelines" target="_blank" title="Ad Unit Definitions"><span class="icon-question-sign"></span></a>
+	</div>
+	
+	<div class="linearForm">
+	<label>Width</label> <input id="width_input" type="text" class="size" value="350" /> 
+	<label>Height</label> <input id="height_input" type="text" class="size" value="350" />
+	</div>
+	<div class="actionButtons">
+					<button class="btn btn-primary" onclick="pageStuff.renderInput()">Render Input</button>
+					<button class="btn" onclick="$sf.host.nuke()">Remove</button>
+	</div>
+	<div class="actionButtons marginTop20">
+					<button class="btn" 
+					title="Generate the Markup to embed this ad in a page.  SafeFrame offers many mechanisms to handle rendering ads. Tag embedding is but one of these mechanisms"
+					onclick="pageStuff.showEmbedDialog()"
+					>Show Tag Embed</button>
+					
+					<button class="btn" 
+					title="Generate the script to embed the ad on this page.  This will show you how to utilize the programmatic mechanism for creating a SafeFrame"
+					onclick="pageStuff.showSFScriptDialog()"
+					>Show Scripted Ad</button>
+
+	</div>
+	
+	</div>
+	</div>
+	
+</div>
+		<hr />
+<!-- ======================================  BEGIN SAMPLE PAGE ==================================== -->
+<div class="adSamplePage">
+<div class="pageContent">
+<div id="contentAboveAd"></div>
+<!-- "position:relative;margin:0px;width:100%;right:auto;top:auto;left:auto;margin-left:auto;margin-right:auto;text-align:center;width:100%;" -->
+		<div id='topAdWrapper' >
+			<div id="tgtLREC"></div>
+		</div>
+
+		<div id="contentBelowAd">
+		<h3>Praesent euismod</h3>
+		<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent euismod porta varius. Donec non diam dignissim, aliquam eros sit amet, suscipit odio. Mauris sollicitudin scelerisque purus quis suscipit. Duis pellentesque metus justo, eu dictum metus accumsan vitae. Praesent arcu sapien, congue at mattis in, fermentum et metus. Nunc suscipit magna risus, eu placerat turpis feugiat eu. Integer fermentum pretium nibh, a euismod arcu. Cras tincidunt porttitor pharetra. Nunc at sem eu metus venenatis aliquam ac vitae nisl. In imperdiet lectus turpis, eget ultricies nunc dictum et. Sed quis tempor enim. Donec vel sem enim. Phasellus purus mauris, adipiscing vitae sodales convallis, bibendum et turpis. Duis vehicula sollicitudin urna.
+</p><p>
+
+In hac habitasse platea dictumst. Aenean lobortis nec magna porttitor porttitor. Integer dictum nisl porta aliquet volutpat. Donec felis ante, mattis non ornare id, faucibus vitae velit. Sed fermentum metus quis lacus tempus, eget tempor nunc condimentum. Duis a semper ligula. Nunc nec est sit amet felis congue luctus hendrerit non sapien. In scelerisque fermentum felis eget venenatis. Nulla egestas ipsum id nibh vehicula, a aliquet massa euismod.
+</p><p>
+Suspendisse sed facilisis sapien, et tempus quam. Vivamus eu velit ullamcorper, convallis enim nec, blandit urna. Phasellus lacinia lectus tellus, a venenatis odio euismod egestas. Curabitur felis dolor, pellentesque at faucibus at, sodales ac risus. Vestibulum a interdum est. Etiam justo erat, volutpat eu orci tempus, elementum mollis felis. Morbi in urna iaculis ante pellentesque sagittis.
+</p><p>
+Aenean tincidunt lectus vel ornare sollicitudin. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In semper, mi et facilisis euismod, lacus erat convallis nisl, ac mattis quam sem quis erat. Suspendisse ut tincidunt est, nec porta sem. Sed facilisis orci neque. Etiam facilisis cursus nibh, sed placerat ipsum semper id. Aenean vitae pellentesque justo. Maecenas at blandit dui. Maecenas ut metus malesuada quam elementum semper.
+</p><p>
+Quisque pulvinar lacus libero, vel mattis ligula lacinia vel. Etiam eu luctus sem, a fermentum felis. Etiam sed eros nec nisi lobortis feugiat eu non nunc. Maecenas a egestas erat. Sed vitae interdum libero, vel placerat augue. Nulla aliquam dignissim neque. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris eros ante, suscipit at tempor in, egestas vel est. Aliquam in magna adipiscing, pulvinar ipsum vitae, congue mauris. Duis eu velit urna. Sed sodales imperdiet sagittis. Aliquam vel dapibus diam. Ut quis accumsan lorem.
+</p>
+		</div>
+		
+</div>
+</div>		
+<!-- ======================================  END SAMPLE PAGE ==================================== -->
+
+		
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/base.js"></script>
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/host/host.js"></script>
+		<script type="text/javascript" src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"></script>
+		
+		<!-- Script code to handle code-based rendering -->
+	<script type="text/javascript">
+	
+	// Shim a simple DOM shortcut, if needed
+	if(window.$ === undefined){
+		window.$ = function(id){
+			if(id[0] == "#"){
+				id = id.substring(1);
+			}
+			return document.getElementById(id);		
+		}
+	}
+	
+	/**
+	* Encapsulation of page functionality
+	*/
+	var pageStuff = {
+		/**
+		* Input source mode - html or script
+		*/
+		sourceMode: 'html',
+		
+		/**
+		* Load one of the pre-defined samples for rendering.
+		*/
+		loadSample: function(selCtl){
+			var sampId = selCtl[selCtl.selectedIndex].value,
+				contEl = $("htmlInput"),
+				adWrap = $('topAdWrapper'),
+				size, adType, bits, adFormat,
+				el, elWd, elHt, code, content;
+			
+			if(sampId == ""){
+				contEl.value = "";
+				return;
+			}
+			
+			el = $(sampId);
+			size = el.getAttribute('adsize');
+			adType = el.getAttribute('adtype');
+			adFormat = el.getAttribute('adformat');
+			if(adType){
+				pageStuff.setInput(adType);
+			}
+			
+			adFormat = adFormat || 'sidekick250';
+			adWrap.className = adFormat;
+			
+			elWd = $("#width_input");
+			elHt = $("height_input");
+			bits = size.split('x');
+			elWd.value = bits[0];
+			elHt.value = bits[1];
+			
+			code = el && (el.text || el.innerHTML || el.innerText);
+			if (code) {
+				try {
+					f = new Function("return " + code);
+					content	= f();
+					contEl.value = content;
+				} catch (e) {
+					content = f = null;
+				}
+				if (!content) {
+					return;
+				}
+			}			
+			pageStuff.renderInput();		
+		},
+		
+		/**
+		* Set the title and intro text for the dialog
+		*/
+		loadDialogTitleAndIntro: function(title, intro){
+			$('dialogTitle').innerHTML = title;
+			$('dialogIntro').innerHTML = intro;			
+		},
+		
+		toggleControls: function(){
+			var el = $('adcontrols');
+			var css = el.className;
+			
+			if (css == 'row collapsable' || css.indexOf('expanded') > -1){
+				el.className = 'row collapsable collapsed';
+			}
+			else{
+				el.className = 'row collapsable expanded';
+			}
+		},
+		
+		/**
+		* Display an overlay with the script commands to create this ad
+		*/
+		showSFScriptDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal fade in visibleBlock wideModal",
+				overlayClass =  "modal-backdrop fade in",
+				contEl = $("htmlInput"),
+				content, ht, wd,
+				embedSrcElem = $("tagMarkupSample"),
+				sfTag = [],
+				adId = "myAdPlacement" + new Date().getMilliseconds(),
+				overlay = $("dlgOverlay");
+				
+			pageStuff.loadDialogTitleAndIntro('Script-based SafeFrame Creation', 
+				'This code shows how to programmatically initialize a SafeFrame by using script instead of a tag');
+			
+			ht = parseInt($('height_input').value);
+			wd = parseInt($('width_input').value);
+			
+			if(isNaN(ht)){
+				ht = "300";
+			}
+			if(isNaN(wd)){
+				wd = "300";
+			}
+			
+			sfTag.push("&lt;!-- ELEMENT MUST EXIST FOR SCRIPT-BASED RENDER --&gt;");
+			sfTag.push("&lt;div id='adTargetElement'&gt;&lt;/div&gt;\n");
+			sfTag.push("&lt;scri" + "pt type='text/javascript' >\n")
+			sfTag.push("  var adPositionId = '" + adId + "',\n\t width = " + wd + ",\n\t height = " + ht + ";");
+			
+			sfTag.push("\n// Ad contents or bootstrap");
+			if(pageStuff.sourceMode == 'script'){
+				sfTag.push("  var src = \"" + contEl.value + "\";");
+			}
+			else{
+				content = $sf.lib.lang.jssafe_html(contEl.value);
+				content = content.replace(/</gi, "&lt;")
+				content = content.replace(/>/gi, "&gt;");
+				content = content.replace(/\n/gi, '\"\n + "');
+				content = content.replace(/""/gi, '');
+			
+				sfTag.push("  var html = \"" + content + "\"");
+			}
+			sfTag.push('');
+			sfTag.push("// Initialize the ad position");
+			sfTag.push("var adConfig = {\n  id: adPositionId, \n  w: width,\n  h: height,\n  dest: 'adTargetElement'\n};");
+			sfTag.push("adConfig.supports = { 'exp-push' : true };\n");
+			sfTag.push("// Register the ad position config information");
+			sfTag.push("var posConf = new $sf.host.PosConfig(adConfig);");
+			sfTag.push("\n// Create the ad position.");
+			var positionInfo = "var pos   = new $sf.host.Position(";
+			if(pageStuff.sourceMode == 'script'){
+				positionInfo += "{ id: adPositionId, src: src }"
+			}
+			else{
+				positionInfo += "adPositionId, html"
+			}
+			positionInfo += ");"
+			sfTag.push(positionInfo);
+			sfTag.push("\n// Render the ad in a SafeFrame.");
+			sfTag.push("$sf.host.render(pos);\n");
+			
+			sfTag.push("&lt;/scr" + "ipt&gt;");
+			
+			embedSrcElem.innerHTML = sfTag.join('\n');
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
+		},
+		
+		/**
+		* Display an overlay with the appropriate markup to embed this ad
+		*/
+		showEmbedDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal fade in visibleBlock wideModal",
+				overlayClass =  "modal-backdrop fade in",
+				contEl = $("htmlInput"),
+				content, ht, wd,
+				embedSrcElem = $("tagMarkupSample"),
+				sfTag,
+				adId = "myAdPlacement" + new Date().getMilliseconds(),
+				overlay = $("dlgOverlay");
+			
+			pageStuff.loadDialogTitleAndIntro('Embed Markup for Ad', 
+				'This area shows SafeFrame tag markup to embed your ad in a page.  ' +
+				'SafeFrame also supports programmatic creation and rotation of ads. ' +
+				'View source on this page for more details.');
+			
+			sfTag = "&lt;scri" + "pt type='text/x-safeframe' class='sf_data' >\n"
+			sfTag += "{\n\t \"id\" : \"" + adId + "\",\n";
+			
+			if(pageStuff.sourceMode == 'script'){
+				sfTag += "\t \"src\" : \"" + contEl.value + "\",\n";
+			}
+			else{
+				content = $sf.lib.lang.jssafe_html(contEl.value);
+				content = content.replace(/</gi, "&lt;")
+				content = content.replace(/>/gi, "&gt;");
+				content = content.replace(/\n/gi, '\"\n + "');
+				content = content.replace(/""/gi, '');
+			
+				sfTag += "\t \"html\" : \"" + content + "\",\n";
+			}
+			
+			ht = parseInt($('height_input').value);
+			wd = parseInt($('width_input').value);
+			
+			if(isNaN(ht)){
+				ht = "300";
+			}
+			if(isNaN(wd)){
+				wd = "300";
+			}
+			
+			sfTag += "\t \"conf\" : {\n";
+			sfTag += "\t\t \"size\" : \"" + wd + "x" + ht + "\",\n";
+			sfTag += "\t\t \"dest\" : \"id_of_target_elem\",\n";
+			sfTag += "\t\t \"supports\" : {\n";
+			sfTag += "\t\t\t \"exp-push\" : \"1\"\n";
+			sfTag += "\t\t \}\n";
+			sfTag += "\t}\n}\n";
+			sfTag += "&lt;/scr" + "ipt&gt;\n";
+			
+			embedSrcElem.innerHTML = sfTag;
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
+		},
+		
+		/**
+		* Hide the dialog
+		*/
+		hideDialog: function(){
+			var dlg = $("sfTagDialog"),
+				dlgClass = "modal hide fade in",
+				overlayClass =  "modal-backdrop fade in hide",
+				overlay = $("dlgOverlay");
+			
+			overlay.className = overlayClass;
+			dlg.className = dlgClass;
+		},
+		
+		/**
+		* Changes the type of ad creative input between script source file
+		* and raw ad HTML.
+		*/
+		setInput: function(type){
+			var htmlBtn = $('sourceHtmlBtn'),
+				scriptBtn = $('sourceScriptBtn'),
+				inputEl = $('htmlInput'),
+				onClass = 'btn btn-info',
+				offClass = 'btn';
+			
+			pageStuff.sourceMode = type;
+			if(type == 'html'){
+				htmlBtn.className = onClass;
+				scriptBtn.className = offClass;
+				inputEl.innerHTML = '';
+			}
+			else{
+				htmlBtn.className = offClass;
+				scriptBtn.className = onClass;
+				inputEl.innerHTML = '[enter script source url here]';
+			}		
+		},
+		
+		/**
+		* Render the given HTML as a SafeFrame ad
+		*/
+		renderInput: function() {
+			var el, val, w, h, html, posID, posConf, adObj, pos;
+
+			$sf.host.nuke();
+
+			el 	= $("htmlInput");
+			val = (el && el.value) || "";
+			val = $sf.lib.lang.trim(val);
+
+			if (!val) {
+				alert("No HTML specified");
+				return;
+			}
+
+			html = val;
+
+			el	= $("width_input");
+			val = (el && el.value) || "";
+			val = $sf.lib.lang.cnum(val,0);
+
+			if (val <= 0) {
+				alert("Width must be a valid number from 1 to 9999 pixels");
+				return;
+			}
+
+			w = val;
+
+
+			el	= $("height_input");
+			val = (el && el.value) || "";
+			val = $sf.lib.lang.cnum(val,0);
+
+			if (val <= 0) {
+				alert("Height must be a valid number from 1 to 9999 pixels");
+				return;
+			}
+
+			h 	= val;
+
+
+			posID	 = "test_" + w + "x" + h;
+			// Initialize the configuration of the new location
+			var configOptions = {id:posID,w:w,h:h,dest:"tgtLREC"};
+			configOptions.supports = {
+				'read-cookie': true,
+				'write-cookie': true,
+				'exp-push': true
+			};
+			
+			posConf	 = new $sf.host.PosConfig(configOptions);
+			adObj = {
+				id: posID
+			};
+			if(pageStuff.sourceMode == 'script'){
+				adObj.src = html.trim();
+				if(adObj.src.indexOf("htt") != 0){
+					alert("Script File mode requires a URL to a script.\n\nSwitch to HTML Input for direct ad markup.");
+				}
+			}
+			else{
+				adObj.html = html;
+			}
+			
+			pos		 = new $sf.host.Position(adObj);
+
+			$sf.host.render(pos);
+
+		}
+	}
+	
+	// ============= END PAGE FUNCTIONS ==================
+
+		/**
+		* Define the Config bootstrap to start SafeFrame.
+		* This identifies the location of the rendering bootstrap file
+		* and defines initial position placements.
+		*/
+		
+		function initSafeFrameConfig() {
+			var conf	= new $sf.host.Config({
+				renderFile:		"http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
+				positions:
+				{
+					"LREC":
+					{
+						id:		"LREC",
+						dest:	"tgtLREC",
+						w:		250,
+						h:		50
+					}
+				}
+			});
+
+			var posMeta		= new $sf.host.PosMeta(null,"rmx",{foo:"bar",bar:"foo"});
+			var pos			= new $sf.host.Position("LREC", "<h3>[[Ad Placement Here]]</h3>", posMeta);
+
+			$sf.host.render(pos);
+		}
+		
+		initSafeFrameConfig();
+	</script>
+
+	
+	
+	
+<!-- ========================  EMBED TAG DIALOG ===================================== -->
+			<div id="sfTagDialog" class="modal hide fade wideModal" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button class="close" onclick="pageStuff.hideDialog()">&times;</button>
+					<h3 id="dialogTitle">Embed Markup for Ad</h3>
+					</div>
+				<div class="modal-body">
+					<div class="divDialogElements">
+					<p id="dialogIntro">
+					This area shows SafeFrame tag markup to embed your ad in a page.  
+					SafeFrame also supports programmatic creation and rotation of ads.
+					View source on this page for more details.
+					</p>
+					
+					<pre id="tagMarkupSample"></pre>
+					
+					
+					
+					<p>
+					Place these script tags anywhere in the publisher host page.
+					In production environments, use your own CDN to host the 
+					SafeFrame Reference Implementation code for best results.
+					You may wish to combine and compress the code for better performance.
+					</p>
+<label>Script Includes and Bootstrap</label>
+<pre>
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/base.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/host/host.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+	src="http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/js/lib/boot.js"&gt;&lt;/script&gt;
+
+&lt;script type="text/javascript" &gt;
+/**
+* Initialize a new SafeFrames publisher configuration
+*/
+	(function() {
+		var conf	= new $sf.host.Config({
+			// Should be absolute path to render file hosted on CDN
+			renderFile:		"http://s3-us-west-2.amazonaws.com/sftemp/sf_v1.0.1/html/r.html",
+			positions: {}
+		});
+
+	})();
+&lt;/script&gt;
+
+</pre>
+						
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="pageStuff.hideDialog();">Close</button>
+				</div>
+			</div>
+<div id="dlgOverlay" class="modal-backdrop fade in hidden"></div>
+	
+	
+	
+	
+	
+	
+	
+<!-- ========================  SAMPLE ADS ===================================== -->
+
+	<script type="text/plain" adsize="300x250" adtype='html' id="lrec_data">"<!--  Standard Inventory Ad; AdinteraxID:140093; ad:cgong-teset/LREC_exp; publisher:publisher1; campaign:demo; size:300x250; Ad File Size:48kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/ad2.js?q=1299740125\"></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://www.barclays.com/\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/LREC_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/hawaiiexplrec_g_300x250_soho_1.gif?adxq=1298696215\" border=0></a></noscr"+"ipt>"</script>
+	
+	<script type="text/plain" adsize="120x600" adtype='html' adformat='skyscraper' id="sky_data">"<!--  Standard Inventory Ad; AdinteraxID:140095; ad:cgong-teset/120_600_exp; publisher:publisher1; campaign:demo; size:120x600; Ad File Size:54kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/ad2.js?q=1299740219\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/http://adinterax.com\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/120x600_skyscraper_070102_v2.jpg?adxq=1290143223\" border=0></a></noscr"+"ipt>"</script>
+	
+	<script type="text/plain" adsize="728x90" adtype='html' adformat='leaderboard' id="n_data">"<!--  Standard Inventory Ad; AdinteraxID:140094; ad:cgong-teset/728_90_exp_flash; publisher:publisher1; campaign:demo; size:728x90; Ad File Size:50kB; (by adinterax)  -->\r\n<scr"+"ipt type=\"text/javascr"+"ipt\" src=\"http://l.yimg.com/pq/js/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/ad2.js?q=1299740195\" ></scr"+"ipt>\r\n<noscr"+"ipt><a href=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/tc,c:noscr"+"ipt/DART\"><img src=\"http://tr.adinterax.com/re/adx_qa,cgong-teset/728_90_exp_flash,C=demo,P=publisher1/0/0/in,ti/http://l.yimg.com/pq/customer/adx_qa/0/seat_shakira_es_728x90_exp_.gif?adxq=1258066365\" border=0></a></noscr"+"ipt>"	</script>
+	
+	<script type="text/plain" adsize="300x250" adtype='script' id="src_ad">"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&"</script>
+	
+	<script type="text/plain" adsize="300x250" adtype='html' adformat='sidekick250expando' id='expander'>"<style>html,body { height:100%;background:#8888FF;}</style>\n<div style=\"font-size:1.4em;\">Eat at Joe's</div>\nStumptown umami portland, nesciunt chambray pickled intelligentsia mustache church-key keytar PBR gastropub sint ea. Carles keffiyeh incididunt 3 wolf moon, pitchfork occupy street art synth art party cred officia sartorial single-origin coffee est. Hella swag semiotics, do leggings DIY ethnic fugiat keffiyeh forage small batch minim ad. Brooklyn trust fund voluptate mcsweeney's twee vero. Keffiyeh elit fashion axe, banjo anim deserunt hoodie tousled quis put a bird on it brooklyn. Placeat echo park bushwick, try-hard eu 8-bit kale chips nulla quinoa officia. Squid 8-bit helvetica, put a bird on it tousled fap retro vegan nisi.\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar expandedWidth = 400,\n expandedHeight = 320;\n\n function writeLog(message){\n  //debugger;\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function expandAd(){\n  var g, ex;\n\n  writeLog(\"Ad expand on m\");\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(expandedWidth, expandedHeight); //{l:400,t:200}\n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   expandAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n \n})(); \n</scr"+"ipt>\n"</script>
+	
+	<script type="text/plain" adsize="120x600" adtype="html" adformat='skyscraper' id="sky_viewable">"<style>html,body { height:100%;background:#DD3333;}</style>\n<div style=\"font-size:1.4em;\">Viewable Skyscraper</div>\n<div id=\"viewInfo\" style=\"height:20px;font-weight:bold;color:blue;font-family:Arial;\"></div>\nViewable calculation based on 50% in view for 3 seconds\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar inViewTime = 3000,\n inViewPercent = 50,\n inViewBeaconFired = false,\n inViewTimerId = 0;\n\n function writeLog(message){\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n /**\n * Update the inView calculation and display.\n * Register the beacon to fire once viewability is satisfied.\n */\n function updateInViewDisplay(){\n  var totalViewable = extern.inViewPercentage();\n  var elem = document.getElementById(\"viewInfo\");\n  if(elem) {\n   elem.innerHTML = \"Viewable: \" + totalViewable + \"%\";\n  }\n  \n  if(!inViewBeaconFired){\n   if(totalViewable >= inViewPercent && inViewTimerId == 0){\n    window.setTimeout(function(){  fireViewableBeacon(); }, inViewTime); \n   }\n   else if(totalViewable < inViewPercent && inViewTimerId != 0) {\n    window.clearTimeout(inViewTimerId);\n    inViewTimerId = 0;\n   }  \n  }\n }\n \n /**\n * Skeleton method to fire beacon\n */\n function fireViewableBeacon(){\n  // tickle your beacon here\n  writeLog(\"IN-VIEW SATISFIED. BEACON FIRED\");\n }\n\n /**\n * This is the event listener to capture events from the publisher host page.\n */\n function statusUpdate(status, data)\n {\n //debugger;\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   updateInViewDisplay();\n  }\n }\n\n // Register the SafeFrame listener\n if (extern) {\n  try {\n   extern.register(120, 600, statusUpdate);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n (function(){\n  window.setTimeout(function(){\n   updateInViewDisplay();\n   }, 100);\n })();\n \n</scr"+"ipt>\n\n"</script>
+	
+	<script type="text/plain" adsize="320x250" adtype="html" adformat='sidekick250expando' id="expand_flash">"<scr"+"ipt src=\"http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject_src.js\" ></scr"+"ipt>\n\n<div id='adWrapper' style=\"width:320px;height:240px;transition: width 1s;-webkit-transition: width 1s;\">\n<OBJECT id=\"sampleFlash\" classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0\" WIDTH=\"100%\" HEIGHT=\"100%\" ALIGN=\"\">\n<PARAM NAME=movie VALUE=\"http://www.adobe.com/content/dotcom/en/devnet/actionscript/samples/drawing_6/_jcr_content/articlecontentAdobe/generic/file.res/6_patterns.swf\"> \n<PARAM NAME=quality VALUE=high> <PARAM NAME=bgcolor VALUE=#333399> <EMBED src=\"http://www.adobe.com/content/dotcom/en/devnet/actionscript/samples/drawing_6/_jcr_content/articlecontentAdobe/generic/file.res/6_patterns.swf\" quality=high bgcolor=#333399 WIDTH=\"100%\" HEIGHT=\"100%\" NAME=\"Yourfilename\" ALIGN=\"\" TYPE=\"application/x-shockwave-flash\" PLUGINSPAGE=\"http://www.macromedia.com/go/getflashplayer\"></EMBED> </OBJECT>\n\n    <scr"+"ipt type=\"text/javascript\">\n    swfobject.registerObject(\"sampleFlash\", \"9.0.115\", \"expressInstall.swf\");\n    </scr"+"ipt>\n\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar expandedWidth = 400,\n expandedHeight = 320;\n\n function writeLog(message){\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function expandAd(){\n  var g, ex;\n\n  writeLog(\"Ad expand on m\");\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(expandedWidth, expandedHeight); //{l:400,t:200}\n   \n   var ad = swfobject.getObjectById(\"sampleFlash\");\n   var add = document.getElementById(\"sampleFlash\");\n   var adwrap = document.getElementById(\"adWrapper\");\n   adwrap.style.width = \"750px\";\n   adwrap.style.height = \"570px\";\n    console.log(adwrap);\n   \n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n   var adwrap = document.getElementById(\"adWrapper\");\n   adwrap.style.width = \"320px\";\n   adwrap.style.height = \"240px\";\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   expandAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n \n})(); \n</scr"+"ipt>\n"</script>
+
+	<script type="text/plain" adsize="320x250" adtype="html" adformat='sidekick250expando' id="expand_push">"<style>html,body { height:100%;background:#FFBF00;}</style>\n\n<button onclick='expandAd();'>Expand</button>\n<button onclick='collapseAd();'>Collapse</button>\n<p>\nPush expansion requires that the ad position be explicitly marked to support the parameter \"exp-push\"\nby the host page.  Additionally, any enclosing DOM elements <b>MUST NOT</b> have an explicit height\nor width defined and they must not be absolutely positioned.\n</p>\n<p>\nSmooth expansion transitions may be achieved using CSS.\n</p>\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\nvar expandedWidth = 400,\n expandedHeight = 320;\n\n function writeLog(message){\n  //debugger;\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function expandAd(){\n  var g, ex, obj;\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n obj = {};\n obj.l=0;\n obj.r=expandedWidth;\n obj.t=0;\n obj.b=expandedHeight;\n obj.push=true;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(obj);\n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n/*\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   expandAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n */\n})(); \n</scr"+"ipt>\n"</script>
+	
+	
+	<script type="text/plain" adsize="920x150" adtype="html" adformat='leaderboard' id="pushdown">"<style>html,body { height:100%;background:#FFBF00;}</style>\n<p>\n<div style='display:inline-block;'>\n<button onclick='pushDownAd();'>Expand</button>\n<button onclick='collapseAd();'>Collapse</button>\n</div>\n<span style='font-weight:bold;font-size:1.2em;'>Pushdown Sample</span>\n\nPush expansion requires that the ad position be explicitly marked to support the parameter \"exp-push\"\nby the host page.  Additionally, any enclosing DOM elements <b>MUST NOT</b> have an explicit height\nor width defined and they must not be absolutely positioned.\n</p>\n<p>\nSmooth expansion transitions may be achieved using CSS.\n</p>\n<div id=\"feedback\"></div>\n<scr"+"ipt>\nvar extern = window.extern || $sf.ext;\nvar sfAPI = extern;\n\n function writeLog(message){\n  //debugger;\n  var el = document.getElementById(\"feedback\");\n  if(el) el.innerHTML += message + \"<br />\";\n }\n \n function status_update(status, data)\n {\n  if(status == \"expanded\"){\n  } \n  else if (status == \"geom-update\") {\n   // update viewability\n  }\n }\n /**\n * Expand the ad by calling the SafeFrame API\n */\n function pushDownAd(){\n  var g, ex, obj;\n\n  if ($sf.ext) {\n   try {\n    g = $sf.ext.geom(); // the geometry object\n    ex = g && g.exp;\n obj = {};\n obj.l=0;\n obj.r=0;\n obj.t=-30;\n obj.b=350;\n obj.push=true;\n    //if (Math.abs(ex.l) >= expandedWidth && Math.abs(ex.t) >= expandedHeight) {\n      $sf.ext.expand(obj);\n    //}\n   } catch (e) {\n    //do not expand, not enough room\n   }\n  } else {\n   //api expansion not supported\n  }\n } \n\n function collapseAd(){\n  $sf.ext.collapse();\n }\n\n if (extern) {\n  try {\n   extern.register(350, 200, status_update);\n  } catch (e) {\n   writeLog(\"Exception or no safeframes available: \" + e.message);\n  }\n }\n \n// Expand the ad on mouseover\n(function(){\n/*\n setTimeout(function(){\n  var body = document.getElementsByTagName('body')[0];\n  body.style.height='100%';\n  body.addEventListener('mouseover', function(){\n   pushDownAd();\n  });\n  body.addEventListener('mouseout', function(){\n   collapseAd();\n  });\n }, 100);\n */\n})(); \n</scr"+"ipt>\n"</script>
+	
+
+	<!--  -->
+
+		</body>
+</html>

@@ -1,0 +1,173 @@
+<html>
+	<head>
+	<title>Billboard: Rising Stars with SafeFrame</title>
+
+	<style type="text/css">
+	
+	body{
+		border: 0;
+		margin: 0;
+		padding: 0;
+		font: Arial;
+	}
+	.title{
+		margin-top: 10px;
+		font-size: 1.3em;
+		
+	}
+
+#contentLogo{
+  float : left;
+  width : 100px;
+  height : 50px;
+}
+
+#contentSearch{
+  float : left;
+  width : 850px;
+  height : 50px;
+}
+
+#contentTop{
+  float : left;
+  width: 650px;
+  height : 90px;
+}
+
+#contentBottom{
+  float : left;
+  width : 970px;
+  height : 50px;
+}
+
+#contentLeft{
+  float : left;
+  width : 650px;
+  height : 890px;
+}
+
+#contentRight{
+  float : right;
+  width : 300px;
+  height : 1000px;
+}
+
+#center{
+  position : relative;
+  margin-right : auto;
+  margin-left : auto;
+  width : 990px;
+}
+
+#topBar{
+	display:block;
+	height: 70px;
+}
+
+.mockContent{
+  position : relative;
+  background-color : #bbbbbb;
+  margin : 10px;
+}
+
+#adUnitWrapper{
+  position : relative;
+  margin-right : auto;
+  margin-left : auto;
+  width : 970px;
+  z-index: 500;
+}
+
+#adUnitWrapper div, #adUnitWrapper div iframe {
+	transition: height 0.4s ease-in-out, height 0.4s;
+}
+
+	
+	</style>
+	
+	
+	</head>
+	<body>
+
+    <div id="center">
+<div id="topBar" >
+      <div id="contentLogo" class="mockContent"></div>
+      <div id="contentSearch" class="mockContent">		<div class="title">Billboard: Rising Stars with SafeFrame</div></div>
+</div>
+
+      <div id="adUnitWrapper" >
+
+<div id="billboardAdDiv"></div>
+
+      </div>
+
+      <div id="contentTop" class="mockContent">
+	  <h1>Billboard Rising Star Ad</h1>
+	  </div>
+
+      <div id="contentRight" class="mockContent"></div>
+
+      <div id="contentLeft" class="mockContent">
+		Example of the Billboard ad unit.
+		<ul>
+		<li>
+		<a href="http://www.iab.net/risingstars">... More on IAB Rising Star ad units</a>
+		</li>
+		<li><a href="https://code.google.com/p/iab-billboard-adunit/">Billboard sample files</a></li>
+		</ul>
+
+	  </div>
+
+      <div id="contentBottom" class="mockContent"></div>
+
+    </div>
+
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"billboardAd",
+		 // relative source is relative to the r.html bootstrap file
+		 // ALWAYS USE ABSOLUTE SOURCES
+		"src":	"../../examples/IAB_RisingStars/Billboard_adfiles/billboardAdBootstrap.js",
+		
+		"conf":
+		{
+			"w":		970,
+			"h":		20,
+			"dest":	"billboardAdDiv",
+			"supports" : {
+				"exp-push" : "1"
+			}
+			
+		}
+	}
+</script>
+
+
+<!-- 
+INCLUDES OF THE SAFEFRAMES FRAMEWORK 
+These script files should be hosted on your CDN from a different 
+top level domain from the host site.
+-->
+	<script type="text/javascript" src="../../src/js/lib/base.js"></script>
+    <script type="text/javascript" src="../../src/js/host/host.js"></script>
+    <script type="text/javascript" src="../../src/js/lib/boot.js"></script>
+	
+		<script type="text/javascript">
+		/**
+		* Initialize a new SafeFrames publisher configuration
+		*/
+			(function() {
+				var conf	= new $sf.host.Config({
+					// Should be absolute path to render file hosted on CDN
+					renderFile:		"../../src/html/r.html",
+					positions: {}
+				});
+
+			})();
+		
+		
+		</script>
+		
+
+	</body>
+</html>
