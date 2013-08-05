@@ -48,6 +48,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		},
 		EXPAND_COMMAND 			= "exp-ovr",
 		COLLAPSE_COMMAND 		= "collapse",
+		ERROR_COMMAND 			= "error",
 		NOTIFY_EXPAND			= "expand",
 		NOTIFY_GEOM_UPDATE		= "geom-update",
 		NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
@@ -2117,6 +2118,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						_fire_pub_callback(POS_MSG, msgObj.pos, "msg", msgObj.msg);
 						ret = TRUE;
 					break;
+					case ERROR_COMMAND:
+						_record_error(msgObj);
+						ret = TRUE;
+					break;
 					case NOTIFY_GEOM_UPDATE:
 						sf.lib.logger.log("Geom update complete: " + msgObj.pos);
 						ret = TRUE;
@@ -2409,7 +2414,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
         if (nWd <= orWd && nHt <= orHt) return;
 
-		if (_fire_pub_callback(BF_POS_MSG, "exp-ovr", posID, dx ,dy)) return; //event canceled
+		if (_fire_pub_callback(BF_POS_MSG, posID, EXPAND_COMMAND, dx ,dy)) return; //event canceled
 
         ifrSt[WIDTH]	= nWd+PX;
         ifrSt[HEIGHT] 	= nHt+PX;
@@ -2445,7 +2450,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         msgObj.cmd			= "expand";
        	msgObj.geom 		= _es(_build_geom(posID, ifr, TRUE));
 
-		_fire_pub_callback(POS_MSG, "exp-ovr", posID, dx ,dy);
+		_fire_pub_callback(POS_MSG, posID, EXPAND_COMMAND, dx ,dy);
 		_send_response(params, msgObj);
 		ifrSt = par = ifr = params = msgObj = NULL;
     }
@@ -2484,7 +2489,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		_clear_geom_update_timer();
 
 		if (!noMsging) {
-			if (_fire_pub_callback(BF_POS_MSG, "collapse", posID, 0, 0)) return;
+			if (_fire_pub_callback(BF_POS_MSG, posID, COLLAPSE_COMMAND, 0, 0)) return;
 		}
 
 		ifrSt.left		=
@@ -2500,7 +2505,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		_shim_frame(id);
 
 		if (!noMsging) {
-			_fire_pub_callback(POS_MSG, "collapse", posID, 0, 0);
+			_fire_pub_callback(POS_MSG, posID, COLLAPSE_COMMAND, 0, 0);
 			msgObj.cmd  	= (isOutside) ? "collapsed" : "collapse";
 			msgObj.geom		= _es(_build_geom(posID, ifr, TRUE));
 			_send_response(params, msgObj);
@@ -2509,6 +2514,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		ifr = ifrSt = par = parSt = params = msgObj = NULL;
     }
 	
+	
+    /**
+     * Records a reported error message to $sf.info.errors and fires any listeners
+     *
+     * @name $sf.host-_record_error
+     * @private
+     * @static
+     * @function
+     * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame having an error
+     *
+     *
+    */
+	
+	function _record_error(msgObj)
+	{
+		var posID		= (msgObj && msgObj.pos),
+			params		= (posID && rendered_ifrs[posID]),
+			params_conf	= (params && params.conf),
+			id			= (params_conf && params_conf.dest),
+			ifr			= (id && _elt(id)),
+			par			= (ifr && _elt(POS_REL_BOX_ID_PREFIX + "_" + posID)),
+			ifrSt		= (ifr && ifr[ST]),
+			parSt		= (par && par[ST]),
+			scr_handle;
+			
+		if(sf && sf.info && sf.info.errs){
+			sf.info.errs.push(msgObj);
+		}
+	
+		_fire_pub_callback(POS_MSG, posID, ERROR_COMMAND, msgObj);
+	}
 	
 	/**
 	 * Returns the current document cookies as a hash
