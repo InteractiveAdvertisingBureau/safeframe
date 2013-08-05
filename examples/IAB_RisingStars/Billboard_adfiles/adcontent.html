@@ -1,4 +1,8 @@
-<!-- THIS IS EMBEDDED AS scripted content -->
+<!-- 
+THIS IS EMBEDDED AS scripted content .
+Source here is provided as a mechanism to make the ad more readable.
+Actual source is translated into Javascript string and placed in "billboardAdBootstrap.js" file.
+-->
 <style>
 #showAdButton{
 	display: none;
@@ -13,20 +17,16 @@
 }
 </style>
 
-<div id="showAdButton" onclick="expandAd()">Show ad <img src="http://safeframes.emination.com/adfiles/downarrow.png" /></div>
+<script>
+function preCollapse(){
+	collapseAd();
+}
+</script>
 
-<img src="../../examples/IAB_RisingStars/Billboard_adfiles/backupImage.png"
+<div id="showAdButton" onclick="expandAd()">Show ad <img src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/downarrow.png" /></div>
+
+<a href="javascript:collapseAd();" onclick="collapseAd();return false;"><img src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/backupImage.png"
 	id="adImage"
-	usemap="admap"
-	style="width:970px;height:250px;" />
+	style="width:970px;height:250px;border:0;" /></a>
 
-
-
-<map name="admap">
-  <area shape="rect" coords="850,5,965,30" href="javascript:collapseAd()" alt="Close" onclick="collapseAd()">
-</map>
-<!--
-<script src=""../../examples/IAB_RisingStars/Billboard_adfiles/adScriptBehavior.js"></script>
--->
-
-<script src="http://safeframes.emination.com/adfiles/adScriptBehavior.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/adScriptBehavior.js"></script>
