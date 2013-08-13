@@ -47,6 +47,7 @@ var NULL					= null,
 	TOLOWERCASE				= "toLowerCase",
 	EXPAND_COMMAND 			= "exp-ovr",
     COLLAPSE_COMMAND 		= "collapse",
+	ERROR_COMMAND 			= "error",
     NOTIFY_GEOM_UPDATE		= "geom-update",
     NOTIFY_EXPAND			= "expand",
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
@@ -652,16 +653,24 @@ var NULL					= null,
 
 	function _report_errs()
 	{
-		var e;
+		var e, errs;
 
 		try {
-			if (errMsgTimerID) {
-				clearTimeout(errMsgTimerID);
-				errMsgTimerID = 0;
+		
+			if(err_msgs.length > 0){
+				errs = err_msgs[0]; // todo - fix
+				
+				var cmd_str = ["cmd=", ERROR_COMMAND, "&pos=", pos_id, "&errors=", errs];
+				_send_msg(_cstr(cmd_str), ERROR_COMMAND);
+			}
+		
+			if (err_msg_timer_id) {
+				clearTimeout(err_msg_timer_id);
+				err_msg_timer_id = 0;
 			}
 		} catch (e) { }
 
-		err_msgs.length = 0;
+		err_msgs = []; // clear the error queue
 	}
 
 	/**
@@ -684,11 +693,11 @@ var NULL					= null,
 		err_msgs.push(_cstr(["Error occurred inside SafeFrame:\nMessage: ", a, "\nURL:", b, "\nLine:", c]));
 
 		try {
-			if (errMsgTimerID) {
-				clearTimeout(errMsgTimerID);
-				errMsgTimerID = 0;
+			if (err_msg_timer_id) {
+				clearTimeout(err_msg_timer_id);
+				err_msg_timer_id = 0;
 			}
-			errMsgTimerID = setTimeout(_report_errs, DOM_WATCH_INTERVAL);
+			err_msg_timer_id = setTimeout(_report_errs, DOM_WATCH_INTERVAL);
 		} catch (e) { }
 
 		return TRUE;
