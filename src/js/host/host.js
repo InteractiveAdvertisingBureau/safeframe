@@ -124,6 +124,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		locHost					= (loc && ((loc.protocol + "//" + (loc.host||loc.hostname)) || "")), // missing the port number
 
 		xtra 					= {}, // xtra extension namespace
+		validEvents 			= ['onBeforePosMsg', 'onPosMsg', 'onStartPosRender', 'onEndPosRender', 'onFailure'],
 		rendered_ifrs			= {},
 		msg_pipes				= {},
 		ifr_dest_id_map 		= {},
@@ -138,7 +139,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		current_status			= NULL,
 		msghostfb				= NULL,
 		flash_ver 				= NULL,
-		config					= NULL;
+		config					= NULL,
+		pendingListeners 		= NULL;
 		
 	var flashActiveXVersions = [
 		"ShockwaveFlash.ShockwaveFlash.11",
@@ -179,7 +181,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function Config(conf)
 	{
-		var me = this, pos_map, conf_pos_map, posID, pos_conf, pos_id, boot_up;
+		var me = this, pos_map, conf_pos_map, posID, pos_conf, pos_id, boot_up, 
+			pend = pendingListeners, pendAr, pendKey, n, plen;
 
 		if (!arguments.length) return (config) ? _mix({}, config) : NULL;
 
@@ -206,7 +209,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 		conf_pos_map		= conf.positions;
 		me.positions		= pos_map = {};
-
+		
 		if (conf_pos_map) {
 			for (posID in conf_pos_map)
 			{
@@ -218,6 +221,22 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			}
 		}
 		config	= me;
+		
+		// look for pending listeners to attach
+		if(pend){
+			for(pendKey in pend){
+				if(pend.hasOwnProperty(pendKey)){
+					if(lang.isArray(pend[pendKey])){
+						pendAr = pend[pendKey];
+						plen = pendAr.length;
+						for(n=0; n< plen; n++){
+							addListener(pendKey, pendAr[n]);
+						}
+					}
+				}			
+			}
+		}
+		
 		boot_up = !!(boot_up && me.auto && lang && lang.ns("$sf.host.boot"));
 
 		try {
@@ -1819,25 +1838,32 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function _fire_pub_callback(cb_name /* args to call back */)
 	{
-		var cb_args = [], args = arguments, len = args[LEN], 
-			idx = 0, f, 
-			ret = FALSE, 
+		var cb_args = [], args = arguments, len, 
+			idx = 0, f, ar,
+			ret = FALSE, i,
 			e, a;
 			
 		if (config) {
-			f	= config[cb_name];
-			if (f) {
-				while (len--)
-				{
-					a = args[idx++];
-					if(a != cb_name){
-						cb_args.push(a);
+			ar = config[cb_name];
+			if(_callable(ar)){
+				ar = [config[cb_name]];
+			}
+			for(i=0; i < ar.length; i++){
+				f	= ar[i];
+				if (f) {
+					len = args[LEN];
+					while (len--)
+					{
+						a = args[idx++];
+						if(a != cb_name){
+							cb_args.push(a);
+						}
 					}
-				}
-				try {
-					ret = f.apply(NULL,cb_args);
-				} catch (e) {
-					ret = FALSE;
+					try {
+						ret = f.apply(NULL,cb_args);
+					} catch (e) {
+						ret = FALSE;
+					}
 				}
 			}
 		}
@@ -2900,6 +2926,86 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 		return _mix({}, obj);
 	}
+	
+	/**
+	* Returns a list of all currently rendered SafeFrame position IDs
+	*
+	*/
+	function list()
+	{
+		var items = [], key;
+		for(key in rendered_ifrs){
+			if(rendered_ifrs.hasOwnProperty){
+				items.push(key);
+			}
+		}
+		return items;
+	}
+	
+	/**
+	* Tests the event name for validity and adjusts, if required.
+	* Returns false if an invalid event name is passed.
+	*/
+	function _validListener(event){
+		var i, lwr;
+		if(!event || event.length < 6){
+			return false;
+		}		
+		if(event.substring(0,2) != 'on'){
+			event = 'on' + event;
+		}
+		
+		lwr = event.toLowerCase();
+		
+		for(i=0; i < validEvents.length; i++){
+			if(lwr == validEvents[i].toLowerCase()) return validEvents[i];
+		}
+		
+		return false;
+	}
+	
+	/**
+	* Add a new event listener to the publisher configuration
+	*
+	*/
+	function addListener(event, func){
+		var ar;
+		
+		event = _validListener(event);
+		
+		if(!_callable(func) || !event){
+			return;
+		}
+		
+		if(config){		
+			ar = config[event];
+			if(!lang.isArray(ar)){
+				ar = [];
+				ar.push(config[event]);
+				config[event] = ar;
+			}
+			ar.push(func);
+		}
+		else{
+			if(!pendingListeners){
+				pendingListeners = {};
+			}
+			if(!pendingListeners[event]){
+				pendingListeners[event] = [];
+			}
+			
+			pendingListeners[event].push(func);
+		}
+	}
+	
+	/**
+	* Remove an event listener from the publisher configuration.
+	*
+	* @param func function to remove. null to clear all listeners
+	*/
+	function removeListener(event, func){
+	
+	}
 
 	/**
 	 * Returns a string as to whether or not the library is busy, empty string is returned on idle
@@ -2972,6 +3078,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				Position:	Position,
 				nuke:		nuke,
 				get: 		get,
+				list: 		list,
+				addListener: 		addListener,
+				removeListener: 	removeListener,
 				render:		render,
 				status:		status,
 				xtra:  		xtra

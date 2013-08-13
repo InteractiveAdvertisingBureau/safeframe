@@ -1,0 +1,44 @@
+<!-- 
+THIS IS EMBEDDED AS scripted content .
+Source here is provided as a mechanism to make the ad more readable.
+Actual source is translated into Javascript string and placed in "billboardAdBootstrap.js" file.
+-->
+<style>
+#feedback{
+	width:310px;
+	height: 200px;
+	overflow:auto;
+	border: 2px solid green;
+	background:#530;
+	border-radius: 4px;
+	color: green;
+	font-family: courier;
+}
+.iblock{
+	display: inline-block;
+	width: 50%;
+}
+</style>
+
+<div class='iblock'>
+<input id='msgContents' type='text' /><button onclick='sendCrosstalk()'>Send Crosstalk</button>
+
+
+<div id='msgTarget'></div>
+
+</div>
+
+<div class='iblock'>
+<div id='feedback' ></div>
+</div>
+
+
+
+
+
+<a href="javascript:collapseAd();" onclick="collapseAd();return false;"><img src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/backupImage.png"
+	id="adImage"
+	style="width:970px;height:250px;border:0;" /></a>
+
+<script src="../js/xtra/crosstalk.js"></script>
+<script src="../../tests/xtra_extension_tests/sample_ads/adScript.js"></script>

@@ -2625,6 +2625,11 @@ if (window["$sf"]) {
 				nsXtra = nsObj[XTRA] = {};
 			}
 			nsXtra[name] = xtra;
+			
+			if(xtra && xtra.init && $sf.lib.lang.callable(xtra.init)){
+				var conf = {}; // get config object
+				xtra.init(conf);
+			}
 		}
 		
 		/**
