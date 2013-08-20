@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>Billboard: Rising Stars with SafeFrame</title>
+	<title>Pushdown: Rising Stars with SafeFrame</title>
 
 <style type="text/css">
 	
@@ -130,21 +130,22 @@ a.unavailable{
 	  <ul class="nav">
 		<li><a class="unavailable" href="./index.html">Home</a></li>
 		<li><a href="./billboard_sample.html">Billboard</a></li>
-		<li><a class="unavailable" href="./filmstrip_sample.html">Filmstrip</a></li>
-		<li><a class="unavailable" href="./portrait_sample.html">Portrait</a></li>
+		<li><a href="./filmstrip_sample.html">Filmstrip</a></li>
+		<li><a href="./portrait_sample.html">Portrait</a></li>
 		<li><a href="./pushdown_sample.html">Pushdown</a></li>
+		<li><a href="./sidekick_sample.html">Sidekick/Slider</a></li>
 	  </ul>
 	  </div>
 </div>
 
       <div id="adUnitWrapper" >
 
-<div id="billboardAdDiv"></div>
+<div id="pushdownAdDiv"></div>
 
       </div>
 
       <div id="contentTop" class="mockContent">
-	  <h1>Billboard Rising Star Ad</h1>
+	  <h1>Pushdown Rising Star Ad</h1>
 	  </div>
 
       <div id="contentRight" class="mockContent">
@@ -153,37 +154,40 @@ a.unavailable{
 
       <div id="contentLeft" class="mockContent">
 		<div>
-		<em>The Billboard is a large billboard running the full width of the page with full close-ability.</em>
+		<em>The Pushdown is a large pushdown teaser running the full width of the page with expandability.</em>
 		<p>
-		In this example the Billboard ad pushes down page content to place itself front and center.
-		The user can close the ad by clicking the "Close" button to dismiss the ad.  
-		A small "Show ad" link is left in case the user wishes to re-display the ad.		
+		A unit that displays a teaser image/swf initially. 
+This type of expansion affects the entire unit. 
+A teaser image/swf is shown until the user hovers 
+over/clicks on the expansion button. 		
 		</p>
+		<p>
+The full unit then slides vertically or horizontally into 
+view from the edge of the teaser, in the direction 
+the arrow in the expansion button was pointing toward.
+</p>
 		<ul>
 		<li>
 		<a href="http://www.iab.net/risingstars" target="_blank">... More on IAB Rising Star ad units</a>
 		</li>
-		<li><a href="https://code.google.com/p/iab-billboard-adunit/" target="_blank">Billboard sample files</a></li>
-		</ul>
 		</div>
 	  </div>
 
       <div id="contentBottom" class="mockContent"></div>
-
+		
     </div>
-<!-- // "https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/adfiles/billboardAdBootstrap.js",  -->
 <script type='text/x-safeframe' class='sf_data'>
 	{
-		"id":		"billboardAd",
+		"id":		"pushdownAd",
 		 // relative source is relative to the r.html bootstrap file
 		 // ALWAYS USE ABSOLUTE SOURCES
-		"src": "../../examples/IAB_RisingStars/AdFiles/billboardAdBootstrap.js",	
+		"src": "../../examples/IAB_RisingStars/AdFiles/pushdownAdBootstrap.js",	
 		
 		"conf":
 		{
 			"w":		970,
-			"h":		20,
-			"dest":	"billboardAdDiv",
+			"h":		90,
+			"dest":	"pushdownAdDiv",
 			"supports" : {
 				"exp-push" : "1",
 				"read-cookie" : "1",
@@ -234,7 +238,8 @@ top level domain from the host site.
 			(function() {
 				var conf	= new $sf.host.Config({
 					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
-					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/html/r.html", 
+					//renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/html/r.html",
+					renderFile:	"../../src/html/r.html",
 					onPosMsg: posMessageCallback,
 					positions: {}
 				});
