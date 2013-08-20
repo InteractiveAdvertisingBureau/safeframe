@@ -3,124 +3,7 @@
 	<head>
 	<title>Portrait: Rising Stars with SafeFrame</title>
 
-<style type="text/css">
-	
-body{
-	border: 0;
-	margin: 0;
-	padding: 0;
-	font-family: "Trebuchet MS", Arial, Verdana;
-}
-.title{
-	margin-top: 10px;
-	font-size: 1.3em;
-}
-
-h1, h2, h3, h4, .title{
-	font-family: "futura-pt-n7","futura-pt",'Trebuchet MS', Arial, sans-serif;
-}
-
-a, a:visited{
-	color: #dc291e;
-	text-decoration:none;
-}
-
-a:hover{
-	background-color: #ffffcc;
-}
-
-#contentLogo{
-  float : left;
-  width : 100px;
-  height : 50px;
-}
-
-#contentNav{
-  float : left;
-  width : 850px;
-  height : 50px;
-}
-
-.nav {
-	list-style: none;
-	margin: 10px 0 0 5px;
-}
-.nav li{
-	display: inline-block;
-	margin-right: 10px;
-	background: #232323;
-	padding: 5px 12px 5px 10px;
-	border-radius: 6px;
-	line-height: 20px
-}
-
-#contentTop{
-  float : left;
-  width: 650px;
-  height : 90px;
-}
-
-#contentBottom{
-  float : left;
-  width : 970px;
-  height : 50px;
-}
-
-#contentLeft{
-  float : left;
-  width : 650px;
-  height : 890px;
-}
-
-#contentRight{
-  float : right;
-  width : 300px;
-  height : 1000px;
-}
-
-#center{
-  position : relative;
-  margin-right : auto;
-  margin-left : auto;
-  width : 990px;
-}
-
-#topBar{
-	display:block;
-	height: 70px;
-}
-
-.mockContent{
-  position : relative;
-  background-color : #bbbbbb;
-  margin : 10px;
-
-}
-
-.mockContent > div, .mockContent > h1, .mockContent > p {
-	padding: 5px;
-}
-
-#adUnitWrapper{
-  position : relative;
-	float: right;
-  margin-right : auto;
-  margin-left : auto;
-  width : 300px;
-	height : 1050px;
-  z-index: 500;
-}
-
-#adUnitWrapper div, #adUnitWrapper div iframe {
-	transition: height 0.4s ease-in-out, height 0.4s;
-}
-
-a.unavailable{
-	color: #555;
-}
-	
-	</style>
-	
+	<link type="text/css" rel="stylesheet" href="samp.css" />
 	
 	</head>
 	<body>
@@ -130,22 +13,22 @@ a.unavailable{
       <div id="contentLogo" class="mockContent"></div>
       <div id="contentNav" class="mockContent">		
 	  <ul class="nav">
-		<li><a class="unavailable" href="./index.html">Home</a></li>
+		<li><a href="./index.html">Home</a></li>
 		<li><a href="./billboard_sample.html">Billboard</a></li>
-		<li><a href="./filmstrip_sample.html">Filmstrip</a></li>
+		<li><a class="unavailable" href="./filmstrip_sample.html">Filmstrip</a></li>
 		<li><a href="./portrait_sample.html">Portrait</a></li>
 		<li><a href="./pushdown_sample.html">Pushdown</a></li>
-		<li><a href="./sidekick_sample.html">Sidekick/Slider</a></li>
+		<li><a class="unavailable" href="#">Sidekick</a></li>
+		<li><a class="unavailable" href="#">Slider</a></li>
 	  </ul>
 	  </div>
 </div>
-
 
       <div id="contentTop" class="mockContent">
 	  <h1>Portrait Rising Star Ad</h1>
 	  </div>
 
-      <div id="adUnitWrapper" >
+      <div id="portraitAdWrapper" class="adWrapper" >
 
 			<div id="portraitAdDiv"></div>
 

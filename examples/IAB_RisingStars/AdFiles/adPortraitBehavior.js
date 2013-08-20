@@ -100,20 +100,13 @@ function expandModule(id)
 		//dim.l = 0;
 		//dim.l = 643;
 		
-		//dim.r = 300;				//r:1380
-		dim.r = 0;						//r:
-		//dim.r = 643;
 		
 		base.style.width = "643px";
-		dim.t = 0;
-		dim.b = 1050;
 		dim.push = false;
 	} else {
 		dim.l = 195;
 		dim.r = 0;
 		base.style.width = "435px";
-		dim.t = 0;
-		dim.b = 1050;
 		dim.push = false;
 	}
 	
