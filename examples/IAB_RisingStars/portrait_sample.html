@@ -42,6 +42,9 @@
 The height of the asset (in this example a video) will vary depending on whether a 
 title for the app is set and the number of assets the app contains. 
 </p>
+<p>
+Clicking on "App" areas in the ad cause them to expand out into the content to display videos or enhanced functionality.
+</p>
 		<ul>
 		<li>
 		<a href="http://www.iab.net/risingstars" target="_blank">... More on IAB Rising Star ad units</a>
@@ -56,9 +59,9 @@ title for the app is set and the number of assets the app contains.
 <script type='text/x-safeframe' class='sf_data'>
 	{
 		"id":		"portraitAd",
-		 // relative source is relative to the r.html bootstrap file
+		 // relative source is relative to the r.html bootstrap file  "../../examples/IAB_RisingStars/AdFiles/portraitAdBootstrap.js",	
 		 // ALWAYS USE ABSOLUTE SOURCES
-		"src": "../../examples/IAB_RisingStars/AdFiles/portraitAdBootstrap.js",	
+		"src": "http://safeframes.emination.com/risingStars/adfiles/portraitAdBootstrap.js", 
 		
 		"conf":
 		{
@@ -116,8 +119,7 @@ top level domain from the host site.
 			(function() {
 				var conf	= new $sf.host.Config({
 					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
-					//renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/html/r.html",
-					renderFile:	"../../src/html/r.html",
+					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/html/r.html",
 					onPosMsg: posMessageCallback,
 					positions: {}
 				});
