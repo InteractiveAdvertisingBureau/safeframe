@@ -1,28 +1,109 @@
 <!-- 
 THIS IS EMBEDDED AS scripted content .
 Source here is provided as a mechanism to make the ad more readable.
-Actual source is translated into Javascript string and placed in "billboardAdBootstrap.js" file.
+Actual source is translated into Javascript string and placed in "pushdownAdBootstrap.js" file.
 -->
 <style>
-#showAdButton{
-	display: none;
-	cursor: pointer;
-	text-decoration: underline;
-	text-align: right;
-	width:970px;
-	color: #888;
-	font-weight:bold;
-	font-size:0.8em;
-	font-family: Verdana;
+#collapsedAd{
+ display: none;
+ cursor: pointer;
+ width:970px;
+ height: 90px;
+}
+
+
+#expandedAd{
+ display: none;
+ cursor: pointer;
+ width:970px;
+ height: 415px;
+}
+
+#adTeaser{
+  height : 70px;
+ font-weight:bold;
+ font-size:0.7em;
+}
+
+#adButton{
+  float : right;
+ color: #888;
+ font-weight:bold;
+ font-size:0.8em;
+ font-family: Verdana;
+ text-align: right;
+ cursor: pointer;
+ text-decoration: underline;
+}
+
+
+#adLogo{
+ max-width: 239;
+  width: 239;
+  height : 68px;
+}
+
+#primaryApp{
+  float : left;
+  width : 543px;
+  height : 307px;
+}
+
+#secondaryApp{
+  float : right;
+  width : 367px;
+  height : 307px;
+}
+
+.mockContent{
+  position : relative;
+  background-color : #A6240F;
+  padding : 10px;
+ font-family: Verdana;
+}
+
+.mockContent > div, .mockContent > h1, .mockContent > p {
 }
 </style>
 
 <script>
-window.sampleAdDim = {b: 415};
+function preCollapse(){
+ collapseAd();
+}
+
+window.adExpandedDim = {l:0, r:970, t:0, b:415, h:415, w:970, push:true};
+window.adCollapsedDim = {h:90,w:970};
 </script>
 
-<a href="javascript:collapseAd();" onclick="collapseAd();return false;"><img src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/pushdown_expanded_ad.png"
-	id="adImage"
-	style="width:960px;height:415px;border:0;margin-left:auto;margin-right:auto" /></a>
+<div id="collapsedAd" onclick="expandAd()" style="display: none;">
+ <!-- Pushdown Teaser -->
+ <div id="adTeaser" class="mockContent">
+   <h1>Teaser</h1>
+  <span id="adButton">Expand
+   <img src="https://s3-us-west-2.amazonaws.com/safeframe/examples/IAB_RisingStars/AdFiles/downarrow.png">
+  </span>
+ </div>
+</div>
 
-<script src="https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/billboard_adfiles/adScriptBehavior.js"></script>
+<div id="expandedAd" onclick="collapseAd()" style="display: block;">
+ <!-- Expanded View -->
+ <!-- Divs
+ <div id="adLogo" class="mockContent" style="max-width: 239px;">
+  Logo
+ </div>
+
+ <div>
+  <div id="primaryApp" class="mockContent">
+  Primary App
+  </div>
+
+  <div id="secondaryApp" class="mockContent">
+  Secondary App
+  </div>
+ </div>-->
+ <img src="https://s3-us-west-2.amazonaws.com/safeframe/examples/IAB_RisingStars/AdFiles/pushdown_expanded_ad.png">
+</div>
+
+<script src="https://s3-us-west-2.amazonaws.com/safeframe/examples/IAB_RisingStars/AdFiles/adScriptBehavior.js"></script>
+
+
