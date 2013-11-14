@@ -44,13 +44,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		var head_el, err_tag;
 
 		try {
-			if (lib && lib.log && win == top) {
+			if(!lib) lib = (sf && sf.lib); // insure we have lib
+			
+			if (lib && lib.logger && win == top) {
 				if (is_err) {
 					lib.logger.error(msg);
 				} else {
 					lib.logger.log(msg);
 				}
 			} else {
+				// Append error message as comment to header
 				head_el 		= d.getElementsByTagName("head")[0];
 				err_tag			= d.createElement("script");
 				err_tag.type	= "text/plain";
@@ -206,6 +209,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			boot_positions 	= [],
 			idx 			= 0,
 			ret				= FALSE,
+			errMsg,
 			sf_host			= sf && sf.host,
 			sf_inline_conf	= sf_host && sf_host.conf,
 			script_tag, script_tag_par, script_tag_id, data, html, pos_obj, pos_conf, pos_dest_el,
@@ -215,6 +219,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			_log("SafeFrame base library not found",TRUE);
 			return ret;
 		}
+
+		if(!lib) lib = (sf && sf.lib); // insure we have lib
 
 		if (doing_auto_boot && has_booted) {
 			_log("Automatic boot already invoked");
@@ -262,7 +268,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					data = data();
 				} catch (err) {
 					data = NULL;
-					_log("Error parsing tag configuration " + err.message);
+					errMsg = "Error parsing tag configuration " + (err && err.message || '');
+					_log(errMsg, TRUE);
 					continue;
 				}
 
