@@ -90,6 +90,7 @@ top level domain from the host site.
 	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/js/lib/boot.js"></script>
 
 
+	<script src='sidekick_host.js'></script>
 
 		<script type="text/javascript">
 		function posMessageCallback(id, msgName, data){
@@ -101,6 +102,12 @@ top level domain from the host site.
 				}
 				msg.push("<br/>");
 				log.innerHTML += msg.join("");
+			}
+			else if(msgName === 'exp-ovr'){
+				animateExpand();
+			}
+			else if(msgName === 'collapse'){
+				animateRetract();
 			}
 		}
 		
