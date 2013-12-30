@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /**
  * @fileOverview This file contains the base library functionality need for both the publisher/host and vendor/client sides of the SafeFrames library.  Contains JavaScript language extensions and base level dom reading / manipulation
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
- * @version 1.0.2
+ * @version 1.0.3
 */
 
 
@@ -30,12 +30,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 if (window["$sf"]) {
 	try {
-		$sf.ver = "1-0-2";
+		$sf.ver = "1-0-3";
 	} catch (sf_lib_err) {
 
 	}
 } else {
-	var $sf = { ver: "1-0-2" };
+	var $sf = { ver: "1-0-3" };
 
 };
 
@@ -135,7 +135,8 @@ if (window["$sf"]) {
 		NUM_MIN 					= (-1 * NUM_MAX),
 		_es     					= (win && win.escape),
 		_ue     					= (win && win.unescape),
-		isIE						= (win && ("ActiveXObject" in win)),
+		isIE11 						= !(window.ActiveXObject) && "ActiveXObject" in window,
+		isIE						= !isIE11 && (win && ("ActiveXObject" in win)),
 		next_id						= 0,
 		useOldStyleAttrMethods		= FALSE,
 		gc_timer_id					= 0,
