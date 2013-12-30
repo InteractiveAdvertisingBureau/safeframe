@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @fileOverview This file contains JavaScript code that handles the HTML document where HTML is rendered for a SafeFrame, as well as defining the External Vendor/Client API.
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.0
+ * @version 1.0.3
 */
 
 
@@ -55,6 +55,10 @@ var NULL					= null,
     NOTIFY_FAILURE			= "failed",
 	NOTIFY_READ_COOKIE		= "read-cookie",
 	NOTIFY_WRITE_COOKIE		= "write-cookie",
+	STATUS_COLLAPSED 		= NOTIFY_COLLAPSED,
+	STATUS_EXPANDED 		= NOTIFY_EXPAND + 'ed',
+	STATUS_COLLAPSING		= 'collapsing',
+	STATUS_EXPANDING 		= NOTIFY_EXPAND + 'ing',
     OUR_TAG_CLS_NAME		= "sf",
     MAX_MSG_WAIT_TIME		= 4000,
 	DOM_WATCH_INTERVAL		= 3000,
@@ -1447,7 +1451,21 @@ var NULL					= null,
 	*/
 	function status()
 	{
-		return (pending_msg && pending_msg.cmd) || "";
+		if(pending_msg){
+			if(pending_msg.cmd == EXPAND_COMMAND) {
+				return STATUS_EXPANDING;
+			}
+			else if(pending_msg.cmd == COLLAPSE_COMMAND) {
+				return STATUS
+			}
+		}
+		
+		if(is_expanded){
+			return STATUS_EXPANDED;
+		}
+		else{
+			return STATUS_COLLAPSED
+		}
 	}
 
 	/**

@@ -117,7 +117,9 @@ var extern = window.extern || $sf.ext;
 
 	function collapseAd(){
 		var w = window, sf = w["$sf"], extern = sf && sf.ext, g, ex;
-					extern.collapse();
+		writeLog("Status before :" + extern.status());
+		extern.collapse();
+		writeLog("Status after :" + extern.status());
 	}
 
 	function adStatus(){
