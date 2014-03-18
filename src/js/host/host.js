@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @name $sf.host
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.0.2
+ * @version 1.1.0
  *
 */
 
@@ -52,6 +52,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		NOTIFY_EXPAND			= "expand",
 		NOTIFY_GEOM_UPDATE		= "geom-update",
 		NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
+		NOTIFY_FOCUS_CHANGE		= "focus-change",
 		DEFAULT_ZINDEX			= 3000,
 		OBJ						= "object",
 		FUNC					= "function",
@@ -134,6 +135,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		html5Bound				= FALSE,
 		win_events_attached		= FALSE,
 		geom_update_timer		= 0,
+		focus_update_timer		= 0,
 		current_status			= NULL,
 		msghostfb				= NULL,
 		flash_ver 				= NULL,
@@ -1883,7 +1885,40 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     		geom_update_timer = 0;
     	}
     }
+	
+	/**
+	 * Clear the timer that fires every so often to update the geometry in side
+	 * of SafeFrames
+	 *
+	 * @name $sf.host-_clear_geom_update_timer
+	 * @static
+	 * @private
+	 * @function
+	 *
+	*/
+    function _clear_focus_update_timer()
+    {
+    	if (focus_update_timer) {
+    		clearTimeout(focus_update_timer);
+    		focus_update_timer = 0;
+    	}
+    }
 
+	/**
+	 * Set up the timer function that updates each SafeFrame with up to date geometric information
+	 *
+	 * @name $sf.host-_set_geom_update_timer
+	 * @static
+	 * @private
+	 * @function
+	 *
+	*/
+    function _set_focus_update_timer(in_focus)
+    {
+    	_clear_focus_update_timer();
+		focus_update_timer = setTimeout(function() { _update_focus(in_focus); }, 2);
+    }
+	
 	/**
 	 * Set up the timer function that updates each SafeFrame with up to date geometric information
 	 *
@@ -2009,6 +2044,58 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	    	}, GEOM_UPDATE_INTRVAL);
 		}
 	}
+	
+	/**
+     * Update all SafeFrames with updated focus information
+     *
+     * @name $sf.host-_update_focus
+     * @static
+     * @private
+     * @function
+     * @param {Boolean} in_focus True when the window has gained focus
+     *
+    */
+
+    function _update_focus(in_focus)
+    {
+    	var posID, params, msgObj, id, ifr;
+    	for (posID in rendered_ifrs)
+    	{
+    		params 			= rendered_ifrs[posID];
+    		id				= (params && params.dest);
+    		ifr				= (id && _elt(id));
+    		if (ifr && params) {
+    			msgObj			= ParamHash();
+				data 			= ParamHash();
+    			msgObj.pos		= posID;
+    			msgObj.cmd		= data.cmd = NOTIFY_FOCUS_CHANGE;
+				msgObj.value	= in_focus;
+
+    			_fire_pub_callback(POS_MSG, posID, NOTIFY_FOCUS_CHANGE, in_focus);
+    			_send_response(params, msgObj);
+    		}
+    	}
+    	_clear_focus_update_timer();
+    }
+
+	
+	/**
+	* Handle the window focus event, which notifies ads of the change
+	*
+	*/
+	function _handle_win_focus(evt)
+	{
+		_set_focus_update_timer(TRUE);
+	}
+
+	/**
+	* Handle the window blur event, which notifies ads of the change
+	*
+	*/
+	function _handle_win_blur(evt)
+	{
+		_set_focus_update_timer(FALSE);
+	}
 
 	/**
 	 * Handle the window onscroll event, eventually leading to a geometric update
@@ -2061,6 +2148,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     		dom.detach(win, SCROLL, _handle_win_geom_scroll);
     		dom.detach(win, "resize", _handle_win_geom_resize);
     		dom.detach(win, "unload", _handle_unload);
+			dom.detach(win, "focus", _handle_win_focus);
+			dom.detach(win, "blur", _handle_win_blur);
+			
     		for (prop in scroll_parents_attached)
     		{
     			scr_handle = scroll_parents_attached[prop];
@@ -2860,6 +2950,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						name_params.html		= _es(pos.html);
 						name_params.geom		= _es(_build_geom(pos_id, dest_el));
 						name_params.src			= config.renderFile;
+						name_params.has_focus 	= lang.cstr(document.hasFocus());
 
 						css_txt[1]			= finalCSSPos;
 						css_txt[13]			= finalCSSEnd;
@@ -2868,6 +2959,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 							dom.attach(win, SCROLL, 	_handle_win_geom_scroll);
 							dom.attach(win, "resize", 	_handle_win_geom_resize);
 							dom.attach(win, "unload",	_handle_unload);
+							dom.attach(win, "focus", _handle_win_focus);
+							dom.attach(win, "blur", _handle_win_blur);
+
 							win_events_attached = TRUE;
 						}
 

@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @fileOverview This file contains JavaScript code that handles the HTML document where HTML is rendered for a SafeFrame, as well as defining the External Vendor/Client API.
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.0.3
+ * @version 1.1.0
 */
 
 
@@ -49,6 +49,7 @@ var NULL					= null,
     COLLAPSE_COMMAND 		= "collapse",
 	ERROR_COMMAND 			= "error",
     NOTIFY_GEOM_UPDATE		= "geom-update",
+	NOTIFY_FOCUS_CHANGE		= "focus-change",
     NOTIFY_EXPAND			= "expand",
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
     NOTIFY_COLLAPSED		= (NOTIFY_COLLAPSE + "d"),
@@ -97,6 +98,7 @@ var NULL					= null,
 	pending_msg					= NULL,
 	geom_info					= NULL,
 	pos_meta					= NULL,
+	win_has_focus 				= FALSE,
 	guid						= "",
 	host_cname					= "",
 	can_use_html5				= FALSE,
@@ -840,6 +842,7 @@ var NULL					= null,
 				host_cname		= render_params.host;
 				geom_info		= render_params.geom;
 				can_use_html5	= lang.cbool(render_params.html5);
+				win_has_focus 	= lang.cbool(render_params.has_focus);
 				temp			= render_conf.bg;
 
 				if (geom_info) {
@@ -1039,6 +1042,11 @@ var NULL					= null,
 		else if (cmd == NOTIFY_GEOM_UPDATE) {
 			_fire_sandbox_callback(NOTIFY_GEOM_UPDATE);
 		} 
+		else if (cmd == NOTIFY_FOCUS_CHANGE) {
+			data.info = data.value = lang.cbool(data.value);
+			win_has_focus = data.value;
+			_fire_sandbox_callback(NOTIFY_FOCUS_CHANGE, data);
+		}
 		else if (cmd == NOTIFY_READ_COOKIE) {
 			ret		= TRUE;
 			if (pending_msg) {
@@ -1530,6 +1538,10 @@ var NULL					= null,
 		}
 		return tv;
 	}
+	
+	function winHasFocus(){
+		return win_has_focus;
+	}
 
 	/**
 	 * Return whether or not a particular feature is supported, or an object containing
@@ -1591,7 +1603,8 @@ var NULL					= null,
 					supports:	supports,
 					cookie: 	cookie,
 					message: 	message,
-					inViewPercentage: inViewPercentage
+					inViewPercentage: inViewPercentage,
+					winHasFocus: winHasFocus,
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?

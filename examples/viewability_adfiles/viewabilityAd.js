@@ -1,7 +1,11 @@
-document.write('<div id="viewInfo" style="height:20px;font-weight:bold;color:blue;font-family:Arial;"></div>');
+document.write('<div style="height:20px;">');
+document.write('<span id="viewInfo" style="height:20px;font-weight:bold;color:blue;font-family:Arial;"></span>');
+document.write('<span id="focusInfo" style="height:20px;font-weight:bold;color:blue;font-family:Arial;"></span>');
+document.write('</div>');
 document.write('<div id="feedback" style="height:40px;background:#333;color:yellow;overflow:auto;" ></div>');
 //document.write('<button onclick="testSupports()">sf.ext.supports</button>');
 document.write('<button onclick="testGeometry()">sf.ext.geom</button>');
+document.write('<button onclick="updateHasFocusDisplay()">Has Focus</button>');
 //document.write('<button onclick="windowGeometry()">window geom</button>');
 document.write('<button onclick="getViewableAmount()">percent_viewable</button>');
 document.write('</div>');
@@ -36,6 +40,13 @@ var sfAPI = extern;
 		var elem = document.getElementById("viewInfo");
 		elem.innerHTML = "Viewable: " + totalViewable + "%";
 	}
+	
+	function updateHasFocusDisplay(){
+		var hf = extern.winHasFocus();
+		var elem = document.getElementById('focusInfo');
+		var str = "Focus: " + hf;
+		elem.innerHTML = str;
+	}
 
 	function status_update(status, data)
 	{
@@ -44,6 +55,9 @@ var sfAPI = extern;
 		} 
 		else if (status == "geom-update") {
 			updateInViewDisplay();
+		}
+		else if (status == "focus-change"){
+			updateHasFocusDisplay();
 		}
 		else if (status == "read-cookie") {
 			writeLog("Read Cookie: " + data.value);
