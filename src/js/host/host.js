@@ -2094,7 +2094,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	*/
 	function _handle_win_blur(evt)
 	{
-		_set_focus_update_timer(FALSE);
+		var f = win[DOC].hasFocus();
+		_set_focus_update_timer(f);
 	}
 
 	/**
