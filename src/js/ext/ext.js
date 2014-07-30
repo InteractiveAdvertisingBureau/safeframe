@@ -1540,7 +1540,7 @@ var NULL					= null,
 	}
 	
 	function winHasFocus(){
-		return win_has_focus;
+		return win_has_focus || document.hasFocus();
 	}
 
 	/**
