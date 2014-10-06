@@ -127,6 +127,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		rendered_ifrs			= {},
 		msg_pipes				= {},
 		ifr_dest_id_map 		= {},
+		initID,
 		pending_ifrs			= {},
 		complete_ifrs			= {},
 		scroll_parents_attached	= {},
@@ -3035,6 +3036,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			/** @ignore */
 			(function() {
 				var e;
+				
 				if (lang) {
 					lang.def("msghost",
 					{

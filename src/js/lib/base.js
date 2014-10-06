@@ -163,6 +163,7 @@ if (window["$sf"]) {
 
 		_cstr, _cnum, _callable,
 		lang, dom,
+		iframes, logger, info,
 
 		/* public functions that are dynamically defined based on whether IE is being used */
 

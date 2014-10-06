@@ -213,7 +213,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			sf_host			= sf && sf.host,
 			sf_inline_conf	= sf_host && sf_host.conf,
 			script_tag, script_tag_par, script_tag_id, data, html, pos_obj, pos_conf, pos_dest_el,
-			pos_meta, pos_meta_item, typ, shared_meta, prv_meta, prv_meta_key, meta_key, sf_ocnf, err;
+			pos_meta, pos_meta_item, typ, shared_meta, prv_meta, prv_meta_key, meta_key, sf_conf, err;
 
 		if (!sf || !lang || !dom) {
 			_log("SafeFrame base library not found",TRUE);
