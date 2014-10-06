@@ -146,22 +146,22 @@ Keys MUST be inside double quote marks.  Javascript allows a much looser syntax 
 		}
 		
 		function startRenderCallback(posConf){
-			var id = posConf && posConf.id || "unknown";
+			var id = posConf && posConf.id || posConf || "unknown";
 			var fb = document.getElementById("feedback");
 			fb.innerHTML += "onStartPosRender called for " + id + " <br />"
 		}
 		function endRenderCallback(status, posConf){
-			var id = posConf && posConf.id || "unknown";
+			var id = posConf && posConf.id || posConf || "unknown";
 			var fb = document.getElementById("feedback");
 			fb.innerHTML += "onEndPosRender called for " + id + " - result: " + status + " <br />"
 		}
 		function beforePosMessageCallback(posConf){
-			var id = posConf && posConf.id || "unknown";
+			var id = posConf && posConf.id || posConf || "unknown";
 			var fb = document.getElementById("feedback");
 			fb.innerHTML += "onBeforePosMsg called for " + id + " <br />"
 		}
 		function posMessageCallback(posConf){
-			var id = posConf && posConf.id || "unknown";
+			var id = posConf && posConf.id || posConf || "unknown";
 			var fb = document.getElementById("feedback");
 			fb.innerHTML += "onPosMsg called for " + id + " <br />"
 		}
