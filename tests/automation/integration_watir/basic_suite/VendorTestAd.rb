@@ -1,6 +1,8 @@
 
 class VendorTestAd
 	attr_reader :clear_btn
+	attr_reader :supports_btn
+	attr_reader :geom_btn
 	attr_reader :log_elem
 	
 	
@@ -17,6 +19,8 @@ class VendorTestAd
 				
 		@frame = b.iframe(:id => @id)
 		@clear_btn = @frame.button(:class => 'clearBtn')
+		@supports_btn = @frame.button(:class => 'ext_supports')
+		@geom_btn = @frame.button(:class => 'ext_geom')
 		@log_elem = @frame.div(:id => 'feedback')
 	end
 	
@@ -28,6 +32,18 @@ class VendorTestAd
 	
 	def log_text
 		return @log_elem.text
+	end
+	
+	def supports_output
+		clear_log
+		@supports_btn.click
+		return log_text
+	end
+
+	def geom_output
+		clear_log
+		@geom_btn.click
+		return log_text
 	end
 	
 	private

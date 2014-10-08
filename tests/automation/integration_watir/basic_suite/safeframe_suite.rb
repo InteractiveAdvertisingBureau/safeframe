@@ -54,6 +54,8 @@ describe "an integration test of SafeFrame" do
   browser.goto(testpage_url "external_methods_test.html")
   
   describe "that we start on external methods test page" do
+	ad = VendorTestAd.new(browser, 'tgtLREC2')
+		
 	before(:each) do
 		
 	end
@@ -64,7 +66,6 @@ describe "an integration test of SafeFrame" do
 	
 	it "should clear ad log" do
 		b = browser
-		ad = VendorTestAd.new(b, 'tgtLREC2')
 		ad.log_text.should include('META-CONTENT initialized')
 		ad.clear_log
 		ad.log_text.should_not include('META-CONTENT initialized')
@@ -73,6 +74,27 @@ describe "an integration test of SafeFrame" do
 	it "should not have an Error" do
 		b = browser
 		b.text.should_not include('Error')
+	end
+	
+	it "should support overlay expansion" do
+		supports = ad.supports_output
+		supports.should include("exp-ovr: 1");
+		supports.should include("exp-push: 0");
+	end
+	
+	it "should have geometry data" do
+		geom = ad.geom_output
+		geom.should_not include("Geometry missing");
+		geom.should include("win");
+		geom.should include("par");
+		geom.should include("self");
+	end
+	
+	it "should report correct ad width in geom" do
+		geom = ad.geom_output
+		geom.should_not include("Geometry missing");
+		geom.should include("self");
+		geom.should include("w: 400, h: 450");
 	end
   end
 

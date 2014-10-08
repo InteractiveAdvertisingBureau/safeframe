@@ -1,6 +1,6 @@
 document.write('<div style="background:lightblue;height:450px;width:400px;">');
-document.write('<button onclick="testSupports()">extern.supports</button>');
-document.write('<button onclick="testGeometry()">extern.geom</button>');
+document.write('<button class="ext_supports" onclick="testSupports()">$sf.ext.supports</button>');
+document.write('<button class="ext_geom" onclick="testGeometry()">$sf.ext.geom</button>');
 document.write('<button onclick="windowGeometry()">window geom</button>');
 document.write('<button onclick="expandAd()">extern.expand</button>');
 document.write('<button onclick="collapseAd()">extern.collapse</button>');
