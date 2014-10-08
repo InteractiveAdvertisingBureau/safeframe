@@ -1,0 +1,25 @@
+
+
+1. Test frame ad load - tags
+2. Frame ad load - scripted
+3. Ad load, nuke, reload
+4. Render style mechanisms
+   a. HTML string
+   b. Script source
+   c. URL to script
+5. Multiple (3-5) ad rendering
+6. Multiple nuke (2 of 5 - targeted)
+7. Host Page events - single ad
+   a. onBeforePosMsg
+   b. onEndPosRender
+   c. onFailure
+   d. onPosMsg
+   e. onStartPosRender
+   
+8. $sf.host.status
+   a. check various states
+
+
+
+
+
