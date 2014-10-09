@@ -4,19 +4,33 @@
 	<title>SafeFrame Vendor method tests</title>
 	<style type="text/css">
 
-		BODY,HTML { margin:0px; padding: 0px; line-height: 1.5em; }
+		BODY,HTML { 
+			margin:0px; padding: 0px; line-height: 1.5em; 
+			font-family: Arial;
+		}
+		
+		h1{
+			margin: 0 3px;
+			font-size: 1.3em;
+		}
+		
+		.floatRight{
+			float: right;
+		}
+		.floatLeft{
+			float: left;
+		}
+		
+		.relative{
+			position: relative;
+		}
+		
+		.mainBody{
+			margin-right: 15px;
+			margin-left: 25px;
+		}
 
-		#header { background: #EAEAEA; height: 90px; }
-		#header h1 { margin: 0px; padding-top: 15px; }
-
-		#main_wrapper { float: left; width: 100%; }
-
-		#main {  margin: 0 450px 0 450px; }
-
-
-		#left_col { width: 450px;  position:absolute; left:0px; top: 90px; background: #C8FC98; }
-
-		#right_col { float: left; width: 450px; margin-left: -450px; background: #FDE95E; }
+		#left_col { width: 450px;  background: #C8FC98; }
 
 		#footer { clear: left; width: 100%; background: black; color: #FFF; text-align: center; padding: 4px 0; }
 
@@ -42,15 +56,15 @@
 		</style>
 	</head>
 	<body>
-		<div id="wrap">
-			<div id="header"><h1>SafeFrame External method tests</h1></div>
-			<div id="main_wrapper">
-				<div id="main">
+			<div id="header"><h1>SafeFrame External method tests</h1>
+			<button onclick="viewportDimensions()" id="viewportSizeBtn" type="button">Inner Size</button> <span id="dataOutput"></span>
+			</div>
+			<hr style="clear:both;"/>
+			<div class="relative">
+				<div class="mainBody floatRight">
 					<div id="feedback_wrapper"><div id="feedback" ></div></div>
 				</div>
-			</div>
-
-			<div id="left_col">
+				<div id="left_col" class="floatLeft">
 				<div id='tgtLREC2'>
 					<script type='text/x-safeframe' class='sf_data'>
 						{
@@ -78,11 +92,8 @@
 					</script>
 				</div>
 			</div>
-			<div id="footer">
-
-
 			</div>
-		</div>
+
 		<!-- NOTE: For testing we are hosting in same domain. In production this should be a CDN on a different domain -->
 		<script type="text/javascript" src="/src/js/lib/base.js"></script>
 		<script type="text/javascript" src="/src/js/host/host.js"></script>
@@ -137,6 +148,15 @@
 				el.className = ""
 				//s = el.style;
 				//s.position = "inline";
+			}
+			
+			function viewportDimensions(){
+				var el = document.getElementById("dataOutput");
+				var s;
+				
+				s = "w: " + window.innerWidth + ", h: " + window.innerHeight
+				
+				el.innerHTML = s;				
 			}
 
 

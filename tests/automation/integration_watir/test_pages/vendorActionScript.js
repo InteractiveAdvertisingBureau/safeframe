@@ -133,7 +133,7 @@ var extern = window.extern || $sf.ext;
 	}
 
 	function adStatus(){
-		writeLog("sf.extern.status(): " + extern.status());
+		writeLog(extern.status());
 	}
 
 	function externMeta(){
@@ -168,11 +168,8 @@ var extern = window.extern || $sf.ext;
 	}
 
 	function getViewableAmount(){
-		var geom = extern.geom();
-		var iv = geom.self.iv;
-		iv = new Number(iv);
-		var totalViewable = iv * 100;
-		writeLog("Percent in view: " + totalViewable + "%");
+		var viewable = $sf.ext.inViewPercentage();
+		writeLog(viewable);
 	}
 
 

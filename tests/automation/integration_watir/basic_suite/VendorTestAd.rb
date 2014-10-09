@@ -3,6 +3,8 @@ class VendorTestAd
 	attr_reader :clear_btn
 	attr_reader :supports_btn
 	attr_reader :geom_btn
+	attr_reader :inview_btn 
+	attr_reader :status_btn
 	attr_reader :log_elem
 	
 	
@@ -22,6 +24,10 @@ class VendorTestAd
 		@supports_btn = @frame.button(:class => 'ext_supports')
 		@geom_btn = @frame.button(:class => 'ext_geom')
 		@log_elem = @frame.div(:id => 'feedback')
+		@inview_btn = @frame.button(:class => 'ext_inviewpercentage')
+		@status_btn = @frame.button(:class => 'ext_status')
+		@expand_btn = @frame.button(:class => 'ext_expand')
+		@collapse_btn = @frame.button(:class => 'ext_collapse')
 	end
 	
 	def clear_log
@@ -32,6 +38,20 @@ class VendorTestAd
 	
 	def log_text
 		return @log_elem.text
+	end
+	
+	def expand
+		@expand_btn.click
+		Watir::Wait.until{
+			@log_elem.text.include? "expanded"
+		}
+	end
+	
+	def collapse
+		@collapse_btn.click
+		Watir::Wait.until{
+			@log_elem.text.include? "collapsed"
+		}
 	end
 	
 	def supports_output
