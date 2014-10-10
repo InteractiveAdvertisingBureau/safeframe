@@ -11,6 +11,7 @@ Install the *gem* packages required to run the automation.
         gem install watir-webdriver
 		gem install bundler
 		gem install page-object
+		gem install watir-scroll
 
 If you are running a Windows environment, be sure to install ansicon.
 https://github.com/adoxa/ansicon/downloads

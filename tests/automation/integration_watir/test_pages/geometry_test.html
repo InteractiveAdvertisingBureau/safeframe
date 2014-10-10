@@ -25,26 +25,43 @@
 			position: relative;
 		}
 		
-		.mainBody{
-			margin-right: 15px;
-			margin-left: 25px;
+		.margin-rb{
+			margin-right:10px;
+			margin-bottom: 10px;
 		}
-
-		#left_col { width: 450px;  background: #C8FC98; }
-
-		#footer { clear: left; width: 100%; background: black; color: #FFF; text-align: center; padding: 4px 0; }
-
-		#feedback_wrapper { width:100%; margin-left: auto; margin-right:auto; text-align: center; }
+		
+		.contentSection{
+			height: 500px;
+			background: #efe;
+			clear: both;
+		}
+		
+		#header {
+			height: 200px;
+			overflow: hidden;
+			position: relative;
+		}
+		
 		#feedback
 		{
-			width: 460px;
-			height: 300px;
+			padding: 3px;
+			position: absolute;
+			right: 1px;
+			top: 0;
+			width: 360px;
+			height: 100%;
 			overflow: auto;
-			border: 1px solid red;
+			border: 0;
 			color: green;
 			background: #333;
 			text-align:left;
 			display:inline-block;
+		}
+		
+		.footer{
+			clear: both;
+			background: #eee;
+			height: 350px;
 		}
 
 
@@ -56,14 +73,25 @@
 		</style>
 	</head>
 	<body>
-			<div id="header"><h1>SafeFrame External method tests</h1>
-			<button onclick="viewportDimensions()" id="viewportSizeBtn" type="button">Inner Size</button> <span id="dataOutput"></span>
+			<div id="header" >
+			<h1>SafeFrame Geometry tests</h1>
+			<button onclick="viewportDimensions()" id="viewportSizeBtn" type="button">Viewport Size</button>
+			<button onclick="windowDimensions()" id="windowSizeBtn" type="button">Window Size</button> 
 			<button onclick="clearHostLog()" id="clearLogBtn" type="button">Clear Host Log</button>
+			<span id="dataOutput"></span>
+			
+			<div id="feedback_wrapper"><div id="feedback" ></div></div>
+
 			</div>
 			<hr style="clear:both;"/>
 			<div class="relative">
-				<div id="left_col" class="floatLeft">
-				<div id='tgtLREC2'>
+				<div class="floatLeft margin-rb" ><div id='tgtLREC2'></div></div>
+				<p>
+Vulputate leo phasellus turpis. Eros massa lorem tortor massa ipsum vestibulum, etiam tortor venenatis porta eu, est felis, lacus suspendisse mauris consectetuer ullamcorper elementum, massa mauris. Ac dolor ac enim modi nunc, vitae quis, dapibus in nonummy, ac dictum. Tempus varius curabitur ut, nulla imperdiet nibh vehicula. Risus amet donec sed, rutrum velit. Sollicitudin dolor sollicitudin dolor eget, dolor a dapibus pede maecenas pellentesque, velit nunc proin.
+</p>
+<p>
+Sit adipiscing semper id in pellentesque, in sodales turpis, elit eu ullamcorper, ultrices suspendisse et, iaculis ac wisi arcu. Montes varius in velit consequat cras, volutpat taciti scelerisque amet. Eros imperdiet id, tempor in, porttitor magna eget sed cursus auctor eget, lorem sagittis, pellentesque wisi. Nulla neque urna sed risus, quis metus feugiat massa, sapien hendrerit dolor gravida porttitor donec cursus, pellentesque et, sodales tortor eget nec. Id sed sodales ipsum amet tristique, vitae lacus cursus in et. Vitae magna, blandit ut, in ut dui turpis pede urna lacus. Nibh purus. Reprehenderit ut posuere donec nibh vitae turpis, et odio. Ornare tortor, habitasse lectus consequat volutpat. Donec non. Justo et nunc sed id consequat.
+				</p>				
 					<script type='text/x-safeframe' class='sf_data'>
 						{
 							"id":		"ad2LREC",
@@ -89,13 +117,21 @@
 						}
 					</script>
 				</div>
-			</div>
+			
 
-				<div class="mainBody floatRight">
-					<div id="feedback_wrapper"><div id="feedback" ></div></div>
-				</div>
 			</div>
+			
+			<div class="contentSection">... more content here</div>
 
+			<div class='footer'>
+<p>
+			Lorem ipsum dolor sit amet, scelerisque urna ut et ac quam. Purus odio et diam pellentesque ridiculus, hac libero, curabitur diam id facilisi eu. At ut. Integer cras vitae in duis, nibh neque ac etiam sed nonummy lacinia. Sollicitudin non tincidunt sed, nibh fermentum vel lacus. Velit proin vestibulum tristique sit, et natoque justo venenatis cras felis. Vel nam auctor nunc etiam, turpis viverra pede parturient ac lacus eros, curabitur eu, tristique orci, lacus elit in aliquam. Dapibus vivamus sed hymenaeos suspendisse, nisl lorem. Duis mi dictum nonummy, molestie phasellus est velit libero adipiscing proin. Metus sit orci sapien viverra, felis nibh sapien et ut, gravida tellus sit ornare. Malesuada risus sed non pharetra, sollicitudin amet egestas, cursus tortor. Fuga amet sodales ut quis, arcu massa tempor lacus.
+			</p>
+			<p>
+Rhoncus venenatis nulla aenean libero pede ac, velit ac, feugiat elit massa praesent montes erat neque, ac wisi, nibh faucibus fringilla felis nihil. A fringilla voluptates, sit a lacinia elementum rutrum augue, aliquam rhoncus dignissim magna quisque eleifend phasellus, vel viverra velit duis vitae augue fringilla. Odio in viverra faucibus risus, non et velit sed massa, in diam, turpis felis, neque et nullam. Nisl elit. Vel nulla lorem cursus ac nulla, imperdiet nunc ut volutpat et. Id est aenean vivamus, eros at sapien sed, habitant laoreet, et enim accumsan, et lorem nunc. Sit enim vehicula ut pulvinar integer, ipsum curae ligula eu quam, vitae ad quis eget lectus, ullamcorper parturient eu congue nulla sed congue, pretium risus pharetra a. Wisi purus eget elit, in eleifend blandit, nec erat dui eget.
+</p>
+			</div>
+			
 		<!-- NOTE: For testing we are hosting in same domain. In production this should be a CDN on a different domain -->
 		<script type="text/javascript" src="/src/js/lib/base.js"></script>
 		<script type="text/javascript" src="/src/js/host/host.js"></script>
@@ -155,9 +191,14 @@
 			function viewportDimensions(){
 				var el = document.getElementById("dataOutput");
 				var s;
-				
 				s = "w: " + window.innerWidth + ", h: " + window.innerHeight
-				
+				el.innerHTML = s;				
+			}
+			
+			function windowDimensions(){
+				var el = document.getElementById("dataOutput");
+				var s;
+				s = "w: " + window.outerWidth + ", h: " + window.outerHeight
 				el.innerHTML = s;				
 			}
 			

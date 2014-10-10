@@ -36,6 +36,17 @@ class VendorTestAd
 		end
 	end
 	
+	def execute_script(script)
+		@frame.execute_script script	
+	end
+	
+	
+	def inview_amount
+		execute_script('getViewableAmount()')
+		val = log_text.to_i
+		return val
+	end
+	
 	def log_text
 		return @log_elem.text
 	end

@@ -168,6 +168,7 @@ var extern = window.extern || $sf.ext;
 	}
 
 	function getViewableAmount(){
+		clearLog()
 		var viewable = $sf.ext.inViewPercentage();
 		writeLog(viewable);
 	}
