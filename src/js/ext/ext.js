@@ -864,7 +864,7 @@ var NULL					= null,
 
 				if (temp != "_top") {
 
-					while (_purge(_tags("base")[0]));
+					while (_purge(_tags("base")[0])){}
 
 					el = dom.make("base");
 					_attr(el,"target",temp);
@@ -1604,7 +1604,7 @@ var NULL					= null,
 					cookie: 	cookie,
 					message: 	message,
 					inViewPercentage: inViewPercentage,
-					winHasFocus: winHasFocus,
+					winHasFocus: winHasFocus
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?

@@ -164,12 +164,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @constructor
 	 * @public
 	 * @param {Object} conf An object containing properties for configuration
-	 * @param {Boolean} [conf.auto] Whether or not to have SafeFrames automatically boostrap an render any SafeFrames tags within the page
-	 * @param {String} conf.cdn The protocol,host name, and port parts of a URI, that is a 2ndary origin, used with SafeFrames to render content. For example JS files would be loaded from conf.cdn+"/"+conf.root+"/"+conf.version+"/[filename]"
-	 * @param {Boolean} [conf.debug] Whether or not debug mode is on or off
-	 * @param {String} conf.root The root path part of the URI that is a 2ndary origin, used with SafeFrames to render content. For example the HTML file for rendering content into would beloaded from conf.cdn+"/"+conf.root+"/"+conf.version+"/"+conf.renderFile
-	 * @param {String} conf.renderFile The filename (may also include path info), for which to render content into via a SafeFrame.
-	 * @param {String} [conf.msgFile] The filename (may also include path info), for which to use as a proxy for x-domain messaging whenever HTML5 messaging is not available. Only required if supporting older browsers.
+	 * @param {boolean} [conf.auto] Whether or not to have SafeFrames automatically boostrap an render any SafeFrames tags within the page
+	 * @param {string} conf.cdn The protocol,host name, and port parts of a URI, that is a 2ndary origin, used with SafeFrames to render content. For example JS files would be loaded from conf.cdn+"/"+conf.root+"/"+conf.version+"/[filename]"
+	 * @param {boolean} [conf.debug] Whether or not debug mode is on or off
+	 * @param {string} conf.root The root path part of the URI that is a 2ndary origin, used with SafeFrames to render content. For example the HTML file for rendering content into would beloaded from conf.cdn+"/"+conf.root+"/"+conf.version+"/"+conf.renderFile
+	 * @param {string} conf.renderFile The filename (may also include path info), for which to render content into via a SafeFrame.
+	 * @param {string} [conf.msgFile] The filename (may also include path info), for which to use as a proxy for x-domain messaging whenever HTML5 messaging is not available. Only required if supporting older browsers.
 	 * @param {Number} [conf.to] The maximum amount of time in milliseconds to wait for a SafeFrame to finish rendering, defaults to 60 seconds.
 	 * @param {Function} [conf.onBeforePosMsg] A callback function that gets fired before any cancellable action is requested to be peformed from a a SafeFrame, such as expansion, etc.  Return true out of this callback function to cancel/disallow the action in question.
 	 * @param {Function} [conf.onPosMsg] A callback function that gets fired when an action requested by a SafeFrame is performed
@@ -239,18 +239,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @name $sf.host.PosConfig
 	 * @public
 	 * @constructor
-	 * @param {Object|String} posIDorObj The id of the $sf.host.PosConfig instance, or an object containing all settings that are to be used for the instance.
-	 * @param {String} [posIDorObj.id] The id of the $sf.host.PosConfig instance, if not specified one will be generated automatically.
-	 * @param {String} [posIDorObj.dest] The HTML element id attribute of the HTML element in the document where a SafeFrame will be rendered. Said element MUST exist within the page prior to a render.
-	 * @param {String} [posIDorObj.bg] The color of the background to be used inside the SafeFrame. Default equals "transparent".
-	 * @param {String} [posIDorObj.tgt] The name of the target window where hyperlinks inside a SafeFrame will navigate too...Note that "_self" is not allowed and always converted to "_top". Allowed values are any string value not prefixed with "_", or "_top" or "_blank".
-	 * @param {String} [posIDorObj.css] A string of CSS rules, or a URL that points to a CSS style sheet to be used inside the SafeFrame
+	 * @param {Object|string} posIDorObj The id of the $sf.host.PosConfig instance, or an object containing all settings that are to be used for the instance.
+	 * @param {string} [posIDorObj.id] The id of the $sf.host.PosConfig instance, if not specified one will be generated automatically.
+	 * @param {string} [posIDorObj.dest] The HTML element id attribute of the HTML element in the document where a SafeFrame will be rendered. Said element MUST exist within the page prior to a render.
+	 * @param {string} [posIDorObj.bg] The color of the background to be used inside the SafeFrame. Default equals "transparent".
+	 * @param {string} [posIDorObj.tgt] The name of the target window where hyperlinks inside a SafeFrame will navigate too...Note that "_self" is not allowed and always converted to "_top". Allowed values are any string value not prefixed with "_", or "_top" or "_blank".
+	 * @param {string} [posIDorObj.css] A string of CSS rules, or a URL that points to a CSS style sheet to be used inside the SafeFrame
 	 * @param {Number} [posIDorObj.w] The width of the SafeFrame, specified in pixels. Cannot be specified in em, % or another values.
 	 * @param {Number} [posIDorObj.h] The height of the SafeFrame, specified in pixels. Cannot be specified in em, % or another values.
-	 * @param {String} [posIDorObj.size] A string formated as "widthXheight", that defines the width and height of the SafeFrame. The delimiter character "X" is can be specified as lower or upper case.
-	 * @param {String} [posIDorObj.z] The z-index of the SafeFrame.
+	 * @param {string} [posIDorObj.size] A string formated as "widthXheight", that defines the width and height of the SafeFrame. The delimiter character "X" is can be specified as lower or upper case.
+	 * @param {string} [posIDorObj.z] The z-index of the SafeFrame.
 	 * @param {Object} [posIDorObj.supports] An object containing key/value pairs for what features/actions are supported by the SafeFrame, and its corresponding value represents a boolean detereming whether that feature can be used.  Currently supported keys are "exp-ovr" == SafeFrame can expand in overlay mode, "exp-push" == SafeFrame can expand in push mode, and "bg" == SafeFrame can change the background of the publisher / host.
-	 * @param {String} [destID] The HTML element id attribute of the HTML element in the document where a SafeFrame will be rendered. Said element MUST exist within the page prior to a render.
+	 * @param {string} [destID] The HTML element id attribute of the HTML element in the document where a SafeFrame will be rendered. Said element MUST exist within the page prior to a render.
 	 * @param {Object} [baseConf] An object representing a $sf.host.Config object to automatically use / create for the SafeFrames library. Note that baseConf can only be used one time, otherwise you have to use the $sf.host.Config object directly.
 	 *
 	*/
@@ -317,7 +317,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @constructor
 	 * @class
 	 * @param {Object} shared_object An object containing keys and values to be shared as meta-data inside the SafeFrame
-	 * @param {String} [owner_key] A key name to be used to hold pseudo private keys / values of meta data.
+	 * @param {string} [owner_key] A key name to be used to hold pseudo private keys / values of meta data.
 	 * @param {Object} [owned_obj] An object containing psuedo private keys and values to be shared as meta-data inside the SafeFrame.
 	 * @example
 	 * var shared_data 		 = {content_id:8978098,partner_id:99},
@@ -359,10 +359,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		 * A method retrieves a meta data value from this object.
 		 *
 		 * @exports get_value as $sf.host.PosMeta#value
-		 * @param {String} propKey The name of the value to retrieve
-		 * @param {String} [owner_key] The name of the owner key of the meta data value. By default, it is assumed to be shared, so nothing needs to be passed in unless looking for a specific proprietary value
+		 * @param {string} propKey The name of the value to retrieve
+		 * @param {string} [owner_key] The name of the owner key of the meta data value. By default, it is assumed to be shared, so nothing needs to be passed in unless looking for a specific proprietary value
 		 * @return {String|Number|Boolean}
-		 * @default {String} ""
+		 * @default {string} ""
 		 * @public
 		 * @function
 		 *
@@ -412,7 +412,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @function
 	 * @private
 	 * @static
-	 * @return {String}
+	 * @return {string}
 	 *
 	*/
 
@@ -484,14 +484,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		}
 		
 		return flash_ver;
-		
-		var getActiveXVersion = function(activeXObj){
-        var version = -1;
-        try{
-            version = activeXObj.GetVariable("$version");
-        }catch(err){}
-        return version;
-    };
 	}
 
 	/**
@@ -520,12 +512,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @constructor
 	 * @public
 	 * @param {Object|String} posIDorObj The id of the position which maps to its configuration, or an object represeting the various values of an $sf.host.Position instance.
-	 * @param {String} [posIDorObj.id] The id of the position which maps to its configuration.
-	 * @param {String} [posIDorObj.html] The HTML content to be rendered inside the SafeFrame. Note that HTML strings which have SCRIPT tags or other special characters may need to be properly escaped in order to avoid JavaScript syntax errors.
-	 * @param {String} [posIDorObj.src] An optional URL to be used for redering inside the SafeFrame which will automatically generate a SCRIPT tag with the specified URL.
+	 * @param {string} [posIDorObj.id] The id of the position which maps to its configuration.
+	 * @param {string} [posIDorObj.html] The HTML content to be rendered inside the SafeFrame. Note that HTML strings which have SCRIPT tags or other special characters may need to be properly escaped in order to avoid JavaScript syntax errors.
+	 * @param {string} [posIDorObj.src] An optional URL to be used for redering inside the SafeFrame which will automatically generate a SCRIPT tag with the specified URL.
 	 * @param {$sf.host.PosMeta} [posIDorObj.meta] An optional instance of the $sf.host.PosMeta object to be passed along into the SafeFrame
 	 * @param {Object} [posIDorObj.conf] An optional representation of an $sf.host.PosConfig object to be used as the configuration for the SafeFrame position.
-	 * @param {String} [html] The HTML content to be rendered inside the SafeFrame. Note that HTML strings which have SCRIPT tags or other special characters may need to be properly escaped in order to avoid JavaScript syntax errors.
+	 * @param {string} [html] The HTML content to be rendered inside the SafeFrame. Note that HTML strings which have SCRIPT tags or other special characters may need to be properly escaped in order to avoid JavaScript syntax errors.
 	 * @param {$sf.host.PosMeta} [meta] An optional instance of the $sf.host.PosMeta object to be passed along into the SafeFrame
 	 * @param {Object} [conf] An optional representation of an $sf.host.PosConfig object to be used as the configuration for the SafeFrame position.
 	 *
@@ -631,8 +623,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @private
      * @static
      * @function
-     * @param {String} val A css value of size
-     * @returns {Boolean}
+     * @param {string} val A css value of size
+     * @returns {boolean}
      *
     */
 
@@ -989,7 +981,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @function
 	 * @param {HTMLElement} element The HTMLElement reference to search within
 	 * @param {HTMLElement} needle The HTMLElement for which you want to check if its contained by the 1st parameter
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 *
 	*/
 
@@ -1026,9 +1018,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @static
 	 * @function
 	 * @param {HTMLElement} el The HTMLElement for which to retrieve style information
-	 * @param {String} [attr] The style attribute (in JavaScript notation, e.g. 'backgroundColor' rather than 'background-color') to fetch.
+	 * @param {string} [attr] The style attribute (in JavaScript notation, e.g. 'backgroundColor' rather than 'background-color') to fetch.
 	 * @return {HTMLStyleObject} An HTMLStyleObject containing all current style attribute values
-	 * @return {String} The value of an style attribute (only if attr parameter is specified).
+	 * @return {string} The value of an style attribute (only if attr parameter is specified).
 	 *
 	*/
 
@@ -1077,7 +1069,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @function
 	 * @param {HTMLElement} el The element for which to calculate information
 	 * @param {Object} [details] An object reference used as an output parameter in which further details about the boundaries of the element are specified
-	 * @param {Boolean} [check_3D] Check the element within 3 dimensional space such that any elements covering said element are also take into consideration
+	 * @param {boolean} [check_3D] Check the element within 3 dimensional space such that any elements covering said element are also take into consideration
 	 * @returns {Object} info An object containing information about the element boundaries
 	 *
 	*/
@@ -1511,7 +1503,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @private
 	 * @static
 	 * @function
-	 * @param {String} methName The method name in the msg host library to call
+	 * @param {string} methName The method name in the msg host library to call
 	 * @param {*} arg1 An arbitrary argument to pass to said method as the 1st arg
 	 * @param {*} arg2 An arbitrary argument to pass to said method as the 2nd arg
 	 * @param {*} arg3 An arbitrary argument to pass to said method as the 3rd arg
@@ -1591,9 +1583,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @public
 	 * @static
 	 * @function
-	 * @param {String} tgtID The HTML id attribute of the iframe element for which to send a message
-	 * @param {String} data The string of data to send to the given iframe
-	 * @returns {Boolean} Whether or not message was send succesfully (note that this does not mean message was handled / recevied, only that sending was ok).
+	 * @param {string} tgtID The HTML id attribute of the iframe element for which to send a message
+	 * @param {string} data The string of data to send to the given iframe
+	 * @returns {boolean} Whether or not message was send succesfully (note that this does not mean message was handled / recevied, only that sending was ok).
 	 *
 	*/
 
@@ -1636,7 +1628,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @public
 	 * @static
 	 * @function
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 *
 	*/
 
@@ -1680,10 +1672,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @static
 	 * @function
 	 * @param {Object} attrs Information required to set up the cross-domain messaging channel
-	 * @param {String} attrs.id The IFRAME HTML id attribute
-	 * @param {String} attrs.src The URL / src attribute of the IFRAME
-	 * @param {String} [attrs.guid] The guid / signature to use to validate that messages sent/ received can be accepted. If not specified, one will be created automatically.
-	 * @param {String} [attrs.name] The IFRAME HTML name attribute which will be used to send an intial message to the HTML document inside the IFRAME.
+	 * @param {string} attrs.id The IFRAME HTML id attribute
+	 * @param {string} attrs.src The URL / src attribute of the IFRAME
+	 * @param {string} [attrs.guid] The guid / signature to use to validate that messages sent/ received can be accepted. If not specified, one will be created automatically.
+	 * @param {string} [attrs.name] The IFRAME HTML name attribute which will be used to send an intial message to the HTML document inside the IFRAME.
 	 * @returns {Object} An object with various properties detailing the messaging pipe-line.
 	 *
 	*/
@@ -1815,7 +1807,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @static
 	 * @private
 	 * @function
-	 * @param {String} cb_name The callback name to fire
+	 * @param {string} cb_name The callback name to fire
 	 *
 	*/
 
@@ -1853,7 +1845,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @static
 	 * @private
 	 * @function
-	 * @param {String} pos_id The position id that has taken too long
+	 * @param {string} pos_id The position id that has taken too long
 	 *
 	*/
 
@@ -1946,7 +1938,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @private
      * @function
-     * @param {Boolean} is_win_scroll Whether or not we are updating due to the main window being scrolled
+     * @param {boolean} is_win_scroll Whether or not we are updating due to the main window being scrolled
      *
     */
 
@@ -2053,7 +2045,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @private
      * @function
-     * @param {Boolean} in_focus True when the window has gained focus
+     * @param {boolean} in_focus True when the window has gained focus
      *
     */
 
@@ -2180,7 +2172,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @private
      * @function
      * @param {String|Object} data the message to be handled
-     * @return {Boolean} return whether or not the message was handled
+     * @return {boolean} return whether or not the message was handled
      *
     */
 
@@ -2555,8 +2547,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame to collapse
-     * @param {Boolean} [isOutside] Whether or not the collapse command came from the publisher
-     * @param {Boolean} [noMsging] Whether or not to send a message of response back to the SafeFrame being collapsed
+     * @param {boolean} [isOutside] Whether or not the collapse command came from the publisher
+     * @param {boolean} [noMsging] Whether or not to send a message of response back to the SafeFrame being collapsed
      *
      *
     */
@@ -2670,7 +2662,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
-     * @param {Boolean} [isOutside] Whether or not the read-cookie command came from the publisher
+     * @param {boolean} [isOutside] Whether or not the read-cookie command came from the publisher
      *
      *
     */
@@ -2718,7 +2710,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
-     * @param {Boolean} [isOutside] Whether or not the write-cookie command came from the publisher
+     * @param {boolean} [isOutside] Whether or not the write-cookie command came from the publisher
      *
      *
     */
@@ -2771,7 +2763,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @static
 	 * @function
 	 * @public
-	 * @param {String} pos_id* One or more position ids to remove from the page. If no arguments are specifed, all positions currently rendered are removed.
+	 * @param {string} pos_id* One or more position ids to remove from the page. If no arguments are specifed, all positions currently rendered are removed.
 	 *
 	*/
 
@@ -3003,7 +2995,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @public
 	 * @function
 	 * @static
-	 * @return {String}
+	 * @return {string}
 	*/
 
 	function status()

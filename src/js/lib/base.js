@@ -897,7 +897,7 @@ if (window["$sf"]) {
 		 *
 		*/
 
-		def("$sf.env", 		{isIE:isIE});
+		def("$sf.env", {isIE: isIE} );
 
 		_cstr 		= cstr;
 		_cnum 		= cnum;
