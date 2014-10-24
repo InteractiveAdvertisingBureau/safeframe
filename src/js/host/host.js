@@ -49,10 +49,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		EXPAND_COMMAND 			= "exp-ovr",
 		COLLAPSE_COMMAND 		= "collapse",
 		ERROR_COMMAND 			= "error",
+		MESSAGE_COMMAND 		= "msg",
 		NOTIFY_EXPAND			= "expand",
 		NOTIFY_GEOM_UPDATE		= "geom-update",
 		NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
 		NOTIFY_FOCUS_CHANGE		= "focus-change",
+		NOTIFY_MESSAGE 			= MESSAGE_COMMAND,
 		DEFAULT_ZINDEX			= 3000,
 		OBJ						= "object",
 		FUNC					= "function",
@@ -2198,8 +2200,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						_collapse_safeframe(msgObj);
 						ret = TRUE;
 					break;
-					case "msg":
-						_fire_pub_callback(POS_MSG, msgObj.pos, "msg", msgObj.msg);
+					case MESSAGE_COMMAND:
+						_notify_message(msgObj);
 						ret = TRUE;
 					break;
 					case ERROR_COMMAND:
@@ -2598,7 +2600,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		ifr = ifrSt = par = parSt = params = msgObj = NULL;
     }
 	
-	
+    /**
+     * Notify publisher that a message has been sent and return the appropriate callback
+     *
+     * @name $sf.host-_record_error
+     * @private
+     * @static
+     * @function
+     * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame
+     *
+     *
+    */
+	function _notify_message(msgObj, noMsging){
+		var posID		= (msgObj && msgObj.pos),
+			params		= (posID && rendered_ifrs[posID]),
+			params_conf	= (params && params.conf),
+			id			= (params_conf && params_conf.dest),
+			ifr			= (id && _elt(id)),
+			par			= (ifr && _elt(POS_REL_BOX_ID_PREFIX + "_" + posID)),
+			ifrSt		= (ifr && ifr[ST]),
+			parSt		= (par && par[ST]),
+			scr_handle;
+			
+		_fire_pub_callback(POS_MSG, msgObj.pos, NOTIFY_MESSAGE, msgObj.msg);
+		
+		if (!noMsging) {
+			msgObj.cmd  	= "msg";
+			msgObj.geom		= _es(_build_geom(posID, ifr, TRUE));
+			_send_response(params, msgObj);
+		}
+	}
+
     /**
      * Records a reported error message to $sf.info.errors and fires any listeners
      *
