@@ -1,0 +1,119 @@
+<html>
+	<head>
+	<title>Safe Frame Sample 3.1.2.1 </title>
+
+	</head>
+	<body>
+<div id="top_leaderboard" style="height:90px;"></div>
+
+		<h1>Safe Frames Tag-at-once Sample</h1>
+		<h2>Spec sample 3.1.2.1</h2>
+
+
+
+
+<!-- type="text/x-safe-frame" -->
+<!-- 
+TAG based safe frames follow strict parsing rules imposed by window.JSON.parse.
+Keys MUST be inside double quote marks.  Javascript allows a much looser syntax for JSON objects
+-->
+<script type='text/plain' class='sf_data' id="sf_tag_1" >
+{
+	"id" : "ad1LREC",
+	"html" : "<div onclick='alert(\"Unsafe read? \" + window.frameElement.parentElement.id);' style='cursor:pointer;background:darkblue;color:white;height:100%;'><h1 >Hello World Leaderboard</h1></div>",
+	"conf" : 
+		{
+		"size" : "728x90",
+		"dest":	"top_leaderboard"
+		},
+	"meta" : 
+	{
+		"rmx": 
+		{
+			"sectionID" : "14800347", 
+			"siteID" : "140509"  
+		} 
+	} 
+} 
+</script> 
+
+<div style="clear:both;">SafeFrame 2 Below</div>
+
+
+<div id='tgtLREC'>
+			<script type='text/x-safeframe' class='sf_data'>
+				{
+					"id":		"ad2LREC",
+					"html":	"<sc" + "ript src=\"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&\" ></scr" + "ipt>" ,
+					"conf":
+					{
+						"w":		300,
+						"h":		250,
+					},
+					"meta":
+					{
+						"rmx":
+						{
+							"sectionID":	 "14800347",
+							"siteID":		 "140509"
+
+						}
+					}
+				}
+			</script>
+			<!-- b/c a "dest" tag exists (the overall div container) container tags will be rendered here -->
+			<!-- optional noscript section for fall back -->
+			<noscript>
+				<img src="http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&" width=300 height=250 />
+			</noscript>
+		</div>
+
+
+		
+<h4>SF 3</h4>
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"ad3LREC",
+		"src":	"http://ad.yieldmanager.com/imp?Z=300x250&cb=98098&S=14800347&i=140509&ycg=m&yyob=1990&zip=&_salt=3618426084&B=10&u=http%3A%2F%2Fsports.yahoo.com%2F&r=0&&o=4&",
+		"conf":
+		{
+			"w":		250,
+			"h":		250,
+			"dest":	"tgtLREC3"
+		},
+		"meta":
+		{
+			"rmx":
+			{
+				"sectionID":	 "14800347",
+				"siteID":		 "140509"
+
+			}
+		}
+	}
+</script>
+
+
+
+		<script type="text/javascript" src="../src/js/lib/base.js"></script>
+		<script type="text/javascript" src="../src/js/host/host.js"></script>
+		<script type="text/javascript" src="../src/js/lib/boot.js"></script>
+		
+		<script type="text/javascript">
+		/**
+		* Initialize a new SafeFrames publisher configuration
+		*/
+			(function() {
+				var conf	= new $sf.host.Config({
+					renderFile:		"../src/html/r.html",
+					positions: {}
+				});
+
+			})();
+		
+		
+		</script>
+		
+
+	</body>
+</html>

@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		<title>$sf.lib.lang.ParamHash | SafeFrames JS API</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<meta name="mobileoptimized" content="0" />
+	
+		<link rel="stylesheet" href="../css/all.css" media="all" />
+		<link rel="stylesheet" href="../css/handheld.css" media="only screen and (max-width: 660px)" />
+		<link rel="stylesheet" href="../css/handheld.css" media="handheld" />
+		<link rel="stylesheet" href="../css/screen.css" media="screen and (min-width: 661px)" />
+
+		<script src="../javascript/all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="../javascript/html5.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+<div class="index">
+	<div class="menu">
+		<div class="indexLinks">
+			
+		</div>
+
+		<h2 class="heading1">Classes</h2>
+
+		<input type="text" name="classFilter" class="classFilter" id="ClassFilter" placeholder="Filter"></input>
+
+		<nav>
+			<ul class="classList" id="ClassList">
+				
+					<li><a href="../symbols/%24sf.html">$sf</a></li>
+				
+					<li><a href="../symbols/%24sf.env.html">$sf<span class='break'> </span>.<span class='break'> </span>env</a></li>
+				
+					<li><a href="../symbols/%24sf.env.ua.html">$sf<span class='break'> </span>.<span class='break'> </span>env<span class='break'> </span>.<span class='break'> </span>ua</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.html">$sf<span class='break'> </span>.<span class='break'> </span>lib</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.dom.html">$sf<span class='break'> </span>.<span class='break'> </span>lib<span class='break'> </span>.<span class='break'> </span>dom</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.dom.iframes.html">$sf<span class='break'> </span>.<span class='break'> </span>lib<span class='break'> </span>.<span class='break'> </span>dom<span class='break'> </span>.<span class='break'> </span>iframes</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.dom.msghost.html">$sf<span class='break'> </span>.<span class='break'> </span>lib<span class='break'> </span>.<span class='break'> </span>dom<span class='break'> </span>.<span class='break'> </span>msghost</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.lang.html">$sf<span class='break'> </span>.<span class='break'> </span>lib<span class='break'> </span>.<span class='break'> </span>lang</a></li>
+				
+					<li><a href="../symbols/%24sf.lib.lang.ParamHash.html">$sf<span class='break'> </span>.<span class='break'> </span>lib<span class='break'> </span>.<span class='break'> </span>lang<span class='break'> </span>.<span class='break'> </span>ParamHash</a></li>
+				
+					<li><a href="../symbols/%24sf.pub.html">$sf<span class='break'> </span>.<span class='break'> </span>pub</a></li>
+				
+					<li><a href="../symbols/%24sf.pub.Config.html">$sf<span class='break'> </span>.<span class='break'> </span>pub<span class='break'> </span>.<span class='break'> </span>Config</a></li>
+				
+					<li><a href="../symbols/%24sf.pub.PosConfig.html">$sf<span class='break'> </span>.<span class='break'> </span>pub<span class='break'> </span>.<span class='break'> </span>PosConfig</a></li>
+				
+					<li><a href="../symbols/%24sf.pub.Position.html">$sf<span class='break'> </span>.<span class='break'> </span>pub<span class='break'> </span>.<span class='break'> </span>Position</a></li>
+				
+					<li><a href="../symbols/%24sf.vend.html">$sf<span class='break'> </span>.<span class='break'> </span>vend</a></li>
+				
+			</ul>
+		</nav>
+	</div>
+	<div class="fineprint" style="clear:both">
+		<footer>
+			
+			Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
+			Template: <a href="" target="_blank">Codeview</a> 1.2.1<br />
+			Generated on:
+			<time datetime='2012-7-6' pubdate>2012-7-6 16:05</time>
+		</footer>
+	</div>
+</div>
+
+<div class="index indexStatic"></div>
+
+<div class="content">
+	<div class="innerContent">
+		<article>
+			<header>
+				<h1 class="classTitle">
+					
+					Class <span>$sf.lib.lang.ParamHash</span>
+				</h1>
+
+				<div class="intro">
+					<p class="description summary">
+						Intantiable class used to convert a delimited string into an object.<br />
+For example querystrings: "name_1=value_1&name_2=value_2" ==> {name_1:value_1,name_2:value_2};<br/><br />
+
+Note that property values could also contain the same sPropDelim and sValueDelim strings.  Proper string encoding should occur
+to not trip up the parsing of the string.  Said values may be ascii escaped, and in turn, along with the <i><b>bRecurse</b></i> constructor parameter set to true, will cause nested ParamHash objects to be created.
+					</p>
+
+					
+						<ul class="summary">
+							
+
+							
+							
+						</ul>
+					
+				</div>
+			</header>
+
+			
+				<section>
+					<div class="props">
+						<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $sf.lib.lang.ParamHash.">
+							<caption class="sectionTitle">Class Summary</caption>
+							<thead>
+								<tr>
+									<th scope="col">Constructor Attributes</th>
+									<th scope="col">Constructor Name and Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription" >
+										<div class="fixedFont">
+											<b><a href="../symbols/%24sf.lib.lang.ParamHash.html#constructor">$sf.lib.lang.ParamHash</a></b>(sString, sPropDelim, sValueDelim, bNoOverwrite, bRecurse)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			
+
+			
+	<!--
+	#### METHODS SUMMARY
+	-->
+			
+				<section>
+					
+
+					<div class="props">
+						<h2 class="sectionTitle">Method Summary</h2>
+
+						
+							<nav>
+								<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class $sf.lib.lang.ParamHash.">
+									<thead>
+										<tr>
+											<th scope="col">Method Attributes</th>
+											<th scope="col">Method Name and Description</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										
+										
+											<tr
+												 class='item0'
+											>
+												<td class="attributes">&nbsp;</td>
+												<td class="nameDescription">
+													<div class="fixedFont"><b><a href="../symbols/%24sf.lib.lang.ParamHash.html#toString">toString</a></b>(sPropDelim, sValueDelim, escapeProp, dontEscapeValue)
+													</div>
+													<div class="description">Converts a ParamHash object back into a string using the property and value delimiters specifed (defaults to "&" and "=").</div>
+												</td>
+											</tr>
+										
+									</tbody>
+								</table>
+							</nav>
+						
+
+						
+					</div>
+				</section>
+			
+
+	<!--
+	#### EVENTS SUMMARY
+	-->
+			
+	<!--
+	#### CONSTRUCTOR DETAILS
+	-->
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle" id="constructor">
+								Class Detail
+							</h2>
+
+							<div class="fixedFont">
+								<b>$sf.lib.lang.ParamHash</b>(sString, sPropDelim, sValueDelim, bNoOverwrite, bRecurse)
+							</div>
+
+							<div class="description">
+								
+								
+							</div>
+
+							
+								
+									<pre class="code">var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1");
+alert(ph.x); // == 1
+alert(ph.y); // == 1
+alert(ph.z); // == 1</pre>
+								
+									<pre class="code">var ph = new $sf.lib.lang.ParamHash("x:1;y:2;z:3", ";", ":");
+alert(ph.x); // == 1
+alert(ph.y); // == 2
+alert(ph.z); // == 3</pre>
+								
+									<pre class="code">var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1&z=2");
+alert(ph.x); // == 1
+alert(ph.y); // 1
+alert(ph.z); //Note that z == 2 b/c of 2 properties with the same name</pre>
+								
+									<pre class="code">var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1&z=2",null,null,true); //null for sPropDelim and sValueDelim == use default values of "&" and "=" respectively
+alert(ph.x); // == 1
+alert(ph.y); // 1
+alert(ph.z); //Note that z == 1 b/c bNoOverwrite was set to true</pre>
+								
+									<pre class="code">//You can also do recursive processing if need be
+var points	= new $sf.lib.lang.ParamHash(),
+    point_1	= new $sf.lib.lang.ParamHash(),
+    point_2	= new $sf.lib.lang.ParamHash();
+
+point_1.x = 100;
+point_1.y = 75;
+
+point_2.x = 200;
+point_2.y = 150;
+
+points.point_1	= point_1;
+points.point_2	= point_2;
+
+var point_str	= points.toString();  // == "point_1=x%3D100%26y%3D75%26&point_2=x%3D200%26y%3D150%26&";
+var points_copy	= new $sf.lib.lang.ParamHash(point_str, null, null, true, true); //note passing true, b/c we want to recurse
+
+alert(points_copy.point_1.x) // == "100";</pre>
+								
+							
+
+							
+								<dl class="detailList params">
+									<dt class="heading">Parameters:</dt>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>sString</b>
+											<i>Optional</i>
+										</dt>
+										<dd>The delimited string to be converted</dd>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>sPropDelim</b>
+											<i>Optional, Default: "&"</i>
+										</dt>
+										<dd>The substring delimiter used to seperate properties. Default is "&".</dd>
+									
+										<dt>
+											<span class="light fixedFont">{String}</span>  <b>sValueDelim</b>
+											<i>Optional, Default: "="</i>
+										</dt>
+										<dd>The substring delimited used to seperate values.  Default is "=".</dd>
+									
+										<dt>
+											<span class="light fixedFont">{Boolean}</span>  <b>bNoOverwrite</b>
+											<i>Optional, Default: false</i>
+										</dt>
+										<dd>If true, when a name is encountered more than 1 time in the string it will be ignored.</dd>
+									
+										<dt>
+											<span class="light fixedFont">{Boolean}</span>  <b>bRecurse</b>
+											<i>Optional, Default: false</i>
+										</dt>
+										<dd>If true, when a value of a property that is parsed also has both the sPropDelim and sValueDelim inside, convert that value to another ParamHash object automatically</dd>
+									
+								</dl>
+							
+
+							
+						</div>
+					</div>
+				</section>
+			
+	<!--
+	#### FIELD DETAILS
+	-->
+			
+	<!--
+	#### METHOD DETAILS
+	-->
+			
+				<section>
+					<div class="details props">
+						<div class="innerProps">
+							<h2 class="sectionTitle">
+								Method Detail
+							</h2>
+
+							<ul class="methodDetail" id="MethodDetail">
+								
+								
+									<li
+										 class='item0'
+									>
+										<div class="fixedFont heading" id="toString">
+											<span class='lighter'>
+											
+											</span>
+
+											<span class="light">{String}</span>
+
+											<b>toString</b>(sPropDelim, sValueDelim, escapeProp, dontEscapeValue)
+										</div>
+
+										<div class="description">
+											Converts a ParamHash object back into a string using the property and value delimiters specifed (defaults to "&" and "=").
+Again this method works recursively.  If an object is found as a property, it will convert that object into a ParamHash string
+and then escape it. Note also that this class's valueOf method is equal to this method.
+
+											
+
+											
+										</div>
+
+										
+
+										
+											<dl class="detailList params">
+												<dt class="heading">Parameters:</dt>
+												
+													<dt>
+														<span class="light fixedFont">{String}</span> <b>sPropDelim</b>
+														<i>Optional, Default: "&"</i>
+													</dt>
+													<dd>The substring delimiter used to seperate properties. Default is "&".</dd>
+												
+													<dt>
+														<span class="light fixedFont">{String}</span> <b>sValueDelim</b>
+														<i>Optional, Default: "="</i>
+													</dt>
+													<dd>The substring delimited used to seperate values.  Default is "=".</dd>
+												
+													<dt>
+														<span class="light fixedFont">{Boolean}</span> <b>escapeProp</b>
+														<i>Optional, Default: false</i>
+													</dt>
+													<dd>Whether or not to ascii escape the name of a property</dd>
+												
+													<dt>
+														<span class="light fixedFont">{Boolean}</span> <b>dontEscapeValue</b>
+														<i>Optional, Default: false</i>
+													</dt>
+													<dd>Do not escape values or properties automatically</dd>
+												
+											</dl>
+										
+
+										
+											<dl class="detailList nomargin">
+
+												
+
+												
+
+												
+
+												
+													<dt class="heading">Returns:</dt>
+													
+														<dd><span class="light fixedFont">{String}</span> the encoded string representation of the object.</dd>
+													
+												
+
+												
+
+												
+
+											</dl>
+										
+										
+									</li>
+								
+							</ul>
+						</div>
+					</div>
+				</section>
+			
+
+	<!--
+	#### EVENT DETAILS
+	-->
+			
+		</article>
+	</div>
+</div>
+
+		<script type="text/javascript">
+			wbos.CssTools.MediaQueryFallBack.LoadCss('../css/screen.css', '../css/handheld.css', 660)
+			codeview.classFilter.Init()
+		</script>
+	</body>
+</html>
+

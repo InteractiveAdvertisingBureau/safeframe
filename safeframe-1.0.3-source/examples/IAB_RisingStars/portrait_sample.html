@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Portrait: Rising Stars with SafeFrame</title>
+
+	<link type="text/css" rel="stylesheet" href="samp.css" />
+	
+	</head>
+	<body>
+
+    <div id="center">
+<div id="topBar" >
+      <div id="contentLogo" class="mockContent"></div>
+      <div id="contentNav" class="mockContent">		
+	  <script type="text/javascript" src="risingstarnav.js" ></script>
+	  </div>
+</div>
+
+      <div id="contentTop" class="mockContent">
+	  <h1>Portrait Rising Star Ad</h1>
+	  </div>
+
+      <div id="portraitAdWrapper" class="adWrapper" >
+
+			<div id="portraitAdDiv"></div>
+
+      </div>
+
+      <div id="contentLeft" class="mockContent">
+		<div>
+		<em>The Portrait is a side displaying advertisement with individual roll out overlays.</em>
+		<p>
+		A large app will expand horizontally while maintaining the height of its initial state. 
+The height of the asset (in this example a video) will vary depending on whether a 
+title for the app is set and the number of assets the app contains. 
+</p>
+<p>
+Clicking on "App" areas in the ad cause them to expand out into the content to display videos or enhanced functionality.
+</p>
+		<ul>
+		<li>
+		<a href="http://www.iab.net/risingstars" target="_blank">... More on IAB Rising Star ad units</a>
+		</li>
+		</div>
+	  </div>
+
+      <div id="contentBottom" class="mockContent"></div>
+		
+		<div id="logger"></div>
+    </div>
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"portraitAd",
+		 // relative source is relative to the r.html bootstrap file  "../../examples/IAB_RisingStars/AdFiles/portraitAdBootstrap.js",	
+		 // http://safeframe.s3-website-us-west-2.amazonaws.com/examples/IAB_RisingStars/AdFiles/portraitAdBootstrap.js
+		 // ALWAYS USE ABSOLUTE SOURCES
+		"src": "http://safeframes.emination.com/risingStars/adfiles/portraitAdBootstrap.js", 
+		
+		"conf":
+		{
+			"w":		300,
+			"h":		1050,
+			"dest":	"portraitAdDiv",
+			"supports" : {
+				"exp-ovr" : "1",
+				"exp-push" : "1",
+				"read-cookie" : "1",
+				"write-cookie" : "1"
+			}
+			
+		}
+	}
+</script>
+
+
+<!-- 
+INCLUDES OF THE SAFEFRAMES FRAMEWORK 
+These script files should be hosted on your CDN from a different 
+top level domain from the host site.
+-->
+<!-- local version 
+	<script type="text/javascript" src="../../src/js/lib/base.js"></script>
+    <script type="text/javascript" src="../../src/js/host/host.js"></script>
+    <script type="text/javascript" src="../../src/js/lib/boot.js"></script>
+-->
+	
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/lib/base.js"></script>
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/host/host.js"></script>
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/lib/boot.js"></script>
+
+
+
+		<script type="text/javascript">
+		function posMessageCallback(id, msgName, data){
+			if(msgName == "error"){
+				var log = document.getElementById("logger");
+				var msg = ["error in ad ", id];
+				if(data && data.errors){
+					msg.push(data.errors);
+				}
+				msg.push("<br/>");
+				log.innerHTML += msg.join("");
+			}
+		}
+		
+		/**
+		* Initialize a new SafeFrames publisher configuration
+		*/
+			(function() {
+				var conf	= new $sf.host.Config({
+					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
+					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html",
+					onPosMsg: posMessageCallback,
+					positions: {}
+				});
+
+			})();
+		
+		
+		</script>
+		
+<script type='text/javascript' src='http://safeframes.net/google_analytics_sfnet.js' ></script>
+
+	</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Sidekick: Rising Stars with SafeFrame</title>
+
+	<link type="text/css" rel="stylesheet" href="samp.css" />
+
+	</head>
+	<body>
+
+    <div id="center">
+<div id="topBar" >
+      <div id="contentLogo" class="mockContent"></div>
+      <div id="contentNav" class="mockContent">		
+	  <script type="text/javascript" src="risingstarnav.js" ></script>
+	  </div>
+</div>
+
+      <div id="adUnitWrapper" class="asWrapper" >
+
+      </div>
+
+      <div id="contentTop" class="mockContent">
+	  <h1>Sidekick Rising Star Ad</h1>
+	  </div>
+
+      <div id="contentRight" class="mockContent">
+	  <div id="SidekickAd"></div>
+	  </div>
+
+      <div id="contentLeft" class="mockContent">
+		<div>
+		<em>Expandable format that launches from IAB standard ad, pushing page content leftward, revealing large, functional canvas</em>
+		<p>
+The IAB Sidekick is an innovative ad format that starts out from an in-page banner and pushes the page over to reveal additional content when expanded. While displaying a large side panel, it keeps the original webpage easily accessible. The Flash files below will show you how a Sidekick with a 300x250 in-page display that expands into a 850x700 panel is built.
+</p>
+		<ul>
+		<li>
+		<a href="http://www.iab.net/risingstars" target="_blank">... More on IAB Rising Star ad units</a>
+		</li>
+		</div>
+	  </div>
+
+      <div id="contentBottom" class="mockContent">
+	  		<div id="logger"></div>
+
+	  </div>
+		
+    </div>
+<script type='text/x-safeframe' class='sf_data'>
+	{
+		"id":		"pushdownAd",
+		 // relative source is relative to the r.html bootstrap file  "../../examples/IAB_RisingStars/AdFiles/pushdownAdBootstrap.js",	
+		 // ALWAYS USE ABSOLUTE SOURCES
+		// "src": "http://safeframes.emination.com/risingStars/adfiles/pushdownAdBootstrap.js", 
+		"src": "http://safeframes.emination.com/risingStars/adfiles/sidekickAdBootstrap.js",
+		
+		"conf":
+		{
+			"w":		300,
+			"h":		600,
+			"dest":	"SidekickAd",
+			"supports" : {
+				"exp-push" : "0",
+				"read-cookie" : "1",
+				"write-cookie" : "1"
+			}
+			
+		}
+	}
+</script>
+
+
+<!-- 
+INCLUDES OF THE SAFEFRAMES FRAMEWORK 
+These script files should be hosted on your CDN from a different 
+top level domain from the host site.
+-->
+<!-- local version 
+	<script type="text/javascript" src="../../src/js/lib/base.js"></script>
+    <script type="text/javascript" src="../../src/js/host/host.js"></script>
+    <script type="text/javascript" src="../../src/js/lib/boot.js"></script>
+-->
+	
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/lib/base.js"></script>
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/host/host.js"></script>
+<script type="text/javascript" 
+	src="https://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/js/lib/boot.js"></script>
+
+
+	<script src='sidekick_host.js'></script>
+
+		<script type="text/javascript">
+		function posMessageCallback(id, msgName, data){
+			if(msgName == "error"){
+				var log = document.getElementById("logger");
+				var msg = ["error in ad ", id];
+				if(data && data.errors){
+					msg.push(data.errors);
+				}
+				msg.push("<br/>");
+				log.innerHTML += msg.join("");
+			}
+			else if(msgName === 'exp-ovr'){
+				animateExpand();
+			}
+			else if(msgName === 'collapse'){
+				animateRetract();
+			}
+		}
+		
+		/**
+		* Initialize a new SafeFrames publisher configuration
+		*/
+			(function() {
+				var conf	= new $sf.host.Config({
+					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
+					//renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html",
+					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html",
+					onPosMsg: posMessageCallback,
+					positions: {}
+				});
+
+			})();
+		
+		
+		</script>
+		
+<script type='text/javascript' src='http://safeframes.net/google_analytics_sfnet.js' ></script>
+
+	</body>
+</html>

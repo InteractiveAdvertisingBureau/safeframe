@@ -1,0 +1,112 @@
+<html>
+	<head>
+	<title>Safe Frame Testing with Script</title>
+	</head>
+	<body>
+		<table cellspacing="0" border="0" cellpadding="0" style="width:100%;height:auto;table-layout:fixed">
+			<tr>
+				<td style="vertical-align:top;white-space:nowrap;text-align:right;">
+					<span id="label_input" style="font-weight:bold;font-family:arial;">HTML Input:&nbsp;&nbsp;</span>
+				</td>
+				<td style="width:90%;vertical-align:top;white-space:nowrap;">
+					<textarea id="html_input" style="width:640px;height:280px;"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td style="width:90%;vertical-align:top;white-space:nowrap;">
+					<span id="label_width" style="font-weight:bold;font-family:arial;">Width:&nbsp;&nbsp;</span><input id="width_input" type="text" style="width:50px;font-family:sans-serif;font-size:9px" value="350" />
+					<span id="label_height" style="font-weight:bold;font-family:arial;">Height:&nbsp;&nbsp;</span><input id="height_input" type="text" style="width:50px;font-family:sans-serif;font-size:9px"  value="350" />&nbsp;&nbsp;&nbsp;&nbsp;
+					<button onclick="render_input()">Render Input</button>&nbsp;&nbsp;|&nbsp;&nbsp;<button onclick="$sf.host.nuke()">Remove</button>
+				</td>
+			</tr>
+		</table>
+		<hr />
+
+
+		<div style="position:relative;margin:0px;width:100%;right:auto;top:auto;left:auto;margin-left:auto;margin-right:auto;text-align:center;width:100%;">
+			<div style="display:inline-block">
+				<div id="tgtLREC"></div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../src/js/lib/base.js"></script>
+		<script type="text/javascript" src="../src/js/host/host.js"></script>
+		<script type="text/javascript" src="../src/js/lib/boot.js"></script>
+		<script type="text/javascript">
+			function render_input()
+			{
+				var el, val, w, h, html, posID, posConf, pos;
+
+				$sf.host.nuke();
+
+				el 	= $sf.lib.dom.elt("html_input");
+				val = (el && el.value) || "";
+				val = $sf.lib.lang.trim(val);
+
+				if (!val) {
+					alert("No HTML specified");
+					return;
+				}
+
+				html = val;
+
+				el	= $sf.lib.dom.elt("width_input");
+				val = (el && el.value) || "";
+				val = $sf.lib.lang.cnum(val,0);
+
+				if (val <= 0) {
+					alert("Width must be a valid number from 1 to 9999 pixels");
+					return;
+				}
+
+				w = val;
+
+
+				el	= $sf.lib.dom.elt("height_input");
+				val = (el && el.value) || "";
+				val = $sf.lib.lang.cnum(val,0);
+
+				if (val <= 0) {
+					alert("Height must be a valid number from 1 to 9999 pixels");
+					return;
+				}
+
+				h 	= val;
+
+
+				posID	 = "test_" + w + "x" + h;
+				posConf	 = new $sf.host.PosConfig({id:posID,w:w,h:h,dest:"tgtLREC"});
+				pos		 = new $sf.host.Position(posID, html);
+
+				$sf.host.render(pos);
+
+			}
+
+
+
+			/* render some sample content */
+//					renderFile:		"http://10.72.227.43/iab/safeframes/src/html/r.html",
+
+			(function() {
+				var conf	= new $sf.host.Config({
+					renderFile:		"../src/html/r.html",
+					positions:
+					{
+						"LREC":
+						{
+							id:		"LREC",
+							dest:	"tgtLREC",
+							w:		300,
+							h:		250
+						}
+					}
+				});
+
+				var posMeta		= new $sf.host.PosMeta(null,"rmx",{foo:"bar",bar:"foo"});
+				var pos			= new $sf.host.Position("LREC", "<h1>Hello World Sean</h1>", posMeta);
+
+				$sf.host.render(pos);
+			})();
+		</script>
+	</body>
+</html>
