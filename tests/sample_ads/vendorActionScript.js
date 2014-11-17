@@ -164,6 +164,14 @@ var extern = window.extern || $sf.ext;
 		var totalViewable = iv * 100;
 		writeLog("Percent in view: " + totalViewable + "%");
 	}
+	
+	function sendMessage(){
+		var msg = "Hello World"
+		var msg2 = { one: "two" }
+		
+		$sf.ext.message(msg);
+	
+	}
 
 
 	function writeLog(message){

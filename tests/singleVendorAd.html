@@ -118,6 +118,9 @@
 				var posConf = host.get(id);
 				var fb = document.getElementById("feedback");
 				fb.innerHTML += "onPosMsg called for " + id + " with message: " + msgName + " <br />"
+				if(msgName == "msg"){
+					fb.innerHTML += "&nbsp;&nbsp;&nbsp;Message: " + data + "<br />";
+				}
 			}
 
 			function renderFailCallback(id){

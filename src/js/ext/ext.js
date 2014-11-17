@@ -47,6 +47,7 @@ var NULL					= null,
 	TOLOWERCASE				= "toLowerCase",
 	EXPAND_COMMAND 			= "exp-ovr",
     COLLAPSE_COMMAND 		= "collapse",
+	MESSAGE_COMMAND 		= "msg",
 	ERROR_COMMAND 			= "error",
     NOTIFY_GEOM_UPDATE		= "geom-update",
 	NOTIFY_FOCUS_CHANGE		= "focus-change",
@@ -54,6 +55,7 @@ var NULL					= null,
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
     NOTIFY_COLLAPSED		= (NOTIFY_COLLAPSE + "d"),
     NOTIFY_FAILURE			= "failed",
+	NOTIFY_MESSAGE 			= MESSAGE_COMMAND,
 	NOTIFY_READ_COOKIE		= "read-cookie",
 	NOTIFY_WRITE_COOKIE		= "write-cookie",
 	STATUS_COLLAPSED 		= NOTIFY_COLLAPSED,
@@ -864,7 +866,7 @@ var NULL					= null,
 
 				if (temp != "_top") {
 
-					while (_purge(_tags("base")[0]));
+					while (_purge(_tags("base")[0])){}
 
 					el = dom.make("base");
 					_attr(el,"target",temp);
@@ -1021,7 +1023,12 @@ var NULL					= null,
 				_fire_sandbox_callback(NOTIFY_COLLAPSED);
 			}
 
-		} 
+		}
+		else if (cmd == NOTIFY_MESSAGE) {
+			ret		= TRUE;
+			pending_msg 	= NULL;
+			_fire_sandbox_callback(NOTIFY_MESSAGE);
+		}
 		else if (cmd == NOTIFY_COLLAPSE) {
 			//Y.SandBox.vendor.collapse was called, notify
 			ret		= TRUE;
@@ -1515,7 +1522,7 @@ var NULL					= null,
 
 	function message(content)
 	{
-		_send_msg(_cstr(["cmd=","msg","&pos=", pos_id, "&msg=", content]), "msg");
+		_send_msg(_cstr(["cmd=",MESSAGE_COMMAND,"&pos=", pos_id, "&msg=", content]), MESSAGE_COMMAND);
 	}
 
 	/**
@@ -1604,7 +1611,7 @@ var NULL					= null,
 					cookie: 	cookie,
 					message: 	message,
 					inViewPercentage: inViewPercentage,
-					winHasFocus: winHasFocus,
+					winHasFocus: winHasFocus
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?
