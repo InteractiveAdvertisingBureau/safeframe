@@ -2801,7 +2801,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function nuke()
 	{
-		var idx = 0, empty = TRUE, args = arguments, pos_id, pos, el_id, el, sb_rel, par;
+		var idx = 0, empty = TRUE, args = arguments, 
+			pos_id, pos, el_id, el, sb_rel, par, adpos, i;
 
 		if (!args[LEN] || args[idx] == "*") {
 			args = [];
@@ -2834,8 +2835,15 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				dom.purge(el);
 
 				if (sb_rel) dom.purge(sb_rel);
-
-
+				
+				for(i=$sf.info.list.length - 1; i >= 0; i--){
+					adpos = $sf.info.list[i];
+					if(adpos && adpos.id === pos_id){
+						$sf.info.list.splice(i, 1);
+						break;
+					}
+				}
+				
 				rendered_ifrs[pos_id] = NULL;
 				delete rendered_ifrs[pos_id];
 				el		= dom.make("div");
@@ -2876,7 +2884,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			finalCSSEnd = "top:0px;left:0px;visibility:hidden;display:none;",
 
 		pos, pos_id, pos_conf, dest_el, new_dest_el, rel_el, par_el,
-		name_params, dest_id, dest_rel_id, css_txt, w, h, st, e, pend;
+		name_params, dest_id, dest_rel_id, css_txt, w, h, st, e, pend,
+		pos_data;
 
 		if (!config) return FALSE;
 		if (!dom.ready()) {
@@ -2994,6 +3003,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						iframes.replace({id: dest_id,name:name_params,src:config.renderFile,_pos_id: pos_id},css_txt, rel_el, _handle_frame_load, _handle_msg_evt);
 
 						rendered_ifrs[pos_id]			= name_params;
+						pos_data = $sf.lib.lang.mix({}, name_params, false, true);
+						delete pos_data['geom'];
+						delete pos_data['has_focus'];
+						$sf.info.list.push(pos_data);
 					}
 				}
 			}

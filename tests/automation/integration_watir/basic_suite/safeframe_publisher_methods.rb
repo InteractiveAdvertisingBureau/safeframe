@@ -51,16 +51,18 @@ describe "an integration test of SafeFrame" do
   describe "that we start on publisher methods test page" do
 	
 	browser.goto(testpage_url "publisher_methods_test.html")
+    browser.iframe(:id => 'tgtLREC2').wait_until_present
 		
 	before(:all) do
 		puts ''
-		puts " \033[1;33m Test $sf.ext \033[0m ..."
+		puts " \033[1;33m Test $sf.host \033[0m ..."
 	end
 	
-	ad = VendorTestAd.new(browser, 'tgtLREC2')
-		
 	before(:each) do
-		
+		b = browser
+		b.element(:id => 'header').focus
+		clearBtn = b.element(:id => 'clearLogBtn')
+		clearBtn.click # sets focus to flush focus change message
 	end
 	  
     it "should be on external methods test" do
@@ -69,6 +71,7 @@ describe "an integration test of SafeFrame" do
 	
 	it "should list ad id in feedback" do
 		b = browser
+		browser.iframe(:id => 'tgtLREC2').click
 		feedback = b.div(:id => 'feedback')
 		feedback.text.should include('ad2LREC')
 	end
@@ -76,8 +79,9 @@ describe "an integration test of SafeFrame" do
 	it "should have the ad in $sf.info.list" do
 		b = browser
 		clearBtn = b.element(:id => 'clearLogBtn')
-		data = b.element(:id => 'dataOutput')
 		clearBtn.click
+		
+		data = b.element(:id => 'dataOutput')
 		feedback = b.div(:id => 'feedback')
 		feedback.text.should_not include('ad2LREC')
 		
@@ -87,6 +91,21 @@ describe "an integration test of SafeFrame" do
 		data.text.should include('1')
 	end
 	
+	it "should remove the ad from $sf.info.list after a nuke" do
+		b = browser
+		clearBtn = b.element(:id => 'clearLogBtn')
+		clearBtn.click
+		sfNukeBtn = b.element(:id => 'sfNukeBtn');
+		sfNukeBtn.click
+		
+		data = b.element(:id => 'dataOutput')
+		feedback = b.div(:id => 'feedback')
+		
+		infoBtn = b.element(:id => 'sfInfoBtn')
+		infoBtn.click
+		feedback.text.should include('$sf.info.list')
+		data.text.should include('0')
+	end
   end
 
 end

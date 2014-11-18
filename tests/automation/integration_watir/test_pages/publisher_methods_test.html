@@ -82,6 +82,8 @@
 			<span id="dataOutput"></span>
 			<br />
 			<button onclick="checkInfo()" id="sfInfoBtn" type="button">Info</button> 
+			<button onclick="nukePositions()" id="sfNukeBtn" type="button">Nuke</button> 
+			<button onclick="getAd()" id="sfGetAdBtn" type="button">Get Ad</button> 
 			
 			</div>
 			<div id="feedback_wrapper"><div id="feedback" ></div></div>
@@ -145,6 +147,17 @@ Rhoncus venenatis nulla aenean libero pede ac, velit ac, feugiat elit massa prae
 
 			function nukePositions(){
 				host.nuke();
+			}
+			
+			function getAd(){
+				var id = 'ad2LREC';
+				var ad = host.get(id);
+				var fb = document.getElementById("feedback");
+				console.log(ad);
+				if(ad == null){
+					ad = 'null'
+				}
+				fb.innerHTML += "ad " + id + ": <br />" + ad.toString() + '<br/>';
 			}
 			
 			function startRenderCallback(id){
