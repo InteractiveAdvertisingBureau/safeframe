@@ -373,7 +373,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 								pos_dest_el	= dom.make("div");
 								_attr(pos_dest_el, "id", pos_conf.dest);
 								try {
-									script_tag_par.insertBefore(pos_dest_el);
+									script_tag_par.insertBefore(pos_dest_el, script_tag);
 								} catch (err) {
 									_log("failed auto-adding destination element " + err.message, TRUE);
 									continue;
