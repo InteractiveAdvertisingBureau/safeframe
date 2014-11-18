@@ -30,16 +30,7 @@ RSpec.configure do |config|
   config.before(:each) { 
   }
   config.before(:suite) {
-	# browser.goto(logout_url)
-    
-	#login
 	b = browser
-	#b.text_field(:id => 'UserName').set user_name
-	#b.text_field(:id => 'Password').set user_pass
-	
-	#b.checkbox(:id => 'RememberMe').clear
-	#b.button(:type => 'submit').click
-	
   }
   
   config.after(:suite) { browser.close unless browser.nil? }
@@ -47,9 +38,6 @@ RSpec.configure do |config|
 end
 
 describe "an integration test of SafeFrame" do
-  # include Helpers
-  # include VendorTestAd
-  
   
   describe "that we start on external methods test page" do
 	

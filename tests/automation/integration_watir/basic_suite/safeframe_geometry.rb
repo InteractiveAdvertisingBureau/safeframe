@@ -45,14 +45,10 @@ puts "\033[1;36m BASE TEST URL" + testpage_url("geometry_test.html") + "\033[0m\
 
 RSpec.configure do |config|
   config.include Helpers
-  # config.include VendorTestAd
   
   config.before(:each) { 
   }
   config.before(:suite) {
-	# browser.goto(logout_url)
-    
-	#login
 	b = browser
   }
   
