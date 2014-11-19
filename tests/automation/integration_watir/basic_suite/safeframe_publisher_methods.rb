@@ -105,6 +105,11 @@ describe "an integration test of SafeFrame" do
 		infoBtn.click
 		feedback.text.should include('$sf.info.list')
 		data.text.should include('0')
+		data.text.should_not include('1')
+		
+		b.element(:id => 'sfRenderAdBtn').click
+		infoBtn.click
+		data.text.should include('1')
 	end
   end
 

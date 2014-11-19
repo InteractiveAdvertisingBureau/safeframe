@@ -84,6 +84,8 @@
 			<button onclick="checkInfo()" id="sfInfoBtn" type="button">Info</button> 
 			<button onclick="nukePositions()" id="sfNukeBtn" type="button">Nuke</button> 
 			<button onclick="getAd()" id="sfGetAdBtn" type="button">Get Ad</button> 
+			<button onclick="renderAd('dynamAd', 'tgtLREC2', '<h1>Dynamic</h1> ad here' )" id="sfRenderAdBtn" type="button">Render Ad</button> 
+			<button onclick="renderAd('fooDynamAd', 'foo', '<h1>Foo</h1> ad here' )" id="sfRenderAdBtn" type="button">Render Foo Ad</button> 
 			
 			</div>
 			<div id="feedback_wrapper"><div id="feedback" ></div></div>
@@ -95,6 +97,7 @@
 Vulputate leo phasellus turpis. Eros massa lorem tortor massa ipsum vestibulum, etiam tortor venenatis porta eu, est felis, lacus suspendisse mauris consectetuer ullamcorper elementum, massa mauris. Ac dolor ac enim modi nunc, vitae quis, dapibus in nonummy, ac dictum. Tempus varius curabitur ut, nulla imperdiet nibh vehicula. Risus amet donec sed, rutrum velit. Sollicitudin dolor sollicitudin dolor eget, dolor a dapibus pede maecenas pellentesque, velit nunc proin.
 </p>
 <p>
+<div class="floatRight"><div id="foo"></div></div>
 Sit adipiscing semper id in pellentesque, in sodales turpis, elit eu ullamcorper, ultrices suspendisse et, iaculis ac wisi arcu. Montes varius in velit consequat cras, volutpat taciti scelerisque amet. Eros imperdiet id, tempor in, porttitor magna eget sed cursus auctor eget, lorem sagittis, pellentesque wisi. Nulla neque urna sed risus, quis metus feugiat massa, sapien hendrerit dolor gravida porttitor donec cursus, pellentesque et, sodales tortor eget nec. Id sed sodales ipsum amet tristique, vitae lacus cursus in et. Vitae magna, blandit ut, in ut dui turpis pede urna lacus. Nibh purus. Reprehenderit ut posuere donec nibh vitae turpis, et odio. Ornare tortor, habitasse lectus consequat volutpat. Donec non. Justo et nunc sed id consequat.
 				</p>				
 					<script type='text/x-safeframe' class='sf_data'>
@@ -158,6 +161,25 @@ Rhoncus venenatis nulla aenean libero pede ac, velit ac, feugiat elit massa prae
 					ad = 'null'
 				}
 				fb.innerHTML += "ad " + id + ": <br />" + ad.toString() + '<br/>';
+			}
+			
+			
+			function renderAd(adid, targetEl, content){
+				var adConfig = {
+				  id: adid, 
+				  w: 350,
+				  h: 400,
+				  dest: targetEl
+				};
+				adConfig.supports = { 'exp-push' : true };
+				// Register the ad position config information
+				var posConf = new $sf.host.PosConfig(adConfig);
+
+				// Create the ad position.
+				var pos   = new $sf.host.Position(adid, content);
+
+				// Render the ad in a SafeFrame.
+				$sf.host.render(pos);
 			}
 			
 			function startRenderCallback(id){
