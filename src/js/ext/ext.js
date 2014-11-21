@@ -9,7 +9,7 @@ Redistributions of source code must retain the above copyright notice, this list
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-
+"use strict";
 /**
  * @fileOverview This file contains JavaScript code that handles the HTML document where HTML is rendered for a SafeFrame, as well as defining the External Vendor/Client API.
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
@@ -833,6 +833,9 @@ var NULL					= null,
 			render_params = guid = NULL;
 			cont 			= FALSE;
 			details.status	= 500.103;
+			e = e || {};
+			if(e[MSG] == null) { e[MSG] = "null error"; }
+			_handle_err("Error during construction: " + e[MSG]);
 		}
 		if (cont) {
 			try {

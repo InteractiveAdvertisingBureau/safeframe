@@ -9,6 +9,7 @@ Redistributions of source code must retain the above copyright notice, this list
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+"use strict";
 
 /**
  * @namespace $sf.host Defines the Publisher side api, and helper functions
@@ -67,6 +68,20 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		PX						= "PX",
 		CLIP					= "clip",
 		SCROLL					= "scroll",
+		SCRW				= SCROLL+"Width",
+		SCRH				= SCROLL+"Height",
+		SCRT				= SCROLL+"Top",
+		SCRL				= SCROLL+"Left",
+		OFFSET				= "offset",
+		OFF_PAR				= OFFSET+"Parent",
+		OFF_TOP				= OFFSET+"Top",
+		OFF_LEFT			= OFFSET+"Left",
+		OFSW				= OFFSET+"Width",
+		OFSH				= OFFSET+"Height",
+		CLW					= "clientWidth",
+		CLH					= "clientHeight",
+		INNRW				= "innerWidth",
+		INNRH				= "innerHeight",
 		ONSCROLL				= "onscroll",
 		COMPAT_MODE				= "compatMode",
 		DOC_EL					= "documentElement",
@@ -75,6 +90,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		CONTAINS				= "contains",
 		COMPARE_DOC_POS			= "compareDocumentPosition",
 		EL_FROM_PT				= "elementFromPoint",
+		PAR_NODE				= "parentNode",
 		AUTO					= "auto",
     	HIDDEN					= "hidden",
 		OVER					= "overflow",
@@ -144,12 +160,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		flash_ver 				= NULL,
 		config					= NULL;
 		
-	var flashActiveXVersions = [
-		"ShockwaveFlash.ShockwaveFlash.11",
-		"ShockwaveFlash.ShockwaveFlash.8",
-		"ShockwaveFlash.ShockwaveFlash.7",
-		"ShockwaveFlash.ShockwaveFlash.6",
-		"ShockwaveFlash.ShockwaveFlash"
+	var FLASHX = "ShockwaveFlash.ShockwaveFlash",
+		flashActiveXVersions = [
+		FLASHX+".11",
+		FLASHX+".8",
+		FLASHX+".7",
+		FLASHX+".6",
+		FLASHX
 	];
 
 	/* --BEGIN-SafeFrames publisher data class definitions */
@@ -407,6 +424,36 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	}
 
 
+	
+	/** @ignore */
+	/* Internal logging method */
+	function _log(msg,is_err)
+	{
+		var head_el, err_tag;
+
+		try {
+			if(!lib) lib = (sf && sf.lib); // insure we have lib
+			
+			if (lib && lib.logger && win == top) {
+				if (is_err) {
+					lib.logger.error(msg);
+					sf.info.errs.push(msg);
+				} else {
+					lib.logger.log(msg);
+				}
+			} else {
+				// Append error message as comment to header
+				head_el 		= d.getElementsByTagName("head")[0];
+				err_tag			= d.createElement("script");
+				err_tag.type	= "text/plain";
+				err_tag.text	= "<!-- SafeFrame " + ((is_err) ? "error" : "log") + ": " + (msg || "unknown") + " -->";
+				head_el.appendChild(head_el, err_tag);
+			}
+		} catch (e) {  }
+	}
+
+
+	
 	/**
 	 * Create the HTML markup for a position if a src property was used
 	 *
@@ -619,6 +666,73 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    		return root;
     }
 
+
+	/**
+	 * Retrieve a document for a given HTML Element
+	 *
+	 * @name doc
+	 * @memberOf $sf.lib.dom-
+	 * @public
+	 * @function
+	 * @param {HTMLElement} el (Required) the HTML element for which you wish to find it's parent document
+	 * @return {Document|null} null if nothing found
+	 *
+	*/
+
+	function doc(el)
+	{
+		var d = NULL, n_type;
+		try {
+			if (el) {
+				n_type	= _get_node_type(el);
+
+				if (n_type == 9) {
+					d = el;
+				} else {
+					d = el[DOC] || el.ownerDocument || NULL;
+				}
+			}
+		} catch (e) {
+			d = NULL;
+		}
+		return d;
+	}	
+	/**
+	 * Retrive the parent element of an HTML element
+	 *
+	 * @name par
+	 * @public
+	 * @function
+	 * @param {HTMLElement} el (Required) the HTML element to check
+	 * return {HTMLElement} the new reference to the parent element or null
+	 *
+	*/
+	function par(el) { return el && (el[PAR_NODE] || el.parentElement); }
+	
+	function _is_element(el) { return _get_node_type(el) === 1; }
+
+	function _get_node_type(el)
+	{
+		var n_type = _cnum((el && el.nodeType), -1);
+		return n_type;
+	}
+	/**
+	 * A wrapper around retrieving the tagName of an HTML element (normalizes values to lower case strings).
+	 *
+	 * @name tagName
+	 * @memberOf $sf.lib.dom
+	 * @public
+	 * @function
+	 * @param {HTMLElement} el The HTML element for which to get the tag name.
+	 * @return {String} The tag name in all lower case of an HTML element, if it cannot be successfully retrieved, alwasys returns an empty string (which will evaluate to FALSE).
+	 *
+	*/
+
+	function tagName(el)
+	{
+		return (_get_node_type(el) === 1 && el.tagName.toLowerCase()) || "";
+	}
+
     /**
      * Returns whether or not a value is specified in pixels
      * @name $sf.lib.dom-_isPX
@@ -705,12 +819,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 *
 	*/
 
-	function _calcBorders(el, rect)
+	function _calcBorders(el, rect, style)
    	{
-     	var t = 0, l = 0, st, re = /^t(?:able|d|h|r|head|foot)$/i;
-
-		st 	= currentStyle(el);
-		if (st) {
+     	var t = 0, l = 0, re = /^t(?:able|d|h|r|head|foot)$/i;
+		var style = style || currentStyle(el);
+		
+		if (style) {
 	     	t 	= st["borderTopWidth"]
 	     	l 	= st["borderLeftWidth"];
 	     	t = (_isPX(t)) ? _cnum(t,0) : 0;
@@ -740,7 +854,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     function _get_doc_scroll(el)
 	{
-   		var pos = {x:0,y:0,w:0,h:0}, def = {scrollLeft:0,scrollTop:0,scrollWidth:0,scrollHeight:0}, d, de, dv, db, offsetX = 0, offsetY = 0;
+   		var pos = {x:0,y:0,w:0,h:0}, 
+			def = {scrollLeft:0,scrollTop:0,scrollWidth:0,scrollHeight:0}, 
+			d, de, dv, db, offsetX = 0, offsetY = 0;
 
 		d		= _doc(el) || dc;
 		de		= d[DOC_EL] || def;
@@ -756,164 +872,160 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		pos.h = _max(de.scrollHeight, db.scrollHeight,0);
    		return pos;
    	}
-
+	
+	
    	/**
-   	 * Calculate a geometric rectangle for a given element. Note that for IE browsers
-   	 * we can use the "getBoundingClientRect" function which saves us some time / increases
-   	 * peformance. . however it really can only be called if the DOM is completely loaded,
-   	 * and if that is the case we fallback to the brute-force / non-IE method.
+   	 * Get an object detailing where a given element is within a web page
    	 *
-   	 * @name $sf.lib.dom-_getRectIE
-   	 * @private
-   	 * @static
+   	 * @name $sf.lib.dom.rect
+   	 * @public
    	 * @function
-   	 * @param {HTMLElement} el  The element for which to derive a rectangle object
-   	 * @returns {Object} An object representing the rectangle for the given HTMLElement
+   	 * @param {HTMLElement} el The element to check
+   	 * @return {Object} t,l,r,b,w,h,z info
    	 *
    	*/
 
-	function _getRectIE(el)
-   	{
-	    var rect 	= {t:0,l:0,r:0,b:0,w:0,h:0,z:0},
-	    	_back 	= "BackCompat",
-	    	scroll, box, d, de, compatMode,st,
-	    	adjustX, adjustY, bLeft, bTop;
-
-        if (el && el[NODE_TYPE] == 1) {
-			try {
-				d			= _doc(el) || dc;
-				if (!dom.ready()) return _getRectNonIE(el);
-
-				scroll 		= _get_doc_scroll(el);
-				box			= el.getBoundingClientRect();
-		       	rect.t		= box.top;
-	        	rect.l		= box.left;
-
-	        	adjustX		=
-	        	adjustY 	= IE_BORDER_ADJ;
-	        	compatMode	= d[COMPAT_MODE];
-	        	de			= d[DOC_EL];
-	        	st			= currentStyle(de);
-	        	bLeft		= st["borderLeftWidth"];
-	        	bTop		= st["borderTopWidth"];
-
-				if (ieVer === 6) {
-					if (compatMode != _back) {
-						adjustX =
-						adjustY = 0;
-					}
-				}
-				if (compatMode == _back) {
-					bLeft 	= (_isPX(bLeft)) ? _cnum(bLeft,0) : 0;
-					adjustX	= bLeft;
-					bTop	= (_isPX(bTop)) ? _cnum(bTop,0) : 0;
-					adjustY = bTop;
-					rect.t -= adjustX;
-					rect.l -= adjustY;
-				}
-				rect.t += scroll.y;
-				rect.l += scroll.x;
-				rect.b = rect.t + el.offsetHeight;
-				rect.r = rect.l + el.offsetWidth;
-				rect.w = _max((rect.r-rect.l),0);
-				rect.h = _max((rect.b-rect.t),0);
-				rect.z = currentStyle(el, "zIndex");
-			} catch (e) {
-				rect = {t:0,l:0,r:0,b:0,w:0,h:0,z:0};
-			}
-		}
-		return rect;
-    }
-
-    /**
-   	 * Calculate a geometric rectangle for a given element. For non-IE browsers, we must use
-   	 * brute-force and walk up the offsetParent tree. Also takes in consideration for some
-   	 * other slight variations in browsers.
-   	 *
-   	 * @name $sf.lib.dom-_getRectNonIE
-   	 * @private
-   	 * @static
-   	 * @function
-   	 * @param {HTMLElement} el  The element for which to derive a rectangle object
-   	 * @returns {Object} An object representing the rectangle for the given HTMLElement
-   	 *
-   	*/
-
-	function _getRectNonIE(el)
+	function rect(el)
     {
-    	var rect		= {t:0,l:0,r:0,b:0,w:0,h:0,z:0},
+    	var r			= {t:0,l:0,r:0,b:0,w:0,h:0,z:0},
+    		BOUNDING	= "getBoundingClientRect",
     		scrollTop	= 0,
     		scrollLeft	= 0,
+    		w			= 0,
+    		h			= 0,
     		bCheck		= FALSE,
-    		root		= _docNode(el),
-    		scroll 		= _get_doc_scroll(el),
-    		parentNode, w, h;
+    		d			= doc(el) || win[DOC],
+    		compatMode	= d[COMPAT_MODE],
+    		docMode		= d.documentMode || 0,
+    		root, scroll, parentNode, last_par, cur_st, par_cur_st,
+    		offX, offY, box, e, use_brute;
 
-    	if (el && el[NODE_TYPE] == 1) {
+    	if (_is_element(el)) {
+
     		try {
-	    		rect.l		= el.offsetLeft || 0;
-	    		rect.t		= el.offsetTop || 0;
+    			cur_st		= currentStyle(el);
+    			root		= _docNode(el);
+    			scroll		= _get_doc_scroll(el);
+	    		r.l			= el[OFF_LEFT] || 0;
+	    		r.t			= el[OFF_TOP] || 0;
 	    		parentNode	= el;
+	    		last_par	= NULL;
+				bCheck		= (geckVer || wbVer > 519);
+				use_brute	= (el === root);
 
-				bCheck	= (geckVer || wbVer > 519);
+				/*
+				 * reintroducted using bounding box native call for 2 reasons
+				 * 1.) performance
+				 * 2.) we get wonky results when there are fixed position elements for some
+				 * 	   reason.  previously i removed it to avoid scroll top/left issues but i think
+				 * 	   that was due to a bug in the impl. Note that for root node, we still use brute
+				 * 	   force
+				 * 3.) The issues mentioned, are caused when you want to measure one element
+				 *	   with respect to another element that is acting as the view port.
+				 *	   In the case where said other element is scrollable, getBoundingClientRect
+				 *	   will return negative values if it is scrolled.  We re-add in the scroll_top
+				 *     or scroll left, but b/c the values are negative in that case we just
+				 *	   end up normalizing to 0.
+				 *
+				 * 	   With brute force we never end up substracting out the scroll top or left
+				 *	   b/c the loop bails since at the root level there are not offset parents or
+				 *	   parent nodes.
+				 *
+				 *  The idea is to have top/left report scroll top and scroll left as there top/left
+				 *  position always rather than normalizing to just the relative numbers which
+				 *  allows for comparison much easier.
+				 *
+				 *
+				*/
 
-	    		while (parentNode = parentNode.offsetParent)
-	    		{
-	    			rect.t += parentNode.offsetTop || 0;
-	    			rect.l += parentNode.offsetLeft || 0;
-	    			if (bCheck)
-	    				_calcBorders(parentNode, rect);
-
-	    			if (parentNode == root) break;
-	    		}
-
-	    		parentNode = el;
-
-				if (currentStyle(parentNode, "position")  != "fixed") {
-					parentNode = el;
-
-					while (parentNode = _par(parentNode))
-					{
-						if (parentNode[NODE_TYPE] == 1) {
-							scrollTop 	= parentNode.scrollTop || 0;
-							scrollLeft 	= parentNode.scrollLeft || 0;
-
-							//Firefox does something funky with borders when overflow is not visible.
-				        	if (geckVer && currentStyle(parentNode, OVER) != "visible")
-				        		_calcBorders(parentNode, rect);
-
-		                    rect.l -= scrollLeft;
-		                    rect.t -= scrollTop;
-						}
-	                    if (parentNode == root) break;
+    			if (!use_brute && BOUNDING && el[BOUNDING]) {
+                	if (isIE) {
+						if (!docMode || (docMode > 0 && docMode < 8) || compatMode === BACK_COMPAT) {
+							offX = root.clientLeft;
+							offY = root.clientTop;
+                        }
 					}
+					box 	= el[BOUNDING]();
+					r.t		= box.top;
+					r.l		= box.left;
 
-					rect.t += scroll.y;
-					rect.l += scroll.x;
+					if (offX || offY) {
+						r.l -= offX;
+						r.t -= offY;
+					}
+					if (scroll.y || scroll.x) {
+						if (!UA.ios || UA.ios >= 4.2) {
+							r.l += scroll.x;
+							r.t += scroll.y;
+						}
+					}
 				} else {
-					rect.t += scroll.y;
-					rect.l += scroll.x;
+        			while ((parentNode = parentNode[OFF_PAR]))
+        			{
+        				if (!_is_element(parentNode) || last_par === parentNode) break;
+
+        				offX = parentNode[OFF_LEFT];
+        				offY = parentNode[OFF_TOP];
+
+        				r.t += offY;
+        				r.l += offX;
+        				if (bCheck)  r = _calcBorders(parentNode, r);
+
+        				last_par = parentNode;
+        			}
+
+					if (cur_st["position"]  != "fixed") {
+						parentNode 	= el;
+						last_par	= NULL;
+
+						while ((parentNode = parentNode[PAR_NODE]))
+						{
+							if (!_is_element(parentNode) || last_par === parentNode) break;
+							if (parentNode == root) break;
+
+							scrollTop 	= parentNode[SCRT];
+							scrollLeft	= parentNode[SCRL];
+
+							if (geckVer) {
+								//Firefox does something funky with borders when overflow is not visible.
+								par_cur_st = currentStyle(parentNode);
+								if (par_cur_st[OVER] != "visible") {
+									r = _calcBorders(parentNode, r, par_cur_st);
+								}
+							}
+							if (scrollTop || scrollLeft) {
+								r.l -= scrollLeft;
+								r.t -= scrollTop;
+							}
+							last_par = parentNode;
+						}
+
+						r.l += scroll.x;
+						r.t += scroll.y;
+					} else {
+						r.l += scroll.x;
+						r.t += scroll.y;
+					}
 				}
-				if (!ieVer && el == _docNode(el)) {
-					h = el.clientHeight;
-					w = el.clientWidth;
+				if (el == root) {
+					h = el[CLH];
+					w = el[CLW];
 				} else {
-					h = el.offsetHeight;
-					w = el.offsetWidth;
+					h = el[OFSH];
+					w = el[OFSW];
 				}
 
-				rect.b = rect.t + h;
-				rect.r = rect.l + w;
-				rect.w = _max((rect.r-rect.l), 0);
-				rect.h = _max((rect.b-rect.t), 0);
-				rect.z = currentStyle(el, "zIndex");
+				r.b = r.t + h;
+				r.r = r.l + w;
+				r.w = _max(w, 0);
+				r.h = _max(h, 0);
+				r.z = cur_st["zIndex"];
 			} catch (e) {
-				rect = {t:0,l:0,r:0,b:0,w:0,h:0,z:0};
+				r = {t:0,l:0,r:0,b:0,w:0,h:0,z:0};
 			}
 		}
-
-		return rect;
-    }
+		return r;
+	}
 
     /**
      * Returns an object that represents a rectangle with the geometric information of an HTMLDocument
@@ -1003,6 +1115,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 							break;
 						}
 						needle = needle.parentNode;
+						if (needle == dc[DOC_EL]) break;
 					}
 				}
 			} else if (element[COMPARE_DOC_POS]) {
@@ -1063,391 +1176,400 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	}
 
 	/**
-	 * Calculate the surrounding boundaries of an HTMLElement, and whether or not the HTMLElement is "in-view" of the user
+	 * Get the rectangle represent the amount of room a current element could
+	 * theoretically grow to
 	 *
 	 * @name $sf.lib.dom.bounds
-	 * @public
-	 * @static
 	 * @function
-	 * @param {HTMLElement} el The element for which to calculate information
-	 * @param {Object} [details] An object reference used as an output parameter in which further details about the boundaries of the element are specified
-	 * @param {boolean} [check_3D] Check the element within 3 dimensional space such that any elements covering said element are also take into consideration
-	 * @returns {Object} info An object containing information about the element boundaries
+	 * @public
+	 * @param {HTMLElement} el The element to be checking
+	 * @param {Object} [details] An object that you can pass in, which will be filled out with values noting details of the boundary calculation.
+	 * @param {Boolean} [check_3D=false] Also check element in regards to any elements overlapping in 3D space
+	 * @param {Number} [def_w=0] A default width of the given element for cases where width of an element may not be set due to visibility or timing issues
+	 * @param {Number} [def_h=0] A default height of the given element for cases where width of an element may not be set due to visibility or timing issues
+	 * @return {Object} t,l,r,b,xs,ys,xiv,yiv,iv,w,h} deailing boundaries of an element
 	 *
 	*/
 
-	function bounds(el, details, check_3D)
-    {
-		var par					= el && _par(el),
-    		root				= _docNode(el),
-    		el_rect				= _rect(el),
-    		root_rect			= _rect(root),
-    		root_scroll			= _get_doc_scroll(root),
-    		doc_rect			= docRect(el),
-    		clip_rect			= {t:0,l:0,r:0,b:0,w:0,h:0},
-    		exp_rect			= {t:0,l:0,r:0,b:0,xs:0,ys:0,xiv:0,yiv:0,iv:0,w:0,h:0},
-    		xsb_h				= 0,
-    		ysb_w				= 0,
-    		is_scroll_node		= FALSE,
-    		is_using_doc_root_r	= FALSE,
-    		is_using_doc_root_b	= FALSE,
-    		cur_st, w, h, t, l, r, b, scroll_width, offset_width, client_width,
-    		scroll_height, offset_height, client_height,over_x_val, scroll_left, scroll_top,
-    		over_y_val, clip, x_hidden, y_hidden, ref_node, temp_rect, is_scroll_node = FALSE;
+	function bounds(el, details, check_3D, def_w, def_h)
+	{
+		var pe					= el && par(el),
+			root				= _docNode(el),
+			el_rect				= rect(el),
+			root_rect			= rect(root),
+			root_scroll			= _get_doc_scroll(root),
+			doc_rect			= docRect(el),
+			clip_rect			= {t:0,l:0,r:0,b:0,w:0,h:0},
+			exp_rect			= {t:0,l:0,r:0,b:0,xs:0,ys:0,xiv:0,yiv:0,iv:0,w:0,h:0},
+			scroll_nodes		= [],
+			is_root				= FALSE,
+			clip_nodes			=
+			{
+				left:			NULL,
+				right:			NULL,
+				top:			NULL,
+				bottom:			NULL
+			},
+			clip_top,clip_left,clip_right,clip_bottom,xsb_h,ysb_w,
+			cur_st, w, h, t, l, r, b, scroll_width, offset_width, client_width,
+			scroll_height, offset_height, client_height,over_x_val,
+			over_y_val, ovr_val, clip, iv_w, iv_h,
+			ot, ob, oh, ol,or,ow,ovr_cnt, ovr_pt_cnt,
+			ovr_iv, cur_iv, ovr_pts, par_rect, added_scroll_node;
 
-       	details = (details && typeof details == OBJ) ? details : {};
+		details = (details && typeof details == "object") ? details : {};
+		def_w	= _cnum(def_w,0,0);
+		def_h	= _cnum(def_h,0,0);
 
-    	if (par) {
-    		/*
-    		 * Here we are looping through parent nodes to check if any of them have clip / overflow
-    		 * settings which would create a new boundary point (as opposed to the body of the document)
-    		 *
-    		 * Ideally I would have liked to break the logic out that finds said reference node, away
-    		 * from the calculation part. . however during optimization phases, it was quick to store
-    		 * off variables for from dom properties for width / height
-    		 *
-    		*/
+		if (!el_rect.h && def_h) {
+			el_rect.h = def_h;
+			el_rect.b = el_rect.t+def_h;
+		}
+		if (!el_rect.w && def_w) {
+			el_rect.w = def_w;
+			el_rect.r = el_rect.l+def_w;
+		}
 
-    		while (cur_st = currentStyle(par))
-    		{
+		if (pe) {
+			/*
+			 * Here we are looping through parent nodes to check if any of them have clip / overflow
+			 * settings which would create a new boundary point (as opposed to the body of the document)
+			 *
+			 * Ideally I would have liked to break the logic out that finds said reference node, away
+			 * from the calculation part. . however during optimization phases, it was quick to store
+			 * off variables for from dom properties for width / height
+			 *
+			 * We used to stop once we found one node that clipped us, but that can cause issues
+			 * with various dom structures, so now we must walk up all parents to make sure and
+			 * get anything that could be clipping us
+			*/
+			clip_top	= root_rect.t;
+			clip_left	= root_rect.l;
+			clip_right	= root_rect.r;
+			clip_bottom	= root_rect.b;
+
+			while (cur_st = currentStyle(pe))
+			{
 				if (cur_st["display"] == "block" ||
 					cur_st["position"] == "absolute" ||
 					cur_st["float"] != "none" ||
 					cur_st["clear"] != "none") {
-					over_x_val		= cur_st[OVER+"X"];
-					over_y_val		= cur_st[OVER+"Y"];
-					clip			= _getClip(cur_st);
-					if (par == root) {
+
+					is_root				= (pe == root);
+					par_rect			= rect(pe);
+					t					= par_rect.t;
+					l					= par_rect.l;
+					r					= par_rect.r;
+					b					= par_rect.b;
+					over_x_val			= cur_st[OVER+"X"];
+					over_y_val			= cur_st[OVER+"Y"];
+					ovr_val				= cur_st[OVER];
+					clip				= (is_root) ? [-1,-1,-1,-1] : _getClip(cur_st);
+					added_scroll_node	= FALSE;
+
+					if (is_root) {
 						scroll_width	= root_scroll.w;
 						scroll_height	= root_scroll.h;
 					} else {
-						scroll_width	= par.scrollWidth;
-						scroll_height	= par.scrollHeight;
-					}
-					offset_width	= par.offsetWidth;
-					offset_height	= par.offsetHeight;
-					client_width	= par.clientWidth;
-					client_height	= par.clientHeight;
-
-					if (over_x_val == HIDDEN || clip[1] > 0 || clip[3] > 0) {
-						if (!ref_node) {
-							x_hidden = 1;
-							ref_node = par;
-						}
+						scroll_width	= pe[SCRW];
+						scroll_height	= pe[SCRH];
 					}
 
-					if (over_y_val == HIDDEN || clip[0] > 0 || clip[2] > 0) {
-						if (!ref_node) {
-							y_hidden = 1;
-							ref_node = par;
-						}
-					}
+					offset_width	= pe[OFSW];
+					offset_height	= pe[OFSH];
+					client_width	= pe[CLW];
+					client_height	= pe[CLH];
 
-					if (over_x_val == SCROLL) {
-						ref_node 		= par;
-						xsb_h 			= offset_height-client_height;
-						is_scroll_node	= TRUE;
-					}
+					if (!ysb_w && offset_width > client_width) ysb_w = (offset_width - client_width);
+					if (!xsb_h && offset_height > client_height) xsb_h = (offset_height - client_height);
 
-					if (over_y_val == SCROLL) {
-						if (!ref_node) ref_node = par;
-						ysb_w = offset_width-client_width;
-						is_scroll_node	= TRUE;
-					}
-
-					if (over_x_val == AUTO) {
-						if (!ref_node) ref_node = par;
+					if (is_root) {
 						if (scroll_width > client_width) {
 							//scrolling is on
-							xsb_h = offset_height - client_height;
+							l = 0;
+							r = ((win[INNRW] || 0) || offset_width)+root_scroll.x;
+
+							if (l > clip_left) clip_left = l;
+							if (r < clip_right) clip_right = r;
 						}
-						is_scroll_node	= TRUE;
-					}
-					if (over_y_val == AUTO) {
-						if (!ref_node) ref_node = par;
+
 						if (scroll_height > client_height) {
-							ysb_w = offset_width - client_width;
+							t		= 0;
+							b		= ((win[INNRH] || 0) || offset_height)+root_scroll.y;
+							if (t > clip_top) clip_top = t;
+							if (b < clip_bottom) clip_bottom = b;
 						}
-						is_scroll_node	= TRUE;
-					}
-
-					if (ref_node) break;
-				}
-				if (par == root) {
-					if (scroll_width > client_width) {
-						//scrolling is on
-						h	  = (win.innerHeight || 0) || offset_height;
-						xsb_h = h - client_height;
-					}
-					if (scroll_height > client_height) {
-						w	  = (win.innerWidth || 0) || offset_width;
-						ysb_w = w - client_width;
-					}
-					is_scroll_node	= TRUE;
-				}
-				par = _par(par);
-				if (!par || par[NODE_TYPE] != 1) break;
-    		}
-    	}
-
-    	if (el_rect.w && el_rect.h) {
-    		/*
-    		 * Now look at the element dimensions vs the ref node dimensions
-    		 *
-    		*/
-
-	    	if (!ref_node || ref_node == root) {
-
-	    		/*
-	    		 * if ref node is the root node we need a bit of special processing
-	    		 *
-	    		*/
-
-	    		exp_rect.t	= _max(el_rect.t, 0);
-	    		exp_rect.l	= _max(el_rect.l, 0);
-
-	    		if (ieVer && dc[COMPAT_MODE] == "BackCompat" && _attr(root,SCROLL) == "no") {
-	    			y_hidden = x_hidden = 1;
-	    		} else {
-					cur_st		= currentStyle(root);
-		    		if (cur_st) {
-		    			x_hidden	= (cur_st[OVER+"X"] == HIDDEN);
-		    			y_hidden	= (cur_st[OVER+"Y"] == HIDDEN);
-		    		}
-		    	}
-
-	    		if (root_scroll.h > root.clientHeight) {
-	    			if (y_hidden) {
-	    				exp_rect.b	= 0;
-	    			} else {
-	    				is_using_doc_root_b	= TRUE;
-	    				exp_rect.b			= _max( ((doc_rect.h-el_rect.h)-xsb_h)-el_rect.t, 0);
-	    			}
-	    		} else {
-					exp_rect.b	= _max( ((root_rect.h-el_rect.h)-xsb_h)-el_rect.t, 0);
-				}
-
-				if (root_scroll.w > root.clientWidth) {
-					if (x_hidden) {
-						exp_rect.r	= 0;
 					} else {
-						is_using_doc_root_r	= TRUE;
-						exp_rect.r			= _max( ((doc_rect.w-el_rect.w)-ysb_w)-el_rect.l, 0);
-					}
-				} else {
-					exp_rect.r	= _max( ((root_rect.r-el_rect.w)-ysb_w)-el_rect.l, 0);
-				}
+						if (ysb_w && ((r-l) == offset_width)) r -= ysb_w;
+						if (xsb_h && ((b-t) == offset_height)) b -= xsb_h;
 
+						if (over_x_val == HIDDEN || over_x_val == SCROLL || over_x_val == AUTO ||
+							ovr_val == HIDDEN || ovr_val == SCROLL || ovr_val == AUTO) {
 
-	    	} else {
-    			cur_st		= currentStyle(ref_node);
+							if (l > clip_left) {
+								clip_left 			= l;
+								clip_nodes.left 	= pe;
+							}
+							if (r < clip_right) {
+								clip_right 			= r;
+								clip_nodes.right	= pe;
+							}
 
-    			/* In standards mode, body's offset and client numbers will == scroll numbers which is not what we want */
-				if (_tagName(ref_node) == "body") {
-					ref_node = root;
-					t		 = el_rect.t;
-					l		 = el_rect.l;
-				} else {
-					t = l = 0;
-				}
+							if (over_x_val == SCROLL || ovr_val == SCROLL) {
+								scroll_nodes.push(pe);
+								added_scroll_node = TRUE;
 
-		    	clip_rect	= _rect(ref_node);
+							} else if ((over_x_val == AUTO || ovr_val == AUTO) && (scroll_width > client_width)) {
+								scroll_nodes.push(pe);
+								added_scroll_node = TRUE;
+							}
 
-		    	if (clip[1] > 0) {
-					clip_rect.w = clip[1];
-					clip_rect.r = clip_rect.l + clip_rect.w;
-				}
-				if (clip[3] > 0) {
-					clip_rect.l = clip_rect.l+clip[3];
-					clip_rect.w = clip_rect.w-clip[3];
-				}
-
-				if (clip[2] > 0) {
-					clip_rect.h	= clip[2];
-					clip_rect.b = clip_rect.t + clip_rect.h;
-				}
-
-				if (clip[0] > 0) {
-					clip_rect.t = clip_rect.t+clip[0];
-					clip_rect.h = clip_rect.h-clip[0];
-				}
-
-		    	if (el_rect.t > clip_rect.t && clip_rect.t > 0)  t = el_rect.t-clip_rect.t;
-		    	if (el_rect.l > clip_rect.l && clip_rect.l > 0)  l = el_rect.l-clip_rect.l;
-
-				scroll_top		= ref_node.scrollTop;
-				scroll_left		= ref_node.scrollLeft;
-				scroll_height	= ref_node.scrollHeight;
-				scroll_width	= ref_node.scrollWidth;
-
-		    	exp_rect.t	= _max(t,0);
-		    	exp_rect.l	= _max(l,0);
-
-	    		if (cur_st) {
-	    			x_hidden	= (cur_st[OVER+"X"] == HIDDEN || clip[1] > 0 || clip[3] > 0);
-	    			y_hidden	= (cur_st[OVER+"Y"] == HIDDEN || clip[0] > 0 || clip[2] > 0);
-	    		}
-
-    			if (el_rect.t >= clip_rect.b) {
-    				exp_rect.b = 0;
-    			} else {
-    				if (!y_hidden && el_rect.t >= clip_rect.b) y_hidden = 1;
-
-    				if (scroll_height > ref_node.clientHeight) {
-    					if (y_hidden) {
-    						exp_rect.b = 0;
-    					} else {
-    						exp_rect.b	= _max( ((scroll_height-el_rect.h)-xsb_h)-t, 0);
-    					}
-    				} else {
-    					exp_rect.b	= _max( ((clip_rect.h-el_rect.h)-xsb_h)-t, 0);
-    				}
-    			}
-
-    			if (el_rect.l >= clip_rect.r) {
-    				exp_rect.r = 0;
-    			} else {
-    				if (!x_hidden && el_rect.l >= clip_rect.r) x_hidden = 1;
-
-    				if (scroll_width > ref_node.clientWidth) {
-    					if (x_hidden) {
-    						exp_rect.r = 0;
-    					} else {
-    						exp_rect.r	= _max( ((scroll_width-el_rect.w)-ysb_w)-l, 0);
-    					}
-    				} else {
-	    				exp_rect.r	= _max( ((clip_rect.w-el_rect.w)-ysb_w)-l, 0);
-	    			}
-    			}
-    		}
-
-    		exp_rect.xs			= (xsb_h)?1:0;
-    		exp_rect.ys			= (ysb_w)?1:0;
-    		exp_rect.w			= exp_rect.r+exp_rect.l;
-    		exp_rect.h			= exp_rect.t+exp_rect.b;
-
-			if (!ref_node || ref_node == root) {
-				temp_rect = root_rect;
-				ref_node  = root;
-			} else {
-				temp_rect = clip_rect;
-			}
-
-			l = _max(el_rect.l,temp_rect.l);
-			r = _min(el_rect.r,(is_using_doc_root_r) ? _min(doc_rect.r,temp_rect.r) : temp_rect.r);
-			w = _max(r - l,0);
-			t = _max(el_rect.t,temp_rect.t);
-			b = _min(el_rect.b,(is_using_doc_root_b) ? _min(doc_rect.b,temp_rect.b) : temp_rect.b);
-			h = _max(b-t,0);
-
-			exp_rect.xiv = _cnum((w / el_rect.w)[TFXD](2));
-			exp_rect.yiv = _cnum((h / el_rect.h)[TFXD](2));
-			exp_rect.iv	 = _cnum(((w * h) / (el_rect.w * el_rect.h))[TFXD](2));
-
-		}
-
-		details.refNode 	= ref_node||root;
-		details.isRoot		= (ref_node == root);
-		details.canScroll	= is_scroll_node;
-		details.refRect		= (!ref_node || ref_node == root) ? root_rect : clip_rect;
-		details.expRect		= exp_rect;
-		details.rect		= el_rect;
-
-		if (check_3D) {
-    		(function() {
-				var idx	= 0, len = 0, arOvrlaps, el_w, el_h, el_area, ovr_node, ovr_node_rect,
-					t, b, l, r, h, w, ovr_area, new_iv, new_xiv, new_yiv;
-
-				if (exp_rect.iv > .5) {
-	    			mgr_bounds_details		= details;
-	    			arOvrlaps				= overlaps(el,_cnum(check_3D,1,1));
-	    			mgr_bounds_details		= NULL;
-	    			len						= arOvrlaps[LEN];
-	    			el_w					= el_rect.w;
-	    			el_h					= el_rect.h,
-	    			el_area					= el_w * el_h;
-
-    				if (len) {
-						while (ovr_node = arOvrlaps[idx++])
-						{
-							ovr_node_rect 	= _rect(ovr_node);
-							l				= _max(el_rect.l, ovr_node_rect.l);
-							r				= _min(el_rect.r, ovr_node_rect.r);
-							t				= _max(el_rect.t, ovr_node_rect.t);
-							b				= _min(el_rect.b, ovr_node_rect.b);
-							w				= r - l;
-							h 				= b - t;
-							ovr_area		= w * h;
-							new_xiv			= (1 - (w / el_w))[TFXD](2);
-							new_yiv			= (1 - (h / el_h))[TFXD](2);
-							new_iv			= (1 - (ovr_area / el_area))[TFXD](2);
-
-							if ((new_xiv>0 && new_xiv < exp_rect.xiv) || (new_yiv>0 && new_yiv < exp_rect.yiv)) {
-								exp_rect.xiv = new_xiv;
-								exp_rect.yiv = new_yiv;
-								exp_rect.iv	 = new_iv;
+						}
+						if (clip[3] > 0) {
+							ol = l+clip[3];
+							if (ol > clip_left) {
+								clip_left 		= ol;
+								clip_nodes.left	= pe;
 							}
 						}
+						if (clip[1] > 0) {
+							or 	= r+clip[1];
+							if (or < clip_right) {
+								clip_right 			= or;
+								clip_nodes.right	= pe;
+							}
+						}
+
+						if (over_y_val == HIDDEN || over_y_val == SCROLL || over_y_val == AUTO ||
+							ovr_val == HIDDEN || ovr_val == SCROLL || ovr_val == AUTO) {
+
+							if (t > clip_top) {
+								clip_top 		= t;
+								clip_nodes.top	= pe;
+							}
+							if (b < clip_bottom) {
+								clip_bottom 		= b;
+								clip_nodes.bottom	= pe;
+							}
+
+							if (!added_scroll_node) {
+								if (over_y_val == SCROLL || ovr_val == SCROLL) {
+									scroll_nodes.push(pe);
+									added_scroll_node = TRUE;
+
+								} else if ((over_y_val == AUTO || ovr_val == AUTO) && (scroll_height > client_height)) {
+									scroll_nodes.push(pe);
+									added_scroll_node = TRUE;
+
+								}
+							}
+
+						}
+						if (clip[0] > 0) {
+							ot 	= t+clip[0];
+							if (ot > clip_top) {
+								clip_top		= ot;
+								clip_nodes.top	= pe;
+							}
+						}
+
+						if (clip[2] > 0) {
+							ob = par_rect.t+clip[2];
+							if (ob < clip_bottom) {
+								clip_bottom 		= ob;
+								clip_nodes.bottom 	= pe;
+							}
+						}
+
 					}
 				}
-			})();
+
+				if (pe == root) break;
+				pe = par(pe);
+				if (!pe || !tagName(pe)) break;
+			}
 		}
 
+		clip_rect	=
+		{
+			t:	_max(clip_top, 		0),
+			l:	_max(clip_left,		0),
+			r:	_max(clip_right,	0),
+			b:	_max(clip_bottom,	0)
+		};
+		clip_rect.w = (clip_rect.r - clip_rect.l, 0);
+		clip_rect.h = (clip_rect.b - clip_rect.t, 0);
+		l			= el_rect.l;
+		r			= el_rect.r;
+		t			= el_rect.t;
+		b			= el_rect.b;
+		w			= r-l;
+		h			= b-t;
+		ol			= clip_rect.l;
+		or			= clip_rect.r;
+		ot			= clip_rect.t;
+		ob			= clip_rect.b;
+		ow			= or-ol;
+		oh			= ob-ot;
+		iv_h		= (_min(b,ob)-_max(t,ot));
+		iv_h		= (iv_h < 0) ? 0 : iv_h;
+		iv_h		= (iv_h > h) ? h : iv_h;
+		iv_w		= (_min(r,or)-_max(l,ol));
+		iv_w		= (iv_w < 0) ? 0 : iv_w;
+		iv_w		= (iv_w > w) ? w : iv_w;
+
+		if (ot < t) {
+			if (ob <= t) {
+				exp_rect.t = 0;
+			} else {
+				exp_rect.t = _max(t - ot,0);
+			}
+		} else {
+			exp_rect.t = 0;
+		}
+		if (ob > b) {
+			if (b <= ot) {
+				exp_rect.b = 0;
+			} else {
+				exp_rect.b = _max(ob - b, 0);
+			}
+		} else {
+			exp_rect.b = 0;
+		}
+		if (ol < l) {
+			if (or <= l) {
+				exp_rect.l = 0;
+			} else if (ob <= t) {
+				exp_rect.l = 0;
+			} else if (b <= ot) {
+				exp_rect.l = 0;
+			} else {
+				exp_rect.l = _max(l - ol, 0);
+			}
+		} else {
+			exp_rect.l = 0;
+		}
+
+		if (or > r) {
+			if (r <= ol) {
+				exp_rect.r = 0;
+			} else if (ob <= t) {
+				exp_rect.r = 0;
+			} else {
+				exp_rect.r = _max(or -r, 0);
+			}
+		} else {
+			exp_rect.r = 0;
+		}
+		exp_rect.w 		= _max(exp_rect.r - exp_rect.l, 0);
+		exp_rect.h 		= _max(exp_rect.b - exp_rect.t, 0);
+		exp_rect.xiv 	= (w > 0) ? _cnum((iv_w / w)[TFXD](2)) : 0;
+		exp_rect.yiv 	= (h > 0) ? _cnum((iv_h / h)[TFXD](2)) : 0;
+		exp_rect.iv	 	= (w > 0 || h > 0) ? _cnum(((iv_w * iv_h) / (w * h))[TFXD](2)) : 0;
+		exp_rect.civ 	= 0;
+
+		if (check_3D) {
+			cur_iv		= exp_rect.iv;
+			if (cur_iv > .49) {
+				ovr_pts		= overlaps(el,def_w,def_h);
+				ovr_cnt		= ovr_pts[LEN];
+				ovr_pt_cnt	= _cnum(ovr_pts.on, 0);
+
+				if (ovr_pt_cnt) {
+					ovr_iv			= 1- _cnum((ovr_pt_cnt/ovr_cnt)[TFXD](2),0);
+					exp_rect.civ	=
+					exp_rect.iv		= ovr_iv;
+				}
+			}
+		}
+
+		details.rect		= el_rect;
+		details.clipRect	= clip_rect; /* formerally 'refRect' */
+		details.docRect		= doc_rect;
+
+		if (!scroll_nodes[LEN]) {
+			if (root_rect.b >= clip_rect.b || root_rect.r >= clip_rect.r) {
+				details.isRoot		= TRUE;
+				exp_rect.xs			= !!(doc_rect.w > root_rect.w && xsb_h);
+				exp_rect.ys			= !!(doc_rect.h > root_rect.h && ysb_w);
+				details.canScroll	= (doc_rect.w > root_rect.w || doc_rect.h > root_rect.h);
+			} else {
+				exp_rect.ys			=
+				exp_rect.xs			=
+				details.isRoot		=
+				details.canScroll	= FALSE;
+			}
+		} else {
+			details.isRoot		= FALSE;
+			details.canScroll	= TRUE;
+			exp_rect.xs			= !!(xsb_h);
+			exp_rect.ys			= !!(ysb_w);
+		}
+
+		details.scrollNodes	= scroll_nodes;
+		details.clipNodes	= clip_nodes;
+		details.expRect		= exp_rect;
+
 		return exp_rect;
-    }
+	}
 
+	/**
+	 * Checks whether an element has other elements that are overlapping in 3D space
+	 *
+	 * @name $sf.lib.dom.overlaps
+	 * @function
+	 * @public
+	 * @param {HTMLElement} el The element to check
+	 * @param {Number} [def_w=0] A default width of the given element for cases where width of an element may not be set due to visibility or timing issues
+	 * @param {Number} [def_h=0] A default height of the given element for cases where width of an element may not be set due to visibility or timing issues
+	 * @return {Object[]} array of objects decribing the point at which the element was checked to see if it is being overlapped
+	 *
+	 *
+	*/
 
-    /**
-     * Find any HTMLElements that are covering a given HTMLElement.
-     *
-     * @name $sf.lib.dom.overlaps
-     * @public
-     * @static
-     * @function
-     * @param {HTMLElement} el The HTMLElement for which to find any other elements that may be covering it.
-     * @param {Number} [limit] The maximum number of covering elements to return
-     * @returns {Array} An array of elements that are covering the given element
-     *
-    */
-
-    function overlaps(el,limit)
+	function overlaps(el,def_w,def_h)
     {
-    	var rect 		= _rect(el),
-    		doc			= _doc(el),
-    		root		= _docNode(doc),
-    		t	 		= rect.t,
-    		l	 		= rect.l,
-    		w	 		= rect.r-rect.l,
-    		h			= rect.b-rect.t,
+    	var el_rect		= rect(el),
+    		dc			= doc(el),
+    		root		= _docNode(dc),
+    		t	 		= el_rect.t,
+    		l	 		= el_rect.l,
     		factor		= INTERSECT_FACTOR,
-    		ret			= [],
-    		baseW		= _round(w / factor),
-    		baseH		= _round(h / factor),
-    		curW		= baseW,
-    		curH		= baseH,
-    		seen		= {},
-    		par_details	= {},
     		points		= [],
     		idx			= 0,
-    		x, y, pt, id, checkEl, ref_par_node, ref_par_rect, maxX, maxY;
+    		w,h,baseW,baseH,curW,curH,x, y, pt, id,
+    		checkEl, maxX, maxY,
+    		scr_l, scr_t, ds;
 
-		if (mgr_bounds_details) {
-			par_details = mgr_bounds_details;
-		} else {
-	    	bounds(el,par_details,TRUE);
-	    }
+    	points.on	= 0;
+		def_w		= _cnum(def_w,0,0);
+       	def_h		= _cnum(def_h,0,0);
 
-    	ref_par_node = par_details.refNode;
-    	ref_par_rect = par_details.refRect;
-    	if (ref_par_rect && ref_par_node && ref_par_node != root) {
-    		maxX = ref_par_rect.r;
-    		maxY = ref_par_rect.b;
-    	} else {
-    		maxX = l+w;
-    		maxY = t+h;
-    	}
+		if (t && !el_rect.h && def_h) {
+       		el_rect.h = def_h;
+       		el_rect.b = t+def_h;
+       	}
+       	if (l && !el_rect.w && def_w) {
+       		el_rect.w = def_w;
+       		elrect.r = l+def_w;
+       	}
 
-    	if (doc && root && doc[EL_FROM_PT]) {
+       	w			= el_rect.w;
+       	h			= el_rect.h;
+       	baseW		= _round(w/factor);
+       	baseH		= _round(h/factor);
+       	curW		= baseW;
+       	curH		= baseH;
+
+       	if (w <= 1 || h <= 1 || baseW < 1 || baseH < 1) return points;
+
+    	ds			= _get_doc_scroll();
+   		scr_t		= ds.y;
+   		scr_l		= ds.x;
+   		maxX 		= l+w;
+    	maxY 		= t+h;
+
+    	if (dc && root && dc[EL_FROM_PT]) {
     		while (curW < w)
 			{
 				curH	= baseH;
@@ -1455,41 +1577,45 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				{
 					x		= l+curW;
 					y		= t+curH;
-					if (x < maxX && y < maxY) points.push([x,y]);
+
+					if (x <= maxX && y <= maxY) points.push({x:x,y:y,on:0});
+
 					curH += baseH;
 				}
 				curW  += baseW;
 			}
 
-			limit = _cnum(limit, points[LEN]);
-
 			while (pt = points[idx++])
 			{
-				checkEl = doc[EL_FROM_PT](pt[0],pt[1]);
-				try {
-					if (checkEl && checkEl.nodeType == 1 && checkEl !== root && checkEl !== el && !contains(el, checkEl)) {
-						id	= _attr(checkEl,"id");
-						if (!id) {
-							id = lang.guid("geom_inter");
-							_attr(checkEl,"id",id);
-						}
-						if (!seen[id] && ret[LEN] < limit) {
-							seen[id] = 1;
-							ret.push(checkEl);
-						}
+				x		= _max(pt.x-scr_l,0);
+				x		= _min(x,pt.x);
+				y		= _max(pt.y-scr_t,0);
+				y		= _min(y,pt.y);
+
+				if (x == 0) {
+					pt.on = "!x-offscreen";
+					points.on++;
+					continue;
+				}
+				if (y == 0) {
+					pt.on = "!y-offscreen";
+					points.on++;
+					continue;
+				}
+
+				checkEl = dc[EL_FROM_PT](x,y);
+				if (checkEl && checkEl !== root && checkEl !== el && !contains(checkEl, el)) {
+					id	= attr(checkEl,"id");
+					if (!id) {
+						id = L.guid("geom_inter");
+						attr(checkEl,"id",id);
 					}
-				} catch (e) { }
+					pt.on	 	= id;
+					points.on++;
+				}
 			}
 		}
-		id = "";
-		for (id in seen)
-		{
-			if (id.indexOf("geom_inter") == 0) {
-				checkEl = _elt(id);
-				if (checkEl) _attr(checkEl,"id",NULL);
-			}
-		}
-		return ret;
+		return points;
     }
 
     /* --END--SafeFrames publisher side dom helper functions */
@@ -2053,7 +2179,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     function _update_focus(in_focus)
     {
-    	var posID, params, msgObj, id, ifr;
+    	var posID, params, msgObj, id, ifr, data;
     	for (posID in rendered_ifrs)
     	{
     		params 			= rendered_ifrs[posID];
@@ -2400,6 +2526,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			}
 		} catch (e) {
 			info = NULL;
+			_log("Exception in build_geom: " + (e && e[MSG] || 'NULL'), TRUE);
 		}
 
 		try {
@@ -2421,6 +2548,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			}
 		} catch (e) {
 			info = NULL;
+			_log("build_geom info error: " + (e && e[MSG] || 'NULL'), TRUE);
 		}
 		return info;
 	}
@@ -3056,11 +3184,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			 *
 			*/
 
-			_rect = (ieVer) ? _getRectIE : _getRectNonIE;
+			// _rect = (ieVer) ? _getRectIE : _getRectNonIE;
 
 			lang.def("dom",
 			{
-				rect:			_rect,
+				rect:			rect,
 				currentStyle:	currentStyle,
 				contains:		contains,
 				docRect:		docRect,
