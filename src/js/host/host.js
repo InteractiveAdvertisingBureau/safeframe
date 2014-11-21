@@ -898,7 +898,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     		compatMode	= d[COMPAT_MODE],
     		docMode		= d.documentMode || 0,
     		root, scroll, parentNode, last_par, cur_st, par_cur_st,
-    		offX, offY, box, e, use_brute;
+    		offX, offY, box, e, use_brute,
+			errmsg;
 
     	if (_is_element(el)) {
 
@@ -954,7 +955,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						r.t -= offY;
 					}
 					if (scroll.y || scroll.x) {
-						if (!UA.ios || UA.ios >= 4.2) {
+						if (!ua.ios || ua.ios >= 4.2) {
 							r.l += scroll.x;
 							r.t += scroll.y;
 						}
@@ -1021,6 +1022,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				r.h = _max(h, 0);
 				r.z = cur_st["zIndex"];
 			} catch (e) {
+				if(!e || !e[MSG]){
+					e = {message: 'null exception'};
+				}
+				errmsg = "sf Exception in rect calculation tag - " + tagName(el) + ' : ' + e[MSG];
+				_log(errmsg, TRUE);
 				r = {t:0,l:0,r:0,b:0,w:0,h:0,z:0};
 			}
 		}
@@ -1397,8 +1403,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			r:	_max(clip_right,	0),
 			b:	_max(clip_bottom,	0)
 		};
-		clip_rect.w = (clip_rect.r - clip_rect.l, 0);
-		clip_rect.h = (clip_rect.b - clip_rect.t, 0);
+		clip_rect.w = _max(clip_rect.r - clip_rect.l, 0);
+		clip_rect.h = _max(clip_rect.b - clip_rect.t, 0);
 		l			= el_rect.l;
 		r			= el_rect.r;
 		t			= el_rect.t;
