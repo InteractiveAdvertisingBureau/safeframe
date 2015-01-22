@@ -8,6 +8,10 @@
 			font-size: 1.3em;
 		}
 		
+		.fixedPosition{
+			position: fixed;
+		}
+		
 		.floatRight{
 			float: right;
 		}
@@ -21,6 +25,10 @@
 		
 		.margin-rb{
 			margin-right:10px;
+			margin-bottom: 10px;
+		}
+		.margin-lb{
+			margin-left:10px;
 			margin-bottom: 10px;
 		}
 		

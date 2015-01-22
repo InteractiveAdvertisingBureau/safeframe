@@ -12,6 +12,10 @@ SafeFrames allows advertisers to obtain data, such as
 viewability and take advantage of advanced features such
 as expansion, at the publisher's discretion.
 
+Also view:
+ * [IAB SafeFrame Site](http://www.iab.net/safeframe)
+ * [Live SafeFrame Samples and Tools](http://safeframes.net/)
+
 The SafeFrames Reference Implementation
 
 ======================================
