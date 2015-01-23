@@ -8,6 +8,10 @@
 			font-size: 1.3em;
 		}
 		
+		.inlineBlock{
+			display: inline-block;
+		}
+		
 		.fixedPosition{
 			position: fixed;
 		}
@@ -38,10 +42,21 @@
 			clear: both;
 		}
 		
-		#header {
+		.header {
 			height: 200px;
 			overflow: hidden;
 			position: relative;
+		}
+		
+		.headerTall{
+			height: 300px;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		textarea.inputblock{
+			width: 250px;
+			height: 180px;
 		}
 		
 		#feedback
