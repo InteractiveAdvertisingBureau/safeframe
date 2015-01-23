@@ -24,13 +24,30 @@ function getEl(id){
 		console.log(extern.status());
 	}
 
-	function testSharedMeta(){
+	function testSharedMeta(showKeys){
 		var key = getEl('sharedMetaKey').value || 'sf_ver';
 		var val = $sf.ext.meta(key);
 		
-		writeLog('shared meta ' + key + ': ' + val);
+		if(showKeys){
+			writeLog('shared meta ' + key + ': ' + val);
+		}
+		else{
+			writeLog(val);
+		}
 	}
 
+	function testPrivateMeta(showKeys){
+		var ownerkey = getEl('privateMetaKey').value;
+		var sec = getEl('privateSectionKey').value;
+		var val = $sf.ext.meta(sec, ownerkey);
+		
+		if(showKeys){
+			writeLog('private ' + ownerkey + ' sec ' + sec + ' : ' + val);
+		}
+		else{
+			writeLog(val);
+		}
+	}
 
 	function writeLog(message){
 		//debugger;

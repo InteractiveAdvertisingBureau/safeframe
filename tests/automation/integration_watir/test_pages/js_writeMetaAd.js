@@ -1,9 +1,9 @@
 document.write('<div style="background:lightblue;">');
-document.write('<input id="sharedMetaKey" value="key_foo" type="text" />');
+document.write('<input id="sharedMetaKey" style="width:65px;" value="key_foo" type="text" />');
 document.write('<button class="ext_sharedmeta" onclick="testSharedMeta()">Shared Meta object</button><br/>');
-document.write('<input id="privateMetaKey" value="myprivatekey" type="text" />');
-document.write('<input id="privateSectionKey" value="sectionKey" type="text" />');
-document.write('<button onclick="testPrivateMeta()">Private Meta</button>');
+document.write('<input id="privateMetaKey" style="width:65px;" value="myprivatekey" type="text" />');
+document.write('<input id="privateSectionKey" style="width:65px;" value="sectionKey" type="text" />');
+document.write('<button class="ext_privatemeta" onclick="testPrivateMeta()">Private Meta</button>');
 document.write('<button class="clearBtn" onclick="clearLog()">Clear Log</button>');
 document.write('</div>');
 document.write('<div id="feedback" style="height:240px;background:#333;color:yellow;overflow:auto;" ></div>');

@@ -93,7 +93,12 @@
 					m = sharedMeta;
 				}
 				if(privatekey && privateData){
-					p = JSON.parse(privateData);
+					try{
+						p = JSON.parse(privateData);
+					}
+					catch(ex){
+						p = privateData;
+					}
 				}
 				posmeta = new $sf.host.PosMeta(m, privatekey, p);
 			}

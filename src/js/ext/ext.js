@@ -240,7 +240,7 @@ var NULL					= null,
 			}
 		} catch (e) { }
 
-		w = ie_old_attach = w3c_old_attach = ie_old_detach = w3c_old_detach = d = _ue = par = handler = grand_par = NULL;
+		w = ie_old_attach = w3c_old_attach = ie_old_detach = w3c_old_detach = d = _ue = par = handler = NULL;
 		return success;
 	}
 

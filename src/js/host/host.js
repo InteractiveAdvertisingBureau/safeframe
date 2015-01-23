@@ -364,14 +364,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		if (!(me instanceof PosMeta)) return new PosMeta(key,owned_obj,pos,shared_obj);
 
 
-		shared 		= {};
+		shared 		= {
+			sf_ver : _cstr(sf.ver),
+			flash_ver: _get_flash_version(),
+			ck_on: _cookies_enabled_test() ? '1' : '0'
+		};
 		non_shared	= {};
-
-		if (!owner_key || typeof owner_key != STR) return me;
 
 		if (shared_obj && typeof shared_obj == OBJ) shared = _mix(shared, shared_obj);
 
-		if (owned_obj && typeof owned_obj == OBJ) non_shared[owner_key] = owned_obj;
+		if (owner_key && typeof owner_key == STR){
+			if (owned_obj && typeof owned_obj == OBJ) non_shared[owner_key] = owned_obj;
+		}
 
 
 		/**
@@ -492,17 +496,24 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	}
 	
 	/**
-	* Get the falsh version number
+	* Get the flash version number
 	*/
 	function _get_flash_version(){
-		if(flash_ver !== NULL){
+		var mimeObj;
+		if(flash_ver !== NULL && flash_ver != undefined){
 			return flash_ver;
 		}
 		
 		if(navigator.plugins && navigator.plugins.length>0){
 			var mimeTypes = navigator.mimeTypes;
             if(mimeTypes && mimeTypes[FLASH_MIME] && mimeTypes[FLASH_MIME].enabledPlugin && mimeTypes[FLASH_MIME].enabledPlugin.description){
-                flash_ver = mimeTypes[FLASH_MIME].enabledPlugin.version;
+				mimeObj = mimeTypes[FLASH_MIME].enabledPlugin;
+				if(mimeObj.version){
+					flash_ver = mimeObj.version;
+				}
+				else if(mimeObj.description){
+					flash_ver = mimeObj.description.replace(/\D+/g, ",").match(/^,?(.+),?$/)[1];
+				}
             }
 		}
 		else if(sf.env.isIE){
