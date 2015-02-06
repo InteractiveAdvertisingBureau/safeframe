@@ -216,7 +216,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			Utils.attachEvt(doc, loadEvent, bootload);
 		}
 		else{
-			Utils.attachEvt(doc, 'load', bootload);
+			Utils.attachEvt(win, 'load', bootload);
 		}
 	}
 	
