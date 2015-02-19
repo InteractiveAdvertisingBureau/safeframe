@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2012, Interactive Advertising Bureau
+* Copyright (c) 2014-2015, Interactive Advertising Bureau
 * All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -12,8 +12,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 "use strict";
 (function(win) {
 	// Root location of the SafeFrame framework. Modify for your distribution
-	var FRAMEWORK_ROOT = 'http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/'; //js/lib/base.js
-	
+	var FRAMEWORK_ROOT = '//s3-us-west-2.amazonaws.com/safeframe/refimpl/1-1-1/'; //js/lib/base.js
+
 	// If you minimize the source, modify the HOST_FILES array to specify your pub-side file
 	// and the RENDER_FILE to your custom r.html file
 	var HOST_FILES = [

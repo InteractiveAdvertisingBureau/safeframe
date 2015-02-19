@@ -22,6 +22,19 @@ pre{
 	padding: 12px;
 	border-top: 2px solid #ccc;
 	}
+	
+table.table{
+	border: 1px solid #999;
+	border-collapse: collapse;
+}
+
+table.table tr td, table.table tr th{
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	padding: 3px;
+	vertical-align:top;
+}
+	
 </style>
 </head>
 <body>
@@ -52,5 +65,30 @@ of the ad via fragment parameters on the script src attribute.
 <pre>
 The code
 
+&lt;script src="sf_bootloader.js#w=120&h=600&target=skyscraper_ad&ad=http://l.yimg.com/pq/js/adx_qa,cgong-teset/120_600_exp,C=demo,P=publisher1/ad2.js?q=1299740219"&gt;&lt;/script&gt;
+
 </pre>
+<p>
+The bootloader script detects the presence or absence of the SafeFrame framework. If missing it dynamically loads the framework files. Once loaded the bootloader parses parameters passed to the script on the src URL fragment. These parameters specify location, size, and ad script URL.
+</p>
+
+<table class="table">
+<thead><tr><th>Parameter</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>w</td><td>Width of the ad</td>
+</tr>
+<tr>
+<td>h</td><td>Height of the ad</td>
+</tr>
+<tr>
+<td>ad</td><td>URL of the script that will deliver the ad content.
+In the bootstrap sample, this should be the last parameter.</td>
+</tr>
+
+</tbody>
+</table>
+
+
 </div>
