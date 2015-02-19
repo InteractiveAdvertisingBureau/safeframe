@@ -30,14 +30,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 if (window["$sf"]) {
 	try {
-		$sf.ver = "1-1-0";
+		$sf.ver = "1-1-1";
 		$sf.specVersion = "1.1";
 	} catch (sf_lib_err) {
 
 	}
 } else {
 	var $sf = { 
-		ver: "1-1-0",
+		ver: "1-1-1",
 		specVersion: "1.1"
 	};
 

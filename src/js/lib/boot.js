@@ -10,6 +10,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 "use strict";
+
+/**
+ * @namespace $sf.host Defines the Publisher side api, and helper functions
+ * @name $sf.host.boot
+ * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
+ * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
+ * @version 1.1.1
+ *
+*/
+
+/** @ignore */
 (function(win) {
 
 	var FALSE						= false,
