@@ -9,7 +9,18 @@ Redistributions of source code must retain the above copyright notice, this list
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+"use strict";
 
+/**
+ * @namespace $sf.host Defines the Publisher side api, and helper functions
+ * @name $sf.host.boot
+ * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
+ * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
+ * @version 1.1.1
+ *
+*/
+
+/** @ignore */
 (function(win) {
 
 	var FALSE						= false,
@@ -44,13 +55,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		var head_el, err_tag;
 
 		try {
-			if (lib && lib.log && win == top) {
+			if(!lib) lib = (sf && sf.lib); // insure we have lib
+			
+			if (lib && lib.logger && win == top) {
 				if (is_err) {
 					lib.logger.error(msg);
+					sf.info.errs.push(msg);
 				} else {
 					lib.logger.log(msg);
 				}
 			} else {
+				// Append error message as comment to header
 				head_el 		= d.getElementsByTagName("head")[0];
 				err_tag			= d.createElement("script");
 				err_tag.type	= "text/plain";
@@ -206,15 +221,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			boot_positions 	= [],
 			idx 			= 0,
 			ret				= FALSE,
+			errMsg,
 			sf_host			= sf && sf.host,
 			sf_inline_conf	= sf_host && sf_host.conf,
 			script_tag, script_tag_par, script_tag_id, data, html, pos_obj, pos_conf, pos_dest_el,
-			pos_meta, pos_meta_item, typ, shared_meta, prv_meta, prv_meta_key, meta_key, sf_ocnf, err;
+			pos_meta, pos_meta_item, typ, shared_meta, prv_meta, prv_meta_key, meta_key, sf_conf, err;
 
 		if (!sf || !lang || !dom) {
 			_log("SafeFrame base library not found",TRUE);
 			return ret;
 		}
+
+		if(!lib) lib = (sf && sf.lib); // insure we have lib
 
 		if (doing_auto_boot && has_booted) {
 			_log("Automatic boot already invoked");
@@ -235,7 +253,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				}
 			}
 			if (!sf_conf) {
-				_log("No configuration found");
+				_log("No configuration found", TRUE);
 				return ret;
 			}
 		}
@@ -262,7 +280,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					data = data();
 				} catch (err) {
 					data = NULL;
-					_log("Error parsing tag configuration " + err.message);
+					errMsg = "Error parsing tag configuration " + (err && err.message || '');
+					_log(errMsg, TRUE);
 					continue;
 				}
 
@@ -366,7 +385,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 								pos_dest_el	= dom.make("div");
 								_attr(pos_dest_el, "id", pos_conf.dest);
 								try {
-									script_tag_par.insertBefore(pos_dest_el);
+									script_tag_par.insertBefore(pos_dest_el, script_tag);
 								} catch (err) {
 									_log("failed auto-adding destination element " + err.message, TRUE);
 									continue;
@@ -390,7 +409,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			try {
 				sf_host.render(boot_positions);
 			} catch (e) {
-				_log("failed during rendering " + e.message);
+				_log("failed during rendering " + e.message, TRUE);
 			}
 		} else {
 			_log("no positions to boot");

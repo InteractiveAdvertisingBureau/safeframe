@@ -9,12 +9,12 @@ Redistributions of source code must retain the above copyright notice, this list
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-
+"use strict";
 /**
  * @fileOverview This file contains JavaScript code that handles the HTML document where HTML is rendered for a SafeFrame, as well as defining the External Vendor/Client API.
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.0
+ * @version 1.1.1
 */
 
 
@@ -47,14 +47,21 @@ var NULL					= null,
 	TOLOWERCASE				= "toLowerCase",
 	EXPAND_COMMAND 			= "exp-ovr",
     COLLAPSE_COMMAND 		= "collapse",
+	MESSAGE_COMMAND 		= "msg",
 	ERROR_COMMAND 			= "error",
     NOTIFY_GEOM_UPDATE		= "geom-update",
+	NOTIFY_FOCUS_CHANGE		= "focus-change",
     NOTIFY_EXPAND			= "expand",
     NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
     NOTIFY_COLLAPSED		= (NOTIFY_COLLAPSE + "d"),
     NOTIFY_FAILURE			= "failed",
+	NOTIFY_MESSAGE 			= MESSAGE_COMMAND,
 	NOTIFY_READ_COOKIE		= "read-cookie",
 	NOTIFY_WRITE_COOKIE		= "write-cookie",
+	STATUS_COLLAPSED 		= NOTIFY_COLLAPSED,
+	STATUS_EXPANDED 		= NOTIFY_EXPAND + 'ed',
+	STATUS_COLLAPSING		= 'collapsing',
+	STATUS_EXPANDING 		= NOTIFY_EXPAND + 'ing',
     OUR_TAG_CLS_NAME		= "sf",
     MAX_MSG_WAIT_TIME		= 4000,
 	DOM_WATCH_INTERVAL		= 3000,
@@ -93,6 +100,7 @@ var NULL					= null,
 	pending_msg					= NULL,
 	geom_info					= NULL,
 	pos_meta					= NULL,
+	win_has_focus 				= FALSE,
 	guid						= "",
 	host_cname					= "",
 	can_use_html5				= FALSE,
@@ -233,7 +241,7 @@ var NULL					= null,
 			}
 		} catch (e) { }
 
-		w = ie_old_attach = w3c_old_attach = ie_old_detach = w3c_old_detach = d = _ue = par = handler = grand_par = NULL;
+		w = ie_old_attach = w3c_old_attach = ie_old_detach = w3c_old_detach = d = _ue = par = handler = NULL;
 		return success;
 	}
 
@@ -826,6 +834,9 @@ var NULL					= null,
 			render_params = guid = NULL;
 			cont 			= FALSE;
 			details.status	= 500.103;
+			e = e || {};
+			if(e[MSG] == null) { e[MSG] = "null error"; }
+			_handle_err("Error during construction: " + e[MSG]);
 		}
 		if (cont) {
 			try {
@@ -837,6 +848,7 @@ var NULL					= null,
 				host_cname		= render_params.host;
 				geom_info		= render_params.geom;
 				can_use_html5	= lang.cbool(render_params.html5);
+				win_has_focus 	= lang.cbool(render_params.has_focus);
 				temp			= render_conf.bg;
 
 				if (geom_info) {
@@ -858,7 +870,7 @@ var NULL					= null,
 
 				if (temp != "_top") {
 
-					while (_purge(_tags("base")[0]));
+					while (_purge(_tags("base")[0])){}
 
 					el = dom.make("base");
 					_attr(el,"target",temp);
@@ -1015,7 +1027,12 @@ var NULL					= null,
 				_fire_sandbox_callback(NOTIFY_COLLAPSED);
 			}
 
-		} 
+		}
+		else if (cmd == NOTIFY_MESSAGE) {
+			ret		= TRUE;
+			pending_msg 	= NULL;
+			_fire_sandbox_callback(NOTIFY_MESSAGE);
+		}
 		else if (cmd == NOTIFY_COLLAPSE) {
 			//Y.SandBox.vendor.collapse was called, notify
 			ret		= TRUE;
@@ -1036,6 +1053,11 @@ var NULL					= null,
 		else if (cmd == NOTIFY_GEOM_UPDATE) {
 			_fire_sandbox_callback(NOTIFY_GEOM_UPDATE);
 		} 
+		else if (cmd == NOTIFY_FOCUS_CHANGE) {
+			data.info = data.value = lang.cbool(data.value);
+			win_has_focus = data.value;
+			_fire_sandbox_callback(NOTIFY_FOCUS_CHANGE, data);
+		}
 		else if (cmd == NOTIFY_READ_COOKIE) {
 			ret		= TRUE;
 			if (pending_msg) {
@@ -1448,7 +1470,21 @@ var NULL					= null,
 	*/
 	function status()
 	{
-		return (pending_msg && pending_msg.cmd) || "";
+		if(pending_msg){
+			if(pending_msg.cmd == EXPAND_COMMAND) {
+				return STATUS_EXPANDING;
+			}
+			else if(pending_msg.cmd == COLLAPSE_COMMAND) {
+				return STATUS
+			}
+		}
+		
+		if(is_expanded){
+			return STATUS_EXPANDED;
+		}
+		else{
+			return STATUS_COLLAPSED
+		}
 	}
 
 	/**
@@ -1490,7 +1526,7 @@ var NULL					= null,
 
 	function message(content)
 	{
-		_send_msg(_cstr(["cmd=","msg","&pos=", pos_id, "&msg=", content]), "msg");
+		_send_msg(_cstr(["cmd=",MESSAGE_COMMAND,"&pos=", pos_id, "&msg=", content]), MESSAGE_COMMAND);
 	}
 
 	/**
@@ -1512,6 +1548,10 @@ var NULL					= null,
 			tv = Math.floor(iv*100);
 		}
 		return tv;
+	}
+	
+	function winHasFocus(){
+		return win_has_focus || document.hasFocus();
 	}
 
 	/**
@@ -1575,7 +1615,8 @@ var NULL					= null,
 					cookie: 	cookie,
 					message: 	message,
 					xtra: 		xtra,
-					inViewPercentage: inViewPercentage
+					inViewPercentage: inViewPercentage,
+					winHasFocus: winHasFocus
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?

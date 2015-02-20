@@ -12,13 +12,7 @@
 <div id="topBar" >
       <div id="contentLogo" class="mockContent"></div>
       <div id="contentNav" class="mockContent">		
-	  <ul class="nav">
-		<li><a href="./index.html">Home</a></li>
-		<li><a href="./billboard_sample.html">Billboard</a></li>
-		<li><a class="unavailable" href="./filmstrip_sample.html">Filmstrip</a></li>
-		<li><a class="unavailable" href="./portrait_sample.html">Portrait</a></li>
-		<li><a href="./pushdown_sample.html">Pushdown</a></li>
-	  </ul>
+	  <script type="text/javascript" src="risingstarnav.js" ></script>
 	  </div>
 </div>
 
@@ -76,37 +70,7 @@
       <div id="contentBottom" class="mockContent"></div>
 
     </div>
-
-
-		<script type="text/javascript">
-		function posMessageCallback(id, msgName, data){
-			if(msgName == "error"){
-				var log = document.getElementById("logger");
-				var msg = ["error in ad ", id];
-				if(data && data.errors){
-					msg.push(data.errors);
-				}
-				msg.push("<br/>");
-				log.innerHTML += msg.join("");
-			}
-		}
-		
-		/**
-		* Initialize a new SafeFrames publisher configuration
-		*/
-			(function() {
-				var conf	= new $sf.host.Config({
-					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
-					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-2/html/r.html", 
-					onPosMsg: posMessageCallback,
-					positions: {}
-				});
-
-			})();
-		
-		
-		</script>
-		
+<script type='text/javascript' src='http://safeframes.net/google_analytics_sfnet.js' ></script>
 
 	</body>
 </html>

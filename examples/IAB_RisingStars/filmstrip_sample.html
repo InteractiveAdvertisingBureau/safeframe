@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>Billboard: Rising Stars with SafeFrame</title>
+	<title>Filmstrip: Rising Stars with SafeFrame</title>
 
 	<link type="text/css" rel="stylesheet" href="samp.css" />
-	
+
 	</head>
 	<body>
 
@@ -15,55 +15,55 @@
 	  <script type="text/javascript" src="risingstarnav.js" ></script>
 	  </div>
 </div>
-      <div id="adUnitWrapper" >
 
-<div id="billboardAdDiv"></div>
+      <div id="adUnitWrapper" class="asWrapper" >
 
       </div>
 
       <div id="contentTop" class="mockContent">
-	  <h1>Billboard Rising Star Ad</h1>
+	  <h1>Filmstrip Rising Star Ad</h1>
 	  </div>
 
       <div id="contentRight" class="mockContent">
-		<div id="logger"></div>
+	  <div id="filmstripAd"></div>
 	  </div>
 
       <div id="contentLeft" class="mockContent">
 		<div>
-		<em>The Billboard is a large billboard running the full width of the page with full close-ability.</em>
+		<em>The Filmstrip is a 300x3000 canvas, viewable through a 300x600 window and fully controlled by viewer</em>
 		<p>
-		In this example the Billboard ad pushes down page content to place itself front and center.
-		The user can close the ad by clicking the "Close" button to dismiss the ad.  
-		A small "Show ad" link is left in case the user wishes to re-display the ad.		
-		</p>
+The IAB Filmstrip enables enhanced creative story‐telling capabilities within a single ad creative. Advertisers submit just one 300x3000 Filmstrip with five different segments. The Filmstrip is then served through the IAB UAP 300x600. Simple engagement features – scroll, click, hover, and touch – allow the user to explore all 5 segments of the 300x3000 creative.
+</p><p>
+One application involves aligning the five segments of the Filmstrip to the five stages of the purchase funnel (awareness, interest, desire, intent, and loyalty). The IAB Filmstrip is designed to launch from any 300x600 ad location on any publisher across devices (PC, iPad and, eventually, mobile). Publishers share a common logic/algorithm that selects the appropriate phase of the purchase funnel depending on ad location (Homepage content might map with ‘awareness’; Lifestyle content might map with ‘desire’). The common logic would also enable the sequencing of the ad as the user browses through a portal.
+</p>
 		<ul>
 		<li>
 		<a href="http://www.iab.net/risingstars" target="_blank">... More on IAB Rising Star ad units</a>
 		</li>
-		<li><a href="https://code.google.com/p/iab-billboard-adunit/" target="_blank">Billboard sample files</a></li>
-		</ul>
 		</div>
 	  </div>
 
-      <div id="contentBottom" class="mockContent"></div>
+      <div id="contentBottom" class="mockContent">
+	  		<div id="logger"></div>
 
+	  </div>
+		
     </div>
-<!-- // "https://s3-us-west-2.amazonaws.com/safeframe/samples/rising_stars/adfiles/billboardAdBootstrap.js",  -->
 <script type='text/x-safeframe' class='sf_data'>
 	{
-		"id":		"billboardAd",
-		 // relative source is relative to the r.html bootstrap file "../../examples/IAB_RisingStars/AdFiles/billboardAdBootstrap.js",	
+		"id":		"pushdownAd",
+		 // relative source is relative to the r.html bootstrap file  "../../examples/IAB_RisingStars/AdFiles/pushdownAdBootstrap.js",	
 		 // ALWAYS USE ABSOLUTE SOURCES
-		"src": "http://safeframes.emination.com/risingStars/adfiles/billboardAdBootstrap.js",
+		// "src": "http://safeframes.emination.com/risingStars/adfiles/pushdownAdBootstrap.js", 
+		"src": "http://safeframes.emination.com/risingStars/adfiles/filmstripAdBootstrap.js",
 		
 		"conf":
 		{
-			"w":		970,
-			"h":		20,
-			"dest":	"billboardAdDiv",
+			"w":		300,
+			"h":		600,
+			"dest":	"filmstripAd",
 			"supports" : {
-				"exp-push" : "1",
+				"exp-push" : "0",
 				"read-cookie" : "1",
 				"write-cookie" : "1"
 			}
@@ -112,8 +112,8 @@ top level domain from the host site.
 			(function() {
 				var conf	= new $sf.host.Config({
 					// Should be absolute path to render file hosted on CDN "../../src/html/r.html",
-					// "http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html", 
-					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html", 
+					//renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html",
+					renderFile:	"http://s3-us-west-2.amazonaws.com/safeframe/refimpl/1-0-3/html/r.html",
 					onPosMsg: posMessageCallback,
 					positions: {}
 				});

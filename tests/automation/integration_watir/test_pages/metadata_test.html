@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>SafeFrame Metadata Test</title>
+<link rel="stylesheet" type="text/css" href="styles.css" />
+	</head>
+	<body>
+		<div id="header" class="headerTall">
+			<h1>SafeFrame Metadata Tests</h1>
+			
+			<div class="mainBody floatRight">
+				<div id="feedback_wrapper"><div id="feedback" ></div></div>
+			</div>
+			
+			<!-- controls to set metadata -->
+			<div class="inlineBlock">
+			<label for="metaShared">Shared Meta</label><br/>
+			<textarea id="metainput" class="inputblock" >{ "key_foo": "bar" }</textarea>
+			</div>
+
+			<div class="inlineBlock">
+			<label for="metainput">Private Meta</label>
+			<input id="txtPrivateKey" type="text" placeholder="Private Key" value="myprivatekey" /> <br/>
+			<textarea id="metaPrivate" class="inputblock" >{"sectionKey": ["one", "two", "three"]}</textarea>
+			</div>
+			
+			<div>
+			<button onclick="pageActions.clearHostLog()" id="clearLogBtn" type="button">Clear Host Log</button>
+				<button onclick="pageActions.renderNewAd()" type="button">Re-render Ad</button>
+				<button onclick="pageActions.clearHostLog()" type="button">Update Meta</button>
+			</div>
+
+		</div>
+			<hr style="clear:both;"/>
+			
+			<div class="relative">
+				<div id="left_col" class="floatLeft">
+				<div id='sftarget'></div>
+			</div>
+
+			</div>
+
+		<!-- NOTE: For testing we are hosting in same domain. In production this should be a CDN on a different domain -->
+		<script type="text/javascript" src="/src/js/lib/base.js"></script>
+		<script type="text/javascript" src="/src/js/host/host.js"></script>
+		<script type="text/javascript" src="/src/js/lib/boot.js"></script>
+		
+		
+		<script type="text/javascript">
+		
+( function(win){
+	var host = $sf.host;
+	var fb = document.getElementById("feedback");
+	
+	var baseAd = "/tests/automation/integration_watir/test_pages/js_writeMetaAd.js?ver=${sf_ver}&sfver=${sf_ver}&cookie=${ck_on}&flashver=${flash_ver}&expand=${sf_exp_ovr}&pushed=${sf_exp_push}&pinned=${sf_pin}&back=${sf_bg}&host=${host_url}";
+	var sfElementId = 'sftarget';
+	var adId = 'metaTargetAd';
+	
+	function getEl(id){
+		return document.getElementById(id);
+	}
+	
+	/**
+	* Methods callable by page elements
+	*/
+	win.pageActions = {
+
+		nukePositions: function (){
+			host.nuke();
+		},
+		
+		renderNewAd: function(){
+			var sharedMeta, privatekey, privateData;
+			var m, p, posmeta, pos;
+			var adConfig;
+			var adSettings = {
+				id: adId,
+				dest: sfElementId,
+				w: 400,
+				h: 300,
+				src: baseAd
+			};
+			
+			sharedMeta  = getEl('metainput').value;
+			privatekey  = getEl('txtPrivateKey').value;
+			privateData = getEl('metaPrivate').value;
+						
+			if(sharedMeta){
+				if(typeof(sharedMeta) === 'string'){
+					m = JSON.parse(sharedMeta);
+				}
+				else{
+					m = sharedMeta;
+				}
+				if(privatekey && privateData){
+					try{
+						p = JSON.parse(privateData);
+					}
+					catch(ex){
+						p = privateData;
+					}
+				}
+				posmeta = new $sf.host.PosMeta(m, privatekey, p);
+			}
+			
+			// This call has a side effect of registering the ad position in the system.
+			// We don't do anything with the object ourselves
+			adConfig = new $sf.host.PosConfig(adSettings);
+			
+			pos = new $sf.host.Position(adSettings, null, posmeta);
+			$sf.host.render(pos);
+		
+		},
+
+		clearHostLog: function (){
+			document.getElementById("feedback").innerHTML = '';
+		}
+	}
+	
+	
+	/**
+	* SF page event handler callbacks
+	*/
+	win.pageHandlers = {
+		startRenderCallback: function (id){
+			var posConf = host.get(id);
+			console.log("onStartPosRender called for " + id);
+		},
+		
+		endRenderCallback: function (id){
+			var posConf = host.get(id);
+			console.log("onEndPosRender called for " + id)
+		},
+		
+		beforePosMessageCallback: function (id, msgName, data){
+			var posConf = host.get(id);
+			console.log("onBeforePosMsg called for " + id)
+		},
+		
+		posMessageCallback: function (id, msgName, data){
+			var posConf = host.get(id);
+			console.log("onPosMsg called for " + id + " with message: " + msgName);
+		},
+
+		renderFailCallback: function (id){
+			var posConf = host.get(id);
+			console.error("onFailure called for " + id);
+		}
+	}
+	
+	
+})(window);
+
+// ============ BOOTSTRAP FRAMEWORK
+
+			/* render some sample content */
+			(function() {
+				var conf	= new $sf.host.Config({
+					renderFile:		"/src/html/r.html",
+
+ 					onStartPosRender: pageHandlers.startRenderCallback,
+ 					onFailure: pageHandlers.renderFailCallback,
+					onEndPosRender: pageHandlers.endRenderCallback,
+					onBeforePosMsg: pageHandlers.beforePosMessageCallback,
+					onPosMsg: pageHandlers.posMessageCallback
+
+				});
+				
+				pageActions.renderNewAd();
+			})();
+			
+		</script>
+	</body>
+</html>

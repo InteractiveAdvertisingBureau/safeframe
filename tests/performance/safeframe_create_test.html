@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Perf Test - SafeFrame Create Multiple</title>
+	<style type="text/css">
+
+		BODY,HTML { 
+			margin:0px; padding: 0px; line-height: 1.5em; 
+			font-family: Arial;
+		}
+		
+		h1{
+			margin: 0 3px;
+			font-size: 1.3em;
+		}
+		
+		.floatRight{
+			float: right;
+		}
+		.floatLeft{
+			float: left;
+		}
+		.inlineBlock{
+			display: inline-block;
+		}
+		.spaced{
+			margin: 4px;
+		}
+		.relative{
+			position: relative;
+		}
+		
+		.margin-rb{
+			margin-right:10px;
+			margin-bottom: 10px;
+		}
+		
+		.contentSection{
+			height: 500px;
+			background: #efe;
+			clear: both;
+		}
+		
+		#header {
+			height: 200px;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		#feedback
+		{
+			padding: 3px;
+			position: absolute;
+			right: 1px;
+			top: 0;
+			width: 360px;
+			height: 100%;
+			overflow: auto;
+			border: 0;
+			color: green;
+			background: #333;
+			text-align:left;
+			display:inline-block;
+		}
+		
+		.footer{
+			clear: both;
+			background: #eee;
+			height: 350px;
+		}
+
+
+		iframe
+		{
+			border: 1px solid black;
+			background: lightblue;
+			margin: 4px;
+		}
+		</style>
+	</head>
+	<body>
+			<div id="header" >
+			<h1>Performance Test - SafeFrame Create Multiple</h1>
+			<div style="display:inline-block;">
+			<label>Number Ads <input id="adCount" value="10" /></label>
+			
+			<button onclick="createAds()" id="createAdsBtn" type="button">Create Ads</button>
+			<br />
+			<span id="dataOutput"></span>
+			</div>
+			
+			<div id="feedback_wrapper"><div id="feedback" ></div></div>
+
+			</div>
+			
+			<div class="relative" style="clear:both;">
+			<hr />
+				<div class="floatLeft margin-rb" ><div id='tgtLREC2'></div></div>
+				<p>
+Ads below</p>
+
+
+<div id="adblockcontainer">
+</div>
+
+
+
+
+			<div class='footer'>
+<p>
+			Lorem ipsum dolor sit amet, scelerisque urna ut et ac quam. Purus odio et diam pellentesque ridiculus, hac libero, curabitur diam id facilisi eu. At ut. Integer cras vitae in duis, nibh neque ac etiam sed nonummy lacinia. Sollicitudin non tincidunt sed, nibh fermentum vel lacus. Velit proin vestibulum tristique sit, et natoque justo venenatis cras felis. Vel nam auctor nunc etiam, turpis viverra pede parturient ac lacus eros, curabitur eu, tristique orci, lacus elit in aliquam. Dapibus vivamus sed hymenaeos suspendisse, nisl lorem. Duis mi dictum nonummy, molestie phasellus est velit libero adipiscing proin. Metus sit orci sapien viverra, felis nibh sapien et ut, gravida tellus sit ornare. Malesuada risus sed non pharetra, sollicitudin amet egestas, cursus tortor. Fuga amet sodales ut quis, arcu massa tempor lacus.
+			</p>
+			<p>
+Rhoncus venenatis nulla aenean libero pede ac, velit ac, feugiat elit massa praesent montes erat neque, ac wisi, nibh faucibus fringilla felis nihil. A fringilla voluptates, sit a lacinia elementum rutrum augue, aliquam rhoncus dignissim magna quisque eleifend phasellus, vel viverra velit duis vitae augue fringilla. Odio in viverra faucibus risus, non et velit sed massa, in diam, turpis felis, neque et nullam. Nisl elit. Vel nulla lorem cursus ac nulla, imperdiet nunc ut volutpat et. Id est aenean vivamus, eros at sapien sed, habitant laoreet, et enim accumsan, et lorem nunc. Sit enim vehicula ut pulvinar integer, ipsum curae ligula eu quam, vitae ad quis eget lectus, ullamcorper parturient eu congue nulla sed congue, pretium risus pharetra a. Wisi purus eget elit, in eleifend blandit, nec erat dui eget.
+</p>
+			</div>
+			
+		<!-- NOTE: For testing we are hosting in same domain. In production this should be a CDN on a different domain -->
+		<script type="text/javascript" src="/src/js/lib/base.js"></script>
+		<script type="text/javascript" src="/src/js/host/host.js"></script>
+		<script type="text/javascript" src="/src/js/lib/boot.js"></script>
+		<script type="text/javascript">
+
+			var host = $sf.host;
+			
+			var renderData = {};
+			
+			function initRenderData(){
+				renderData = {
+					total: 0,
+					rendered: 0,
+					errors: 0,
+					timings: {},
+					sumTimings: 0			
+				}			
+			}
+
+			function nukePositions(){
+				host.nuke();
+			}
+			
+			function createAds(){
+				var cntEl = document.getElementById('adCount');
+				var i, content, adid, elname, adblock = document.getElementById('adblockcontainer');
+				var targMarkup = []
+				initRenderData();
+				nukePositions();
+				clearHostLog();
+				
+				renderData.total = parseInt(cntEl.value);
+				
+				for(i=1; i < renderData.total+1; i++){
+					targMarkup.push('<div class="inlineBlock spaced"><div id="perfad' + new String(i) + '" ></div></div>');
+				}
+				
+				adblock.innerHTML = targMarkup.join('');
+				
+				renderData.start = new Date().getTime();
+				
+				for(i=1; i < renderData.total+1; i++){
+					elname = 'perfad' + new String(i);
+					adid = 'adfor_' + elname;
+					renderAd(adid, elname, 'Ad ' + adid);
+				}
+				
+				
+			}
+			
+			function writeOut(msg){
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += msg + '<br />';
+			}
+			
+			function renderAd(adid, targetEl, content){
+				renderData.timings[adid] = { start: new Date().getTime() };
+				
+				var adConfig = {
+				  id: adid, 
+				  w: 50,
+				  h: 40,
+				  dest: targetEl
+				};
+				adConfig.supports = { 'exp-push' : true };
+				// Register the ad position config information
+				var posConf = new $sf.host.PosConfig(adConfig);
+
+				// Create the ad position.
+				var pos   = new $sf.host.Position(adid, content);
+
+				// Render the ad in a SafeFrame.
+				$sf.host.render(pos);
+			}
+			function startRenderCallback(id){
+				var posConf = host.get(id);
+			}
+			
+			function endRenderCallback(id){
+				var tobj = renderData.timings[id] || {};
+				tobj.end = new Date().getTime();
+				renderData.timings[id] = tobj;
+				renderData.sumTimings += tobj.end-tobj.start
+				
+				renderData.rendered++;
+				if(renderData.rendered == renderData.total){
+					outputPerf();
+				}
+			}
+
+			function renderFailCallback(id){
+				renderData.rendered++;
+				renderData.errors++;
+				if(renderData.rendered == renderData.total){
+					outputPerf();
+				}
+
+			}
+			
+			function outputPerf(){
+				renderData.end =  new Date().getTime();
+				writeOut('completed ad renders: ' + new String(renderData.end - renderData.start));
+				writeOut('avg render time: ' + new String(renderData.sumTimings/renderData.total));
+			}
+			
+			function clearHostLog(){
+				document.getElementById("feedback").innerHTML = '';
+			}
+			
+			function checkInfo(){
+				var info = $sf.info;
+				var el = document.getElementById("dataOutput");
+				var fb = document.getElementById("feedback");
+				fb.innerHTML += "$sf.info.list length: " + info.list.length + '<br/>'
+				
+				el.innerHTML = info.list.length;
+			}
+
+
+
+			/* render some sample content */
+			(function() {
+				var conf	= new $sf.host.Config({
+					renderFile:		"/src/html/r.html",
+
+ 					onStartPosRender: startRenderCallback,
+ 					onFailure: renderFailCallback,
+					onEndPosRender: endRenderCallback
+
+				});
+
+
+				// var posMeta		= new $sf.host.PosMeta(null,"rmx",{foo:"bar",bar:"foo"});
+				// var pos			= new $sf.host.Position("LREC", "<h1>Hello World Sean</h1>", posMeta);
+
+				// $sf.host.render(pos);
+			})();
+		</script>
+	</body>
+</html>

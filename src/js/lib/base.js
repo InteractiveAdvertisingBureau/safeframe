@@ -9,11 +9,11 @@ Redistributions of source code must retain the above copyright notice, this list
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-
+"use strict";
 /**
  * @fileOverview This file contains the base library functionality need for both the publisher/host and vendor/client sides of the SafeFrames library.  Contains JavaScript language extensions and base level dom reading / manipulation
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
- * @version 1.0.2
+ * @version 1.1.0
 */
 
 
@@ -30,12 +30,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 if (window["$sf"]) {
 	try {
-		$sf.ver = "1-0-2";
+		$sf.ver = "1-1-1";
+		$sf.specVersion = "1.1";
 	} catch (sf_lib_err) {
 
 	}
 } else {
-	var $sf = { ver: "1-0-2" };
+	var $sf = { 
+		ver: "1-1-1",
+		specVersion: "1.1"
+	};
 
 };
 
@@ -109,6 +113,8 @@ if (window["$sf"]) {
 		BLANK_URL				= "about:blank",
 		NODE_TYPE				= "nodeType",
 		IFRAME					= "iframe",
+		EMPTYSTR				= "",
+		APPLY					= "apply",
 		GC						= "CollectGarbage",
 		ie_attach				= "attachEvent",
 		w3c_attach				= "addEventListener",
@@ -137,7 +143,8 @@ if (window["$sf"]) {
 		NUM_MIN 					= (-1 * NUM_MAX),
 		_es     					= (win && win.escape),
 		_ue     					= (win && win.unescape),
-		isIE						= (win && ("ActiveXObject" in win)),
+		isIE11 						= !(window.ActiveXObject) && "ActiveXObject" in window,
+		isIE						= !isIE11 && (win && ("ActiveXObject" in win)),
 		next_id						= 0,
 		useOldStyleAttrMethods		= FALSE,
 		gc_timer_id					= 0,
@@ -160,6 +167,7 @@ if (window["$sf"]) {
 
 		_cstr, _cnum, _callable,
 		lang, dom,
+		iframes, logger, info,
 
 		/* public functions that are dynamically defined based on whether IE is being used */
 
@@ -210,6 +218,8 @@ if (window["$sf"]) {
 			if (typ == STR) return str;
 			if (typ == NUM && !str) return "0";
 			if (typ == OBJ && str && str.join) return str.join("");
+			if (str === false) return 'false';
+			if (str === true) return 'true';
 			return (str) ? S(str) : "";
 		}
 
@@ -552,7 +562,7 @@ if (window["$sf"]) {
 			if(typeof obj === "string"){
 				return false;
 			}
-			if(obj.length != null && obj.constructor == Array){
+			if(obj[LEN] != null && obj.constructor == Array){
 				return true;
 			}
 			return false;
@@ -652,214 +662,185 @@ if (window["$sf"]) {
 			return new_str;
 		}
 
+	function es(str) { return escape(str); }
+	function ues(str) { return unescape(str); }
+	
+	/**
+	 * Calls indexOf method on strings, mainly used to save space during
+	 * compression
+	 *
+	 * @name _indexOf
+	 * @function
+	 * @private
+	 * @ignore
+	 * @param {String} haystack the string to search
+	 * @param {String} needle the substring being looked for
+	 * @param {Boolean} useLast Whether or not to search from the end instead of the begining
+	 * @return {Number} the index of the substring in the given string or -1 if not found
+	 *
+	*/
 
-		/**
-		 * @class Intantiable class used to convert a delimited string into an object.<br />
-		 * For example querystrings: "name_1=value_1&name_2=value_2" ==> {name_1:value_1,name_2:value_2};<br/><br />
-		 *
-		 * Note that property values could also contain the same sPropDelim and sValueDelim strings.  Proper string encoding should occur
-		 * to not trip up the parsing of the string.  Said values may be ascii escaped, and in turn, along with the <i><b>bRecurse</b></i> constructor parameter set to true, will cause nested ParamHash objects to be created.
-		 *
-		 * @constructor
-		 * @memberOf $sf.lib.lang
-		 * @exports ParamHash as $sf.lib.lang.ParamHash
-		 * @param {String} [sString]  The delimited string to be converted
-		 * @param {String} [sPropDelim="&"]  The substring delimiter used to seperate properties. Default is "&".
-		 * @param {String} [sValueDelim="="]  The substring delimited used to seperate values.  Default is "=".
-		 * @param {Boolean} [bNoOverwrite=false]  If true, when a name is encountered more than 1 time in the string it will be ignored.
-		 * @param {Boolean} [bRecurse=false]  If true, when a value of a property that is parsed also has both the sPropDelim and sValueDelim inside, convert that value to another ParamHash object automatically
-		 * @example
-		 * var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1");
-		 * alert(ph.x); // == 1
-		 * alert(ph.y); // == 1
-		 * alert(ph.z); // == 1
-		 *
-		 * @example
-		 * var ph = new $sf.lib.lang.ParamHash("x:1;y:2;z:3", ";", ":");
-		 * alert(ph.x); // == 1
-		 * alert(ph.y); // == 2
-		 * alert(ph.z); // == 3
-		 *
-		 * @example
-		 * var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1&z=2");
-		 * alert(ph.x); // == 1
-		 * alert(ph.y); // 1
-		 * alert(ph.z); //Note that z == 2 b/c of 2 properties with the same name
-		 *
-		 * @example
-		 * var ph = new $sf.lib.lang.ParamHash("x=1&y=1&z=1&z=2",null,null,true); //null for sPropDelim and sValueDelim == use default values of "&" and "=" respectively
-		 * alert(ph.x); // == 1
-		 * alert(ph.y); // 1
-		 * alert(ph.z); //Note that z == 1 b/c bNoOverwrite was set to true
-		 *
-		 * @example
-		 * //You can also do recursive processing if need be
-		 * var points	= new $sf.lib.lang.ParamHash(),
-		 *     point_1	= new $sf.lib.lang.ParamHash(),
-		 *     point_2	= new $sf.lib.lang.ParamHash();
-		 *
-		 * point_1.x = 100;
-		 * point_1.y = 75;
-		 *
-		 * point_2.x = 200;
-		 * point_2.y = 150;
-		 *
-		 * points.point_1	= point_1;
-		 * points.point_2	= point_2;
-		 *
-		 * var point_str	= points.toString();  // == "point_1=x%3D100%26y%3D75%26&point_2=x%3D200%26y%3D150%26&";
-		 * var points_copy	= new $sf.lib.lang.ParamHash(point_str, null, null, true, true); //note passing true, b/c we want to recurse
-		 *
-		 * alert(points_copy.point_1.x) // == "100";
-		 *
-		 *
-	    */
-		function ParamHash(sString, sPropDelim, sValueDelim, bNoOverwrite, bRecurse)
+	function _indexOf(haystack, needle, useLast)
+	{
+		return (useLast) ? haystack.lastIndexOf(needle) : haystack.indexOf(needle);
+	}
+
+
+	/**
+	 * Intantiable class used to convert a delimited string into an object.<br />
+	 * For example querystrings: "name_1=value_1&name_2=value_2" ==> {name_1:value_1,name_2:value_2};<br/>
+	 *
+	 * Note that unescaped property values
+	 * that are added into this object, that also contain the same sPropDelim and sValueDelim strings will be recursively
+	 * converted into their own ParamHash objects.  Therefore if you do not want this recursion to occur, you must make sure
+	 * that the values are encoded/escaped properly.
+	 *
+	 * This class is required for nearly all DARLA classes to work properly.<br /><br />
+	 *
+	 * @class
+	 * @name ParamHash
+	 * @memberOf sf.lib.lang
+	 * @param {String} sString  The delimited string to be converted
+	 * @param {String} sPropDelim  The substring delimiter used to seperate properties. Default is "&".
+	 * @param {String} sValueDelim  The substring delimited used to seperate values.  Default is "=".
+	 * @param {Boolean} bNoOverwrite  If true, when a name is encountered more than 1 time in the string it will be ignored.
+	 * @param {Boolean} bRecurse  If true, when a value of a property that is parsed also has both the sPropDelim
+	 *                            and sValueDelim inside, convert that value to another ParamHash object automatically
+	 */
+	function ParamHash(sString, sPropDelim, sValueDelim, bNoOverwrite, bRecurse)
+	{
+		var idx, idx2, idx3, sTemp, sTemp2, sTemp3, me = this, pairs, nv, nm, added, cnt, doAdd = FALSE, obj, len, len2;
+
+		if (!(me instanceof ParamHash)) return new ParamHash(sString, sPropDelim, sValueDelim, bNoOverwrite,bRecurse);
+		if (!arguments[LEN]) return me;
+
+		if (sString && typeof sString == OBJ) return mix(new ParamHash(EMPTYSTR,sPropDelim,sValueDelim,bNoOverwrite,bRecurse),sString);
+
+		sString 	= cstr(sString);
+		sPropDelim	= cstr(sPropDelim) || a;
+		sValueDelim	= cstr(sValueDelim) || eq;
+
+		if (!sString) return me;
+		if (sPropDelim != q && sValueDelim != q && sString.charAt(0) == q) sString = sString.substring(1);
+
+		if (sString.charAt(0) == sPropDelim) sString = sString.substring(1);
+
+		pairs = sString.split(sPropDelim);
+		cnt   = pairs[LEN];
+		idx   = 0;
+		while (cnt--)
 		{
-			var idx, idx2, idx3, sTemp, sTemp2, sTemp3, me = this, pairs, nv, nm, added, cnt, io="indexOf",ss="substring", doAdd = FALSE, obj, len, len2;
+			sTemp	= pairs[idx++];
+			added	= FALSE;
+			doAdd	= FALSE;
+			if (sTemp) {
+				nv	= sTemp.split(sValueDelim);
+				len	= nv[LEN];
+				if (len > 2) {
+					nm		= ues(nv[0]);
+					nv.shift();
 
-			if (!(me instanceof ParamHash)) return new ParamHash(sString, sPropDelim, sValueDelim, bNoOverwrite,bRecurse);
-			if (!arguments[LEN]) return me;
+					if (bRecurse) {
+						/* Its possible that someone screws up and doesn't have a value encoded properly and but have multiple delimiters
+						 * As if recursion was going to take place. So here we know that's the case and try to handle it if we can detect
+						 * the end points as well
+						*/
 
-			if (sString && typeof sString == OBJ) return mix(new ParamHash("",sPropDelim,sValueDelim,bNoOverwrite,bRecurse),sString);
+						sTemp2	= nm+sValueDelim;
+						idx2	= _indexOf(sString,sTemp2);
+						len		= sTemp2[LEN];
+						sTemp3	= sString.substring(idx2+len);
+						sTemp2	= sPropDelim+sPropDelim;
+						len2	= sTemp2[LEN];
+						idx3	= _indexOf(sTemp3,sTemp2);
+						if (idx3 != -1) {
+							sTemp3 = sString.substr(idx2+len, idx3+len2);
+							obj	   = new ParamHash(sTemp3, sPropDelim, sValueDelim, bNoOverwrite, bRecurse);
+							sTemp3 = EMPTYSTR;
+							len	   = 0;
+							for (sTemp3 in obj) len++;
 
-			sString 	= cstr(sString);
-			sPropDelim	= cstr(sPropDelim) || a;
-			sValueDelim	= cstr(sValueDelim) || eq;
-
-			if (!sString) return me;
-			if (sPropDelim != q && sValueDelim != q && sString.charAt(0) == q) sString = sString[ss](1);
-
-			idx  = sString[io](q);
-			idx2 = sString[io](sValueDelim);
-
-			if (idx != -1 && idx2 != -1 && idx > idx2) {
-				sTemp	= _es(sString[ss](idx2+1));
-				sTemp2	= sString.substr(0, idx2+1);
-				sString	= sTemp2 + sTemp;
-			} else if (idx != -1) {
-				sString	= sString[ss](idx+1);
-				return new ParamHash(sString, sPropDelim, sValueDelim, bNoOverwrite);
-			};
-			if (sString.charAt(0) == sPropDelim) sString = sString[ss](1);
-
-			pairs = sString.split(sPropDelim);
-			cnt   = pairs[LEN];
-			idx   = 0;
-			while (cnt--)
-			{
-				sTemp	= pairs[idx++];
-				added	= FALSE;
-				doAdd	= FALSE;
-				if (sTemp) {
-					nv	= sTemp.split(sValueDelim);
-					len	= nv[LEN];
-					if (len > 2) {
-						nm		= _ue(nv[0]);
-						nv.shift();
-
-						if (bRecurse) {
-							/* Its possible that someone screws up and doesn't have a value encoded properly and but have multiple delimiters
-							 * As if recursion was going to take place. So here we know that's the case and try to handle it if we can detect
-							 * the end points as well
-							*/
-
-							sTemp2	= nm+sValueDelim;
-							idx2	= sString[io](sTemp2);
-							len		= sTemp2[LEN];
-							sTemp3	= sString[ss](idx2+len);
-							sTemp2	= sPropDelim+sPropDelim;
-							len2	= sTemp2[LEN];
-							idx3	= sTemp3[io](sTemp2);
-							if (idx3 != -1) {
-								sTemp3 = sString.substr(idx2+len, idx3+len2);
-								obj	   = new ParamHash(sTemp3, sPropDelim, sValueDelim, bNoOverwrite, bRecurse);
-								sTemp3 = "";
-								len	   = 0;
-								for (sTemp3 in obj) len++;
-
-								if (len > 0) idx += (len-1);
-								sTemp = obj;
-							} else {
-								sTemp  = _ue(nv.join(sValueDelim));
-							}
-
+							if (len > 0) idx += (len-1);
+							sTemp = obj;
 						} else {
-							sTemp	= _ue(nv.join(sValueDelim));
+							sTemp  = ues(nv.join(sValueDelim));
 						}
-						doAdd	= TRUE;
-					} else if (len == 2) {
-						nm		= _ue(nv[0]);
-						sTemp	= _ue(nv[1]);
-						doAdd	= TRUE;
+
+					} else {
+						sTemp	= ues(nv.join(sValueDelim));
 					}
-					if (doAdd) {
-						if (bNoOverwrite) {
-							if (!(nm in me)) {
-								me[nm] = sTemp
-								added	 = TRUE;
-							};
-						} else {
-							me[nm]	= sTemp;
-							added		= TRUE;
+					doAdd	= TRUE;
+				} else if (len == 2) {
+					nm		= ues(nv[0]);
+					sTemp	= ues(nv[1]);
+					doAdd	= TRUE;
+				}
+				if (doAdd) {
+					if (bNoOverwrite) {
+						if (!(nm in me)) {
+							me[nm] = sTemp
+							added	 = TRUE;
 						};
-						if (bRecurse && added && nm && sTemp && typeof sTemp != OBJ && (sTemp[io](sPropDelim) >= 0 || sTemp[io](sValueDelim) >= 0)) {
-							me[nm] = new ParamHash(sTemp, sPropDelim, sValueDelim, bNoOverwrite, bRecurse);
-						}
+					} else {
+						me[nm]	= sTemp;
+						added		= TRUE;
+					};
+					if (bRecurse && added && nm && sTemp && typeof sTemp != OBJ && (_indexOf(sTemp,sPropDelim) >= 0 || _indexOf(sTemp,sValueDelim) >= 0)) {
+						me[nm] = new ParamHash(sTemp, sPropDelim, sValueDelim, bNoOverwrite, bRecurse);
 					}
 				}
-			};
-		}
-
-		proto = ParamHash[PROTO];
-
-		/*
-		 * This internal function is used for the valueOf / toString methods of our ParamHash class.
-		 *
-		*/
-
-		/**
-		 * Converts a ParamHash object back into a string using the property and value delimiters specifed (defaults to "&" and "=").
-		 * Again this method works recursively.  If an object is found as a property, it will convert that object into a ParamHash string
-		 * and then escape it. Note also that this class's valueOf method is equal to this method.
-		 *
-		 * @methodOf ParamHash#
-		 * @public
-		 * @function
-		 * @param {String} [sPropDelim="&"]  The substring delimiter used to seperate properties. Default is "&".
-	 	 * @param {String} [sValueDelim="="]  The substring delimited used to seperate values.  Default is "=".
-	 	 * @param {Boolean} [escapeProp=false] Whether or not to ascii escape the name of a property
-	 	 * @param {Boolean} [dontEscapeValue=false] Do not escape values or properties automatically
-	 	 * @return {String} the encoded string representation of the object.
-	 	 *
-	 	*/
-		function toString(sPropDelim, sValueDelim, escapeProp, dontEscapeValue)
-		{
-			var prop, buffer = [], me = this, itemType, item;
-
-			sPropDelim 	= sPropDelim || a;
-			sValueDelim	= sValueDelim || eq;
-
-			for (prop in me)
-			{
-				item		= me[prop];
-				itemType	= typeof item;
-
-				if (item && itemType == FUNC) continue;
-				if (item && itemType == OBJ) {
-					item = toString.apply(item, [sPropDelim,sValueDelim,escapeProp,dontEscapeValue]);
-				}
-				if (escapeProp) prop = _es(prop);
-				if (!dontEscapeValue) item = _es(item);
-
-				buffer.push(prop, sValueDelim, item, sPropDelim);
 			}
-			return cstr(buffer);
+		};
+	}
+
+	proto = ParamHash[PROTO];
+
+	/** @ignore */
+	function _param_hash_tostring(sPropDelim, sValueDelim, escapeProp, dontEscapeValue)
+	{
+		var prop, buffer = [], me = this, itemType, item;
+
+		sPropDelim 	= sPropDelim || a;
+		sValueDelim	= sValueDelim || eq;
+
+		for (prop in me)
+		{
+			item		= me[prop];
+			itemType	= typeof item;
+
+			if (item && itemType == FUNC) continue;
+			if (item && itemType == OBJ) {
+				if (item.tagName || item.nodeType) {
+					if (DARLA.note) DARLA.note(559);
+					item = "#node";
+				} else {
+					item = _param_hash_tostring[APPLY](item, [sPropDelim,sValueDelim,escapeProp,dontEscapeValue]);
+				}
+			}
+			if (escapeProp) prop = es(prop);
+			if (!dontEscapeValue) item = es(item);
+
+			buffer.push(prop, sValueDelim, item, sPropDelim);
 		}
+		if (buffer[LEN]) buffer[buffer[LEN]-1] = "";
+		return cstr(buffer);
+	}
 
+	/**
+	 * Converts a ParamHash object back into a string using the property and value delimiters specifed (defaults to "&" and "=").
+	 * Again this method works recursively.  If an object is found as a property, it will convert that object into a ParamHash string
+	 * and then escape it. Note also that this class's valueOf method is equal to this method.
+	 *
+	 * @name toString
+	 * @memberOf lang.ParamHash
+	 * @function
+	 * @param {String} sPropDelim  The substring delimiter used to seperate properties. Default is "&".
+	 * @param {String} sValueDelim  The substring delimited used to seperate values.  Default is "=".
+	 * @return {String} the encoded string representation of the object.
+	 *
+	*/
+	proto.toString = proto.valueOf = _param_hash_tostring;
 
-	 	/** @ignore */
-		proto.toString = proto.valueOf = toString;
 
 		lang = def(IAB_LIB + ".lang",
 		{
@@ -891,7 +872,7 @@ if (window["$sf"]) {
 		 *
 		*/
 
-		def("$sf.env", 		{isIE:isIE});
+		def("$sf.env", {isIE: isIE} );
 
 		_cstr 		= cstr;
 		_cnum 		= cnum;

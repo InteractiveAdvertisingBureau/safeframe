@@ -1,14 +1,21 @@
 var extern = window.extern || $sf.ext;
 
 	function testSupports(){
-		writeLog("start");
+		writeLog("SUPPORTS");
 		//debugger;
 		var obj = extern.supports();
+		var item;
 
 		var key
 		for (key in obj){
-			writeLog(key + " is " + obj[key]);
+			if(obj.hasOwnProperty(key)){
+				item = obj[key]
+				if(typeof item !== 'function'){
+					writeLog(key + ": " + obj[key]);
+				}
+			}
 		}
+		writeLog("=====================");
 	}
 
 	function testGeometry(){
@@ -20,6 +27,8 @@ var extern = window.extern || $sf.ext;
 			writeLog("Geometry missing");
 		} else {
 			for (key in geom) {
+				if(!geom.hasOwnProperty(key)) { continue; }
+				
 				obj = geom[key];
 				typ = typeof obj;
 				if (typ == "object") {
@@ -27,15 +36,16 @@ var extern = window.extern || $sf.ext;
 					buffer.push(key, ": ");
 					for (propKey in obj)
 					{
+						if(! obj.hasOwnProperty(propKey)){ continue; }
 						if (typeof obj[propKey] == "function") continue;
-						buffer.push(propKey, " is ", obj[propKey], ", ");
+						buffer.push('  ', propKey, ": ", obj[propKey], ", ");
 					}
 					buffer.length -= 1;
 					buffer.push("<br />");
 				} else if (typ == "function") {
 					continue;
 				} else {
-					buffer.push(key, " is ", obj, "<br />");
+					buffer.push(key, ": ", obj, "<br />");
 				}
 			}
 			writeLog(buffer.join(""));
@@ -123,7 +133,7 @@ var extern = window.extern || $sf.ext;
 	}
 
 	function adStatus(){
-		writeLog("sf.extern.status(): " + extern.status());
+		writeLog(extern.status());
 	}
 
 	function externMeta(){
@@ -158,19 +168,9 @@ var extern = window.extern || $sf.ext;
 	}
 
 	function getViewableAmount(){
-		var geom = extern.geom();
-		var iv = geom.self.iv;
-		iv = new Number(iv);
-		var totalViewable = iv * 100;
-		writeLog("Percent in view: " + totalViewable + "%");
-	}
-	
-	function sendMessage(){
-		var msg = "Hello World"
-		var msg2 = { one: "two" }
-		
-		$sf.ext.message(msg);
-	
+		clearLog()
+		var viewable = $sf.ext.inViewPercentage();
+		writeLog(viewable);
 	}
 
 

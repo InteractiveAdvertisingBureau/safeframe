@@ -1,0 +1,89 @@
+		BODY,HTML { 
+			margin:0px; padding: 0px; line-height: 1.5em; 
+			font-family: Arial;
+		}
+		
+		h1{
+			margin: 0 3px;
+			font-size: 1.3em;
+		}
+		
+		.inlineBlock{
+			display: inline-block;
+		}
+		
+		.fixedPosition{
+			position: fixed;
+		}
+		
+		.floatRight{
+			float: right;
+		}
+		.floatLeft{
+			float: left;
+		}
+		
+		.relative{
+			position: relative;
+		}
+		
+		.margin-rb{
+			margin-right:10px;
+			margin-bottom: 10px;
+		}
+		.margin-lb{
+			margin-left:10px;
+			margin-bottom: 10px;
+		}
+		
+		.contentSection{
+			height: 500px;
+			background: #efe;
+			clear: both;
+		}
+		
+		.header {
+			height: 200px;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		.headerTall{
+			height: 300px;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		textarea.inputblock{
+			width: 250px;
+			height: 180px;
+		}
+		
+		#feedback
+		{
+			padding: 3px;
+			position: absolute;
+			right: 1px;
+			top: 0;
+			width: 360px;
+			height: 100%;
+			overflow: auto;
+			border: 0;
+			color: green;
+			background: #333;
+			text-align:left;
+			display:inline-block;
+		}
+		
+		.footer{
+			clear: both;
+			background: #eee;
+			height: 350px;
+		}
+
+
+		iframe
+		{
+			border: 1px solid black;
+			background: lightgreen;
+		}

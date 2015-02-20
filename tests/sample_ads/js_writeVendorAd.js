@@ -11,6 +11,7 @@ document.write('<button onclick="getHostUrl()">extern.hostURL</button>');
 document.write('<button onclick="showMyUrl()">My URL</button>');
 document.write('<button onclick="clearLog()">Clear Log</button>');
 document.write('<button onclick="throw(\"Error Forced\");" style="background:red;color:white;">THROW EXCEPTION</button>');
+document.write('<button onclick="sendMessage()">SendMessage</button>');
 document.write('<div id="feedback" style="height:240px;background:#333;color:yellow;overflow:auto;" ></div>');
 //for local testing use
 document.write('<scr' + 'ipt src=\"../../tests/sample_ads/vendorActionScript.js\" ></sc' + '' + 'ript>');
