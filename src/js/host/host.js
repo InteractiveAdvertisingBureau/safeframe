@@ -2339,7 +2339,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						_expand_safeframe(msgObj);
 						ret = TRUE;
 					break;
-					case "collapse":
+					case COLLAPSE_COMMAND:
 						_collapse_safeframe(msgObj);
 						ret = TRUE;
 					break;

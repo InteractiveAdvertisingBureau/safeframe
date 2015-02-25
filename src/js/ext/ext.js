@@ -49,6 +49,7 @@ var NULL					= null,
     COLLAPSE_COMMAND 		= "collapse",
 	MESSAGE_COMMAND 		= "msg",
 	ERROR_COMMAND 			= "error",
+	BACKGROUND_COMMAND 		= "bg",
     NOTIFY_GEOM_UPDATE		= "geom-update",
 	NOTIFY_FOCUS_CHANGE		= "focus-change",
     NOTIFY_EXPAND			= "expand",
@@ -1226,6 +1227,28 @@ var NULL					= null,
 		_set_alignment(0, 0);
 		return TRUE;
 	}
+	
+	/**
+	* Internal function to set the request for background takeover
+	*/
+	function _background(options)
+	{
+		var content, newObj;
+		var strkeys = ['color','href','imgsrc','tgt']
+		var boolkeys = ['repeatX','repeatY','fixed']
+		
+		newObj = {
+			color: _cstr(options.color),
+			href:  _cstr(options.href),
+			imgsrc:  _cstr(options.imgsrc),			
+		}
+		
+		content = escape(ParamHash(newObj))
+		_send_msg(_cstr(["cmd=",BACKGROUND_COMMAND,"&pos=", pos_id, "&msg=", content]), BACKGROUND_COMMAND);	
+	}
+	
+	
+	/********************************* public methods below ************************************/
 
 	/**
 	 * Intialize the SafeFrame external vendor/client API, so that other features may be used
@@ -1404,6 +1427,25 @@ var NULL					= null,
 	function collapse()
 	{
 		if (_collapse()) _send_msg(_cstr(["cmd=",COLLAPSE_COMMAND,"&pos=", pos_id]), COLLAPSE_COMMAND);
+	}
+	
+	/**
+	 * Set the background and clickable hovering elements of parent page.
+	 *
+	 * @name $sf.ext.bg
+	 * @public
+	 * @static
+	 * @function
+	 * @param {object} [bgDes] Background description object
+	 *
+	*/
+	function bg(bgDes)
+	{
+		var does_bg = true; // supports(BACKGROUND_COMMAND);
+
+		if (does_bg && typeof(bgDes) == 'object') {
+			_background(bgDes);
+		}		
 	}
 
 	/**
