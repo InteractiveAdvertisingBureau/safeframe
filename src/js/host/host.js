@@ -51,7 +51,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		COLLAPSE_COMMAND 		= "collapse",
 		ERROR_COMMAND 			= "error",
 		MESSAGE_COMMAND 		= "msg",
-		NOTIFY_EXPAND			= "expand",
+		BACKGROUND_COMMAND 		= "bg",
+ 		NOTIFY_EXPAND			= "expand",
 		NOTIFY_GEOM_UPDATE		= "geom-update",
 		NOTIFY_COLLAPSE			= COLLAPSE_COMMAND,
 		NOTIFY_FOCUS_CHANGE		= "focus-change",
@@ -2351,6 +2352,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						_record_error(msgObj);
 						ret = TRUE;
 					break;
+					case BACKGROUND_COMMAND:
+						_set_background(msgObj);
+						ret = TRUE;
 					case NOTIFY_GEOM_UPDATE:
 						sf.lib.logger.log("Geom update complete: " + msgObj.pos);
 						ret = TRUE;
@@ -2744,6 +2748,212 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 		ifr = ifrSt = par = parSt = params = msgObj = NULL;
     }
+	
+	/**
+	* Builds the background data and sets default values.
+	*
+	* @static
+	* @function
+	* @param {$sf.lib.lang.ParamHash} bgData The details about the message send from the SafeFrame to set background
+	*/
+	function _buildBgData(bgData){
+		var k, v, i;
+		var bg = {};
+		var panes = [], p, objKey;
+		var topKeys = {
+			'color'    : null,
+			'href'     : null,
+			'imgsrc'   : null,
+			'posX'     : 50,
+			'posY'     : 0,
+			'repeatX'  : false,
+			'repeatY'  : false,
+			'fixed'    : false,
+			't'        : 0,
+			'b'        : '800px',
+			'l'        : null,
+			'r'        : null
+		};
+		
+		var paneKeys = {
+			'href'     : null,
+			'imgsrc'   : null,
+			'posX'     : 100,
+			'posY'     : 0,
+			'repeatX'  : false,
+			'repeatY'  : false,
+			'fixed'    : false,
+			't'        : 0,
+			'b'        : '800px',
+			'l'        : null,
+			'r'        : null			
+		};
+		
+		for(k in topKeys){
+			if(bgData.hasOwnProperty(k)){
+				bg[k] = bgData[k];
+			}
+			else{
+				bg[k] = topKeys[k];
+			}
+		}
+		
+		panes = [bgData['left_pane'], bgData['right_pane'] ];
+		for(i=0;i<panes.length;i++){
+			p = panes[i];
+			if(p){
+				objKey = i == 0 ? 'left_pane' : 'right_pane';
+				bg[objKey] = {};
+				for(k in paneKeys){
+					if(p.hasOwnProperty(k)){
+						bg[objKey][k] = p[k];
+					}
+					else{
+						bg[objKey][k] = paneKeys[k];
+					}
+				}
+			}
+		}
+		
+		//bg = bgData;
+		
+		return bg;
+	}
+	
+	/**
+     * Set background based on ad request
+     *
+     * @name $sf.host-_set_background
+     * @private
+     * @static
+     * @function
+     * @param {$sf.lib.lang.ParamHash} msgObj The details about the message send from the SafeFrame to set background
+	*/
+	function _set_background(msgObj){
+		var xn = FALSE, yn = FALSE, posID = (msgObj && msgObj.pos), params, params_conf, 
+			id, bgData, bodyEl, htmlEl, applyIf, topElems = [],
+			ifr, par, ifrSt, parSt, s,
+			z, delta, scr_handle;
+			
+		var color, hasTopImg, hasLRImages, pane, pData, pArr;
+
+		if(!posID) return;
+
+		params			= rendered_ifrs[posID];
+		params_conf		= (params && params.conf);
+		bgData 			= _buildBgData(msgObj.msg);
+
+		if (!params || !params_conf) return;
+
+		id		= params.dest;
+		ifr		= _elt(id);
+		par		= _elt(POS_REL_BOX_ID_PREFIX + "_" + posID);
+		if (!ifr || !par) return;
+
+		ifrSt	= ifr[ST];
+		parSt	= par[ST];
+
+		if (!ifrSt) return;
+		
+		// inner convenience method
+		applyIf = function(dataObj, optKey, cssKey, elements, itemTemplate){
+			var i, data;
+			if(dataObj[optKey] != null){
+				if(itemTemplate){
+					data = itemTemplate.replace(/\{0\}/gi, dataObj[optKey]);
+				}
+				else{
+					data = dataObj[optKey];
+				}
+				for(i=0;i<elements.length;i++){					
+					elements[i].style[cssKey] = data;
+				}
+			}
+		}		
+		
+
+		scr_handle = scroll_parents_attached[posID];
+
+		if (scr_handle && scr_handle.tID) clearTimeout(scr_handle.tID);
+
+		_clear_geom_update_timer();
+		
+		bodyEl = win[DOC].getElementsByTagName('BODY')[0];
+		topElems.push(bodyEl);
+		htmlEl = win[DOC].getElementsByTagName('HTML');
+		if(htmlEl && htmlEl.length > 0){
+			htmlEl = htmlEl[0];
+			topElems.push(htmlEl);
+		}
+		
+		hasTopImg = bgData['imgsrc'] != null && bgData['imgsrc'] != '';
+		hasLRImages = (typeof(bgData['left_pane']) === 'object' || typeof(bgData['right_pane']) === 'object');
+		
+		if(hasLRImages){
+			bodyEl.style.backgroundColor='transparent';
+			applyIf(bgData, 'color', 'backgroundColor', [htmlEl]);
+		}
+		else{
+			applyIf(bgData, 'color', 'backgroundColor', topElems);
+		}
+		applyIf(bgData, 'imgsrc', 'backgroundImage', topElems, 'url({0})');
+		
+		// apply top image
+		if(hasTopImg){
+			if(bgData.repeatX || bgData.repeatY){
+				if(bgData.repeatX && bgData.repeatY){					
+				}
+				else{
+					bgData['bgrepeat'] = bgData.repeatX ? 'repeatX' : 'repeatY';
+					applyIf(bgData, 'bgrepeat', 'backgroundRepeat', topElems);
+				}
+			}
+			else{
+				bgData['bgrepeat'] = 'no-repeat';
+				applyIf(bgData, 'bgrepeat', 'backgroundRepeat', topElems);
+			}
+		}
+		
+		// Left and right rail images
+		if(hasLRImages){
+			var createPane = function(styleStr, paneData){
+				pane = document.createElement('DIV');
+				pArr = [pane];
+				sf.lib.dom.css(pane, styleStr);
+				applyIf(pData, 'imgsrc', 'backgroundImage', pArr, 'url({0})');
+				
+				bodyEl.insertBefore(pane, bodyEl.firstChild);
+			}
+			
+			pData = bgData['left_pane'];
+			if(pData){
+				s = 'position:absolute;z-index:-1;left:0;top:0;height:800px;width:1000px;';
+				createPane(s, pData);
+			}
+			pData = bgData['right_pane'];
+			if(pData){
+				s = 'position:absolute;z-index:-1;right:0;top:0;height:800px;width:1000px;background-position:right center;';
+				createPane(s, pData);
+			}
+			
+		}
+
+		if (_fire_pub_callback(BF_POS_MSG, posID, BACKGROUND_COMMAND)) return; //event canceled
+
+        params.expanded		= TRUE;
+        msgObj.dx			= dx;
+        msgObj.dy			= dy;
+        msgObj.w			= nWd;
+        msgObj.h			= nHt;
+        msgObj.cmd			= "bg";
+       	msgObj.geom 		= _es(_build_geom(posID, ifr, TRUE));
+
+		_fire_pub_callback(POS_MSG, posID, EXPAND_COMMAND, dx ,dy);
+		_send_response(params, msgObj);
+		ifrSt = par = ifr = params = msgObj = NULL;
+	}
+	
+	
 	
     /**
      * Notify publisher that a message has been sent and return the appropriate callback

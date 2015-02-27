@@ -63,10 +63,10 @@
 			 height = 66;
 
 		// Ad contents or bootstrap
-		  var html = '<img src="http://localhost:9099/tests/layer-bg/leaderAd.png" style="width:970px;height:66px;margin:0 auto 0 auto;" />';
+		var src = 'http://localhost:9099/tests/layer-bg/js_takeoverAd.js';
+		var html = '<scr' + 'ipt src="' + src + '" ></scr' + 'ipt>';
 		  
-		  // html = "<div style='width:800px;height:50px;background:red;'>red</div>";
-
+		  
 		// Initialize the ad position
 		var adConfig = {
 		  id: adPositionId, 
@@ -74,7 +74,7 @@
 		  h: height,
 		  dest: 'leaderboardAd'
 		};
-		adConfig.supports = { 'exp-push' : true, 'bg' : true };
+		adConfig.supports = {'bg' : true };
 
 		// Register the ad position config information
 		var posConf = new $sf.host.PosConfig(adConfig);

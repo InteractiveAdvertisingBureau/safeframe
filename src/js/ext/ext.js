@@ -83,6 +83,7 @@ var NULL					= null,
 	_ue						= (win && win.unescape),
 	_cstr					= (lang && lang.cstr),
 	_cnum					= (lang && lang.cnum),
+	_cbool					= (lang && lang.cbool),
 	_append					= (dom && dom.append),
 	_tags					= (dom && dom.tags),
 	_elt					= (dom && dom.elt),
@@ -1233,14 +1234,31 @@ var NULL					= null,
 	*/
 	function _background(options)
 	{
+		var i, k;
 		var content, newObj;
-		var strkeys = ['color','href','imgsrc','tgt']
-		var boolkeys = ['repeatX','repeatY','fixed']
+		var strkeys = ['color','href','imgsrc','tgt'];
+		var numkeys = ['t', 'b','l','r'];
+		var boolkeys = ['repeatX','repeatY','fixed'];
+		var objkeys = ['left_pane','right_pane'];
 		
 		newObj = {
 			color: _cstr(options.color),
 			href:  _cstr(options.href),
 			imgsrc:  _cstr(options.imgsrc),			
+		}
+		
+		for(i=0;i<boolkeys.length;i++){
+			k = boolkeys[i];
+			if(options[k] !== undefined){
+				newObj[k] = _cbool(options[k]);
+			}
+		}
+		
+		for(i=0;i<objkeys.length;i++){
+			k = objkeys[i];
+			if(typeof(options[k]) == 'object'){
+				newObj[k] = options[k];
+			}
 		}
 		
 		content = escape(ParamHash(newObj))
@@ -1441,7 +1459,7 @@ var NULL					= null,
 	*/
 	function bg(bgDes)
 	{
-		var does_bg = true; // supports(BACKGROUND_COMMAND);
+		var does_bg = supports(BACKGROUND_COMMAND);
 
 		if (does_bg && typeof(bgDes) == 'object') {
 			_background(bgDes);
@@ -1656,7 +1674,8 @@ var NULL					= null,
 					cookie: 	cookie,
 					message: 	message,
 					inViewPercentage: inViewPercentage,
-					winHasFocus: winHasFocus
+					winHasFocus: winHasFocus,
+					bg: bg
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?
