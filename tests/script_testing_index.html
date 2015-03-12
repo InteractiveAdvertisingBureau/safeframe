@@ -36,6 +36,7 @@
 			function render_input()
 			{
 				var el, val, w, h, html, posID, posConf, pos;
+				var meta;
 
 				$sf.host.nuke();
 
@@ -74,9 +75,10 @@
 				h 	= val;
 
 
+				meta	= {foo: 'bar', text: 'hello world meta'};
 				posID	 = "test_" + w + "x" + h;
 				posConf	 = new $sf.host.PosConfig({id:posID,w:w,h:h,dest:"tgtLREC"});
-				pos		 = new $sf.host.Position(posID, html);
+				pos		 = new $sf.host.Position(posID, html, meta);
 
 				$sf.host.render(pos);
 

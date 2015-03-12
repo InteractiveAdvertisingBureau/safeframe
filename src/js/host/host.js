@@ -626,8 +626,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		}
 
 		if (!me.html) me.html		= "";
-
-		me.meta = meta || me.meta || {};
+		
+		if(meta != null && !(meta instanceof PosMeta)){
+			meta = new PosMeta(meta);
+		}
+		
+		me.meta = meta || me.meta || new PosMeta();
 		me.conf = conf || me.conf || {};
 
 		if (id) {

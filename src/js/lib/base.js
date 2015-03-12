@@ -693,7 +693,7 @@ if (window["$sf"]) {
 	 * converted into their own ParamHash objects.  Therefore if you do not want this recursion to occur, you must make sure
 	 * that the values are encoded/escaped properly.
 	 *
-	 * This class is required for nearly all DARLA classes to work properly.<br /><br />
+	 * This class is required for nearly all SafeFrame classes to work properly.<br /><br />
 	 *
 	 * @class
 	 * @name ParamHash
@@ -809,7 +809,6 @@ if (window["$sf"]) {
 			if (item && itemType == FUNC) continue;
 			if (item && itemType == OBJ) {
 				if (item.tagName || item.nodeType) {
-					if (DARLA.note) DARLA.note(559);
 					item = "#node";
 				} else {
 					item = _param_hash_tostring[APPLY](item, [sPropDelim,sValueDelim,escapeProp,dontEscapeValue]);
