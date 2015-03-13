@@ -30,6 +30,8 @@ Bug fixes - Not, switching to Github for tracking as of this version.
 * Metadata object fix - section 4.6 of spec allows any key/value object passed to Position, 
   but implementation only recognized a PosMeta object instance (ticket #2).
 * Commented out CSS transition in example (ticket #1).
+* Code fails building geom with 3D overlap (ticket #3).
+
 
 Version 1.1.1
 ==============

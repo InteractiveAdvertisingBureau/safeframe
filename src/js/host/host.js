@@ -1626,10 +1626,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 				checkEl = dc[EL_FROM_PT](x,y);
 				if (checkEl && checkEl !== root && checkEl !== el && !contains(checkEl, el)) {
-					id	= attr(checkEl,"id");
+					id	= _attr(checkEl,"id");
 					if (!id) {
 						id = L.guid("geom_inter");
-						attr(checkEl,"id",id);
+						_attr(checkEl,"id",id);
 					}
 					pt.on	 	= id;
 					points.on++;
@@ -2453,14 +2453,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     function _handle_frame_load()
     {
-		var el = this, pos_id = dom.attr(el, "_pos_id"), all_renders_done = TRUE;
+		var el = this, pos_id = _attr(el, "_pos_id"), all_renders_done = TRUE;
 
 		if (pending_ifrs[pos_id]) {
 			clearTimeout(pending_ifrs[pos_id]);
 			delete pending_ifrs[pos_id];
 			complete_ifrs[pos_id]	= pos_id;
-			dom.attr(el, "_pos_id", NULL);
-			dom.attr(el, "name", NULL);
+			_attr(el, "_pos_id", NULL);
+			_attr(el, "name", NULL);
 			el[ST].visibility 	= "inherit";
 			el[ST].display		= "block";
 			_fire_pub_callback("onEndPosRender", pos_id);
