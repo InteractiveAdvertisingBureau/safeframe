@@ -1628,7 +1628,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				if (checkEl && checkEl !== root && checkEl !== el && !contains(checkEl, el)) {
 					id	= _attr(checkEl,"id");
 					if (!id) {
-						id = L.guid("geom_inter");
+						id = _guid("geom_inter");
 						_attr(checkEl,"id",id);
 					}
 					pt.on	 	= id;
