@@ -2553,7 +2553,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		try {
 	        if (info) {
 	        	info.win	= ParamHash(dom.winRect());
-				info.par 	= ParamHash(details.refRect);
+				info.par 	= ParamHash(details.clipRect);
 
 				ex			= ParamHash(details.expRect);
 				s			= ParamHash(details.rect);
