@@ -956,7 +956,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     			if (!use_brute && BOUNDING && el[BOUNDING]) {
                 	if (isIE) {
-						if (!docMode || (docMode > 0 && docMode < 8) || compatMode === BACK_COMPAT) {
+						if (!docMode || (docMode > 0 && docMode < 8) || compatMode === 'BackCompat') {
 							offX = root.clientLeft;
 							offY = root.clientTop;
                         }
