@@ -16,9 +16,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @name $sf.host
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.1.1
+ * @version 1.1.2
  *
 */
+
+/* =====================
+* FIXES
+* #8 (IE 11 expand fails intermittently) 18-11-2015
+====================== */
 
 /** @ignore */
 (function(win) {
@@ -627,8 +632,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		}
 
 		if (!me.html) me.html		= "";
-
-		me.meta = meta || me.meta || {};
+		
+		if(meta != null && !(meta instanceof PosMeta)){
+			meta = new PosMeta(meta);
+		}
+		
+		me.meta = meta || me.meta || new PosMeta();
 		me.conf = conf || me.conf || {};
 
 		if (id) {
@@ -1623,10 +1632,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 				checkEl = dc[EL_FROM_PT](x,y);
 				if (checkEl && checkEl !== root && checkEl !== el && !contains(checkEl, el)) {
-					id	= attr(checkEl,"id");
+					id	= _attr(checkEl,"id");
 					if (!id) {
-						id = L.guid("geom_inter");
-						attr(checkEl,"id",id);
+						id = _guid("geom_inter");
+						_attr(checkEl,"id",id);
 					}
 					pt.on	 	= id;
 					points.on++;
@@ -1678,11 +1687,31 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function _check_html5_init(evt)
 	{
+		var fn;
+		var evtname = 'on' + MSG;
+		var supported = (evtname in win);
+		if(supported){
+			canUseHTML5	= TRUE;
+			return;
+		}
+		else{
+			fn = function(){};
+			dom[ATTACH](win,MSG,fn);
+			if(typeof(win[evtname]) === 'function'){
+				canUseHTML5	= TRUE;
+				dom[DETACH](win, MSG, fn);
+				return;
+			}
+			canUseHTML5	= FALSE;
+		}
+		
+		/*
 		if (!canUseHTML5 && evt && evt.data == initID) {
 			canUseHTML5	= TRUE;
 			dom.evtCncl(evt);
 			dom[DETACH](win, MSG, _check_html5_init);
 		}
+		*/
 	}
 
 	/**
@@ -2453,14 +2482,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     function _handle_frame_load()
     {
-		var el = this, pos_id = dom.attr(el, "_pos_id"), all_renders_done = TRUE;
+		var el = this, pos_id = _attr(el, "_pos_id"), all_renders_done = TRUE;
 
 		if (pending_ifrs[pos_id]) {
 			clearTimeout(pending_ifrs[pos_id]);
 			delete pending_ifrs[pos_id];
 			complete_ifrs[pos_id]	= pos_id;
-			dom.attr(el, "_pos_id", NULL);
-			dom.attr(el, "name", NULL);
+			_attr(el, "_pos_id", NULL);
+			_attr(el, "name", NULL);
 			el[ST].visibility 	= "inherit";
 			el[ST].display		= "block";
 			_fire_pub_callback("onEndPosRender", pos_id);
@@ -2553,7 +2582,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		try {
 	        if (info) {
 	        	info.win	= ParamHash(dom.winRect());
-				info.par 	= ParamHash(details.refRect);
+				info.par 	= ParamHash(details.clipRect);
 
 				ex			= ParamHash(details.expRect);
 				s			= ParamHash(details.rect);
@@ -3439,14 +3468,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						send:		send_msg_to_child_iframe
 					}, dom, TRUE);
 
-					dom[ATTACH](win,MSG,_check_html5_init);
 					initID			= "xdm-html5-init-" + _guid();
 					locHost			= (locHost.indexOf("file") == 0) ? locHost = "file" : locHost;
+					_check_html5_init({foo:'bar', data: initID});
+					
+					/*
+					dom[ATTACH](win,MSG,_check_html5_init);
 					try {
 						win[PMSG](initID, (locHost == "file") ? "*" : locHost);
 					} catch (e) {
 						dom[DETACH](win,MSG,_check_html5_init);
 					}
+					*/
 				}
 			})();
 
