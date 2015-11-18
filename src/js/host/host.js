@@ -16,9 +16,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @name $sf.host
  * @author <a href="mailto:ssnider@yahoo-inc.com">Sean Snider</a>
  * @author <a href="mailto:ccole[AT]emination.com">Chris Cole</a>
- * @version 1.1.1
+ * @version 1.1.2
  *
 */
+
+/* =====================
+* FIXES
+* #8 (IE 11 expand fails intermittently) 18-11-2015
+====================== */
 
 /** @ignore */
 (function(win) {
@@ -1681,11 +1686,31 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 	function _check_html5_init(evt)
 	{
+		var fn;
+		var evtname = 'on' + MSG;
+		var supported = (evtname in win);
+		if(supported){
+			canUseHTML5	= TRUE;
+			return;
+		}
+		else{
+			fn = function(){};
+			dom[ATTACH](win,MSG,fn);
+			if(typeof(win[evtname]) === 'function'){
+				canUseHTML5	= TRUE;
+				dom[DETACH](win, MSG, fn);
+				return;
+			}
+			canUseHTML5	= FALSE;
+		}
+		
+		/*
 		if (!canUseHTML5 && evt && evt.data == initID) {
 			canUseHTML5	= TRUE;
 			dom.evtCncl(evt);
 			dom[DETACH](win, MSG, _check_html5_init);
 		}
+		*/
 	}
 
 	/**
@@ -3233,14 +3258,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						send:		send_msg_to_child_iframe
 					}, dom, TRUE);
 
-					dom[ATTACH](win,MSG,_check_html5_init);
 					initID			= "xdm-html5-init-" + _guid();
 					locHost			= (locHost.indexOf("file") == 0) ? locHost = "file" : locHost;
+					_check_html5_init({foo:'bar', data: initID});
+					
+					/*
+					dom[ATTACH](win,MSG,_check_html5_init);
 					try {
 						win[PMSG](initID, (locHost == "file") ? "*" : locHost);
 					} catch (e) {
 						dom[DETACH](win,MSG,_check_html5_init);
 					}
+					*/
 				}
 			})();
 
