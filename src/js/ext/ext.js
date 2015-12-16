@@ -111,6 +111,7 @@ var NULL					= null,
 	inline_handler_timer_id		= 0,
 	err_msgs					= [],
 	unload_handlers				= [],
+	message_handlers			= [],
 
 	render_params, render_conf, ie_old_attach, w3c_old_attach, ie_old_detach, w3c_old_detach;
 
@@ -491,19 +492,30 @@ var NULL					= null,
 
 		dom.evtCncl(evt);
 
-		if (str && src && src == top) {
-			msg_params	= ParamHash(str,NULL,NULL,TRUE,TRUE);
-			msg_guid	= msg_params.guid;
-			msg_obj		= msg_params.msg;
-			if (guid == msg_guid && msg_obj && typeof msg_obj == OBJ) {
-				try {
-					/** @ignore */
-					setTimeout(function()
-					{
-						_receive_msg(msg_obj, evt);
-						msg_params = evt = msg_guid = msg_obj = NULL;
-					},1);
-				} catch (e) { }
+		if (str && src) {
+			if (src == top) {
+				msg_params	= ParamHash(str,NULL,NULL,TRUE,TRUE);
+				msg_guid	= msg_params.guid;
+				msg_obj		= msg_params.msg;
+				if (guid == msg_guid && msg_obj && typeof msg_obj == OBJ) {
+					try {
+						/** @ignore */
+						setTimeout(function()
+						{
+							_receive_msg(msg_obj, evt);
+							msg_params = evt = msg_guid = msg_obj = NULL;
+						},1);
+					} catch (e) { }
+				}
+			} else if ((src != top) && (src != parent) && (src != window)) {
+				/* foreign message - if ext code registered a listener for the message's source window, pass it along safely: */
+				for (var i = 0; i < message_handlers.length; i++) {
+					if (message_handlers[i][0] == src) {
+						try {
+							message_handlers[i][1](evt);
+						} catch (e) { }
+					}
+				}
 			}
 		}
 	}
@@ -1554,6 +1566,28 @@ var NULL					= null,
 	}
 
 	/**
+	 * Allow external code loaded into the SafeFrame to safely register a postMessage HTML5 listener.
+	 * This enables external code to listen for messages in the SafeFrame from any parent child IFRAME
+	 * it may install. We don't let external code directly attach message listeners as we don't want
+	 * to risk parent pages leveraging postMessage from accidently leaking messages to SafeFrame'd
+	 * external code.
+	 *
+	 * @name $sf.ext.regMessageListener
+	 * @public
+	 * @static
+	 * @function
+	 * @param {Object} source_window The content window object that will send our SafeFrame messages that ext code wants to listen to (other than our publisher/parent). This cannot be window (the SafeFrame itself) nor parent or top - if it is it will be ignored.
+	 * @param {Function} message_handler The callback function that will be called with the message received by the SafeFrame when the message is an "ext" message.
+	 *
+	*/
+	function regMessageListener(source_window, message_handler)
+	{
+		if ((source_window == window) || (source_window == parent) || (source_window == top))
+			return;
+		message_handlers.push([source_window, message_handler]);
+	}
+
+	/**
 	 * Return whether or not a particular feature is supported, or an object containing
 	 * key/value pairs denoting all features and whether or not they are supported
 	 *
@@ -1614,7 +1648,8 @@ var NULL					= null,
 					cookie: 	cookie,
 					message: 	message,
 					inViewPercentage: inViewPercentage,
-					winHasFocus: winHasFocus
+					winHasFocus: winHasFocus,
+					regMessageListener: regMessageListener
 				}, sf, TRUE);
 
 				// QUESTION - IS this just leftover?
