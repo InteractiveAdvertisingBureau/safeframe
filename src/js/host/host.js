@@ -606,10 +606,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 		// Insure config is initialized
 		if(config == null){
-			var msg = "Publisher Config not initialized - abort";
-			logger.error(msg);
-			info.errs.push(msg);
-			return;
+			return _log("Publisher Config not initialized - abort", TRUE);
 		}
 
 		if (typ == OBJ) {

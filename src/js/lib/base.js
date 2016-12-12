@@ -1146,7 +1146,7 @@ if (window["$sf"]) {
 
 	        try {
         		date.setTime(date.getTime() + 1000);
-        		d.cookie = cstr(["sf_ck_tst=test; expires=", date.toGMTString(), "; path=/"]);
+        		d.cookie = _cstr(["sf_ck_tst=test; expires=", date.toGMTString(), "; path=/"]);
         		if (d.cookie.indexOf("sf_ck_tst") != -1) ret.cks = TRUE;
 	        } catch (e) {
 	        	ret.cks = FALSE;
