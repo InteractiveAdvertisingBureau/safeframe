@@ -3052,7 +3052,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			args		= arguments,
 			firstCSSPos = "relative",
 			finalCSSPos = "absolute",
-			finalCSSEnd = "top:0px;left:0px;visibility:hidden;display:none;",
+			finalCSSEnd = "top:0px;left:0px;visibility:hidden;display:none;max-width:none;max-height:none;",
 
 		pos, pos_id, pos_conf, dest_el, new_dest_el, rel_el, par_el,
 		name_params, dest_id, dest_rel_id, css_txt, w, h, st, e, pend,
