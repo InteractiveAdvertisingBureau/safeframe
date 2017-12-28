@@ -1474,7 +1474,7 @@ var NULL					= null,
 				return STATUS_EXPANDING;
 			}
 			else if(pending_msg.cmd == COLLAPSE_COMMAND) {
-				return STATUS
+				return STATUS_COLLAPSING;
 			}
 		}
 		
