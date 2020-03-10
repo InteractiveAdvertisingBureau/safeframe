@@ -741,7 +741,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @public
 	 * @function
 	 * @param {HTMLElement} el The HTML element for which to get the tag name.
-	 * @return {String} The tag name in all lower case of an HTML element, if it cannot be successfully retrieved, alwasys returns an empty string (which will evaluate to FALSE).
+	 * @return {string} The tag name in all lower case of an HTML element, if it cannot be successfully retrieved, alwasys returns an empty string (which will evaluate to FALSE).
 	 *
 	*/
 
@@ -832,7 +832,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @function
 	 * @param {HTMLElement} el The HTMLElement for which to look at. . .
 	 * @param {Object} rect The rect object generated for the HTMLElement in question to be adjusted
-	 * @returns {Object} rect
+	 * @returns {!Object} rect
 	 *
 	*/
 
@@ -865,7 +865,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {HTMLElement} [el] An HTMLElement to use as a reference document rather than the default main document
-     * @return {Object} Contains x, y, w, h properties for scrolling
+     * @return {!Object} Contains x, y, w, h properties for scrolling
      *
     */
 
@@ -898,7 +898,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    	 * @public
    	 * @function
    	 * @param {HTMLElement} el The element to check
-   	 * @return {Object} t,l,r,b,w,h,z info
+   	 * @return {!Object} t,l,r,b,w,h,z info
    	 *
    	*/
 
@@ -1059,7 +1059,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {HTMLElement} [el] An HTMLElement to use as the reference for an HTMLDocument
-     * @returns {Object}
+     * @returns {!Object}
      *
     */
 
@@ -1085,7 +1085,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      * @static
      * @function
      * @param {HTMLElement} [el] An HTMLElement to use as the references for an HTMLWindow
-     * @returns {Object}
+     * @returns {!Object}
      *
     */
 
@@ -1210,7 +1210,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @param {Boolean} [check_3D=false] Also check element in regards to any elements overlapping in 3D space
 	 * @param {Number} [def_w=0] A default width of the given element for cases where width of an element may not be set due to visibility or timing issues
 	 * @param {Number} [def_h=0] A default height of the given element for cases where width of an element may not be set due to visibility or timing issues
-	 * @return {Object} t,l,r,b,xs,ys,xiv,yiv,iv,w,h} deailing boundaries of an element
+	 * @return {!Object} t,l,r,b,xs,ys,xiv,yiv,iv,w,h} deailing boundaries of an element
 	 *
 	*/
 
@@ -1545,7 +1545,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @param {HTMLElement} el The element to check
 	 * @param {Number} [def_w=0] A default width of the given element for cases where width of an element may not be set due to visibility or timing issues
 	 * @param {Number} [def_h=0] A default height of the given element for cases where width of an element may not be set due to visibility or timing issues
-	 * @return {Object[]} array of objects decribing the point at which the element was checked to see if it is being overlapped
+	 * @return {!Object[]} array of objects decribing the point at which the element was checked to see if it is being overlapped
 	 *
 	 *
 	*/
@@ -2839,7 +2839,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	 * @private
 	 * @static
 	 * @function
-	 * @returns {Object}
+	 * @returns {!Object}
 	 *
 	*/
 

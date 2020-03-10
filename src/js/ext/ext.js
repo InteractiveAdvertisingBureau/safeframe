@@ -991,7 +991,7 @@ var NULL					= null,
 	 * @static
 	 * @param {$sf.lib.lang.ParamHash} params The message parameter hash object containing information about what has occured
 	 * @param {HTMLEvent} [evt] The raw DOM event from the x-domain message
-	 * @return {Boolean} Whether or not the message received could be handled
+	 * @return {boolean} Whether or not the message received could be handled
 	 *
 	*/
 
@@ -1289,7 +1289,7 @@ var NULL					= null,
      * 					     Check $sf.ext.supports("exp-push"), ahead of time to verify
      *
      *
-     * @return {Boolean} true/false if the request to expand the container was sent. This does not mean that expansion is complete as expansion is an asynchronous process. Pass in a callback function to $sf.ext.register to get status updates.
+     * @return {boolean} true/false if the request to expand the container was sent. This does not mean that expansion is complete as expansion is an asynchronous process. Pass in a callback function to $sf.ext.register to get status updates.
      *
     */
 
@@ -1496,7 +1496,7 @@ var NULL					= null,
 	 * @function
 	 * @param {String} [cookieName] The name of the cookie to set or read
 	 * @param {Object} [cookieData] An object hash containing the value and an optional expires
-	 * @return {Number}
+	 * @return {number}
 	 *
 	*/
 	function cookie(cookieName, cookieData)
@@ -1535,7 +1535,7 @@ var NULL					= null,
 	 * @public
 	 * @static
 	 * @function
-	 * @return {Number}
+	 * @return {number}
 	 *
 	*/
 	function inViewPercentage()
