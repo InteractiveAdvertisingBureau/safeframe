@@ -232,7 +232,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @function
 		 * @param {*} val Any JavaScript reference / value
-		 * @return {Boolean} The normalized boolean value
+		 * @return {boolean} The normalized boolean value
 		 *
 		*/
 
@@ -296,7 +296,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @function
 		 * @param {Function} A reference to a JavaScript function
-		 * @return {Boolean} true if function can be called safely, otherwise false.
+		 * @return {boolean} true if function can be called safely, otherwise false.
 		 *
 		*/
 
@@ -382,7 +382,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @function
 		 * @static
-		 * @return {Number} current time
+		 * @return {number} current time
 		 *
 		*/
 
@@ -397,7 +397,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @static
 		 * @function
-		 * @return {Number} random number
+		 * @return {number} random number
 		 *
 		*/
 
@@ -674,7 +674,7 @@ if (window["$sf"]) {
 	 * @param {String} haystack the string to search
 	 * @param {String} needle the substring being looked for
 	 * @param {Boolean} useLast Whether or not to search from the end instead of the begining
-	 * @return {Number} the index of the substring in the given string or -1 if not found
+	 * @return {number} the index of the substring in the given string or -1 if not found
 	 *
 	*/
 
@@ -894,7 +894,7 @@ if (window["$sf"]) {
 		 * @private
 		 * @function
 		 * @param {String} s The string representing a version number (e.g. 'major.minor.revision')
-		 * @returns {Number}
+		 * @returns {number}
 		 *
 		*/
 
@@ -956,7 +956,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @function
 		 * @param {String} [subUA] An alternate user-agent string to parse. If no valid string is passed in, function will return an object based on the known user-agent
-		 * @returns {Object} <b>parsed</b> Browser and OS information<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		 * @returns {!Object} <b>parsed</b> Browser and OS information<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 * @returns {Number} <b>parsed</b>.ie  The major version number of the Internet Explorer browser being used, or 0 if not.<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 * @returns {Number} <b>parsed</b>.opera The major version number of the Opera browser being used, or 0 if not.<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 * @returns {Number} <b>parsed</b>.gecko The major version number of the Gecko (Firefox) browser being used, or 0 if not.<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1841,7 +1841,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @function
 		 * @param {HTMLElement} node The HTML element to be removed from the dom
-		 * @return {Boolean} Whether or not the element was successfully removed
+		 * @return {boolean} Whether or not the element was successfully removed
 		 *
 		*/
 
@@ -1969,7 +1969,7 @@ if (window["$sf"]) {
 		 * @public
 		 * @static
 		 * @function
-		 * @return {Boolean}
+		 * @return {boolean}
 		 *
 		*/
 
