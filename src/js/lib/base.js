@@ -2217,7 +2217,6 @@ if (window["$sf"]) {
 			attr(newCl,"TABINDEX",-1);
 			attr(newCl,"MARGINWIDTH",0);
 			attr(newCl,"MARGINHEIGHT",0);
-			attr(newCl,"MARGINHEIGHT",0);
 			attr(newCl,"allow","accelerometer; gyroscope;");
 
 			_bind_iframe_onload(newCl,cb);
